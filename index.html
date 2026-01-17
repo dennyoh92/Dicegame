@@ -911,25 +911,64 @@
       pointer-events: none;
       z-index: 5;
     }
-    .stun-badge::before {
-      content: '⚠';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 2rem;
-      color: #ef4444;
-      text-shadow: 0 0 10px rgba(239, 68, 68, 0.8);
-      animation: stunPulse 1s ease-in-out infinite;
-    }
-    @keyframes stunPulse {
-      0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
-      50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
-    }
     .die.stunned {
       opacity: 0.6;
       background: #fef3c7;
       border: 2px solid #ef4444;
+    }
+    .die.special-dice {
+      background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+      border: 2px solid #f1f5f9;
+    }
+    .die.special-dice::before {
+      content: '★';
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      font-size: 0.875rem;
+      color: #9333ea;
+      z-index: 10;
+      text-shadow: 0 0 4px rgba(147, 51, 234, 0.5);
+    }
+    .die.special-dice.selected {
+      border: 4px solid #60a5fa;
+      box-shadow: 0 0 20px rgba(96, 165, 250, 0.5), 0 8px 0 rgba(0, 0, 0, 0.15);
+    }
+    .die-tooltip {
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(30, 41, 59, 0.95);
+      color: white;
+      padding: 0.75rem 1rem;
+      border-radius: 0.5rem;
+      font-size: 0.75rem;
+      white-space: nowrap;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.2s ease;
+      pointer-events: none;
+      z-index: 50;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+      margin-bottom: 0.5rem;
+      line-height: 1.5;
+      min-width: 200px;
+      text-align: center;
+    }
+    .die:hover .die-tooltip {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) translateY(-5px);
+    }
+    .die-tooltip::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 6px solid transparent;
+      border-top-color: rgba(30, 41, 59, 0.95);
     }
     .score-preview {
       background: rgba(255, 255, 255, 0.8);
@@ -1034,6 +1073,46 @@
       font-size: 0.875rem;
       font-weight: bold;
       color: #f59e0b;
+      position: relative;
+      display: inline-block;
+      cursor: help;
+    }
+    .stun-counter:hover .stun-tooltip {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+    .stun-tooltip {
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%) translateY(-10px);
+      background: rgba(30, 41, 59, 0.95);
+      color: white;
+      padding: 0.75rem 1rem;
+      border-radius: 0.5rem;
+      font-size: 0.75rem;
+      font-weight: normal;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.2s ease;
+      pointer-events: none;
+      z-index: 50;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+      margin-bottom: 0.5rem;
+      line-height: 1.5;
+      min-width: 280px;
+      max-width: 400px;
+      text-align: left;
+    }
+    .stun-tooltip::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 6px solid transparent;
+      border-top-color: rgba(30, 41, 59, 0.95);
     }
     .rerolls-left {
       text-align: center;
@@ -1058,9 +1137,16 @@
       font-weight: medium;
     }
     .attack-result {
-      font-size: 3rem;
-      font-weight: black;
-      margin-top: 1rem;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+    .attack-result-modal {
+      max-width: 400px;
+      padding: 1.5rem;
+    }
+    .attack-result-modal .attack-label {
+      font-size: 1.75rem;
+      margin-bottom: 0.5rem;
     }
     .counterattack-overlay {
       position: fixed;
@@ -1100,15 +1186,18 @@
 
     const REWARDS = [
       { id: "skilled_hands", name: "Skilled Hands", nameKo: "숙련된 손길", descriptionKo: "리롤 기회 영구 +1회 추가", iconName: "Hand" },
-      { id: "giants_strike", name: "Giant's Strike", nameKo: "거인의 일격", descriptionKo: "주사위 합계 23 이상 시 데미지 2배", iconName: "Dumbbell" },
-      { id: "lucky_seven", name: "Lucky Seven", nameKo: "럭키 세븐", descriptionKo: "최고 + 최저 눈금 = 7일 때 2배", iconName: "Clover" },
-      { id: "gamblers_chip", name: "Gambler's Chip", nameKo: "도박사의 칩", descriptionKo: "Chance 족보 배수 2배", iconName: "Coins" },
+      { id: "giants_strike", name: "Giant's Strike", nameKo: "거인의 일격", descriptionKo: "주사위 합계 24 이상 시 데미지 2배", iconName: "Dumbbell" },
+      { id: "gamblers_chip", name: "Gambler's Chip", nameKo: "찬스 강화", descriptionKo: "찬스 족보 배수 2배로 변경", iconName: "Coins" },
       { id: "cursed_power", name: "Cursed Power", nameKo: "저주받은 힘", descriptionKo: "데미지 2배, 단 1이 있으면 0 데미지", iconName: "Skull" },
-      { id: "precise_strike", name: "Precise Strike", nameKo: "정밀한 타격", descriptionKo: "합계가 정확히 12일 때 3배", iconName: "Target" },
-      { id: "dimension_warp", name: "Dimension Warp", nameKo: "차원 왜곡", descriptionKo: "주사위 1개를 8면체(1-8)로 교체", iconName: "Orbit" },
-      { id: "stable_engine", name: "Stable Engine", nameKo: "안정적인 엔진", descriptionKo: "주사위 1개를 특수 6면체(2-7)로 교체", iconName: "Cog" },
       { id: "raging_power", name: "Raging Power", nameKo: "폭주하는 힘", descriptionKo: "주사위 +1개, 단 Hold 사용 불가", iconName: "Flame" },
-      { id: "three_straight", name: "Three Straight", nameKo: "3 스트레이트", descriptionKo: "연속된 숫자 3개 포함 시 2배", iconName: "ArrowRight" },
+      { id: "all_two_dice", name: "All Two Dice", nameKo: "올 투 다이스", descriptionKo: "1개의 일반 주사위를 2,2,2,2,2,2 면 구성 주사위로 바꿈", iconName: "Target" },
+      { id: "extreme_dice", name: "Extreme Dice", nameKo: "익스트림 다이스", descriptionKo: "1개의 일반 주사위를 0,0,0,0,6,6 면 구성 주사위로 바꿈", iconName: "Target" },
+      { id: "even_dice", name: "Even Dice", nameKo: "짝수 다이스", descriptionKo: "1개의 일반 주사위를 2,2,2,4,4,6 면 구성 주사위로 바꿈", iconName: "Target" },
+      { id: "odd_dice", name: "Odd Dice", nameKo: "홀수 다이스", descriptionKo: "1개의 일반 주사위를 1,3,3,3,5,5 면 구성 주사위로 바꿈", iconName: "Target" },
+      { id: "middle_dice", name: "Middle Dice", nameKo: "중간 다이스", descriptionKo: "1개의 일반 주사위를 3,3,3,3,4,4 면 구성 주사위로 바꿈", iconName: "Target" },
+      { id: "triple_boost", name: "Triple Boost", nameKo: "트리플 강화", descriptionKo: "트리플 배수가 x3로 변경됩니다", iconName: "Target" },
+      { id: "two_pair_boost", name: "Two Pair Boost", nameKo: "투페어 강화", descriptionKo: "투페어 배수가 x4로 변경됩니다", iconName: "Target" },
+      { id: "small_straight_boost", name: "Small Straight Boost", nameKo: "스몰 스트레이트 강화", descriptionKo: "스몰 스트레이트 배수가 x5로 변경됩니다", iconName: "Target" },
     ];
 
     const COMBINATIONS = {
@@ -1118,7 +1207,7 @@
       fullHouse: { multiplier: 6, label: "Full House", labelKo: "풀 하우스 (3+2)" },
       smallStraight: { multiplier: 4, label: "Small Straight", labelKo: "스몰 스트레이트 (4개 연속)" },
       twoPair: { multiplier: 3, label: "Two Pair", labelKo: "투페어 (2쌍)" },
-      threeOfAKind: { multiplier: 2, label: "3 of a Kind", labelKo: "쓰리카드 (3개 동일)" },
+      threeOfAKind: { multiplier: 2, label: "3 of a Kind", labelKo: "트리플 (3개 동일)" },
       chance: { multiplier: 1, label: "Chance", labelKo: "찬스" },
     };
 
@@ -1191,6 +1280,17 @@
       const combination = detectCombination(dice);
       let { multiplier, label, labelKo } = COMBINATIONS[combination];
       
+      // 족보 강화 보상 적용
+      if (combination === "threeOfAKind" && ownedRewards.includes("triple_boost")) {
+        multiplier = 3;
+      }
+      if (combination === "twoPair" && ownedRewards.includes("two_pair_boost")) {
+        multiplier = 4;
+      }
+      if (combination === "smallStraight" && ownedRewards.includes("small_straight_boost")) {
+        multiplier = 5;
+      }
+      
       if (combination === "chance" && ownedRewards.includes("gamblers_chip")) {
         multiplier *= 2;
       }
@@ -1207,21 +1307,8 @@
       }
       
       if (!isCursed) {
-        if (ownedRewards.includes("giants_strike") && sum >= 23) {
+        if (ownedRewards.includes("giants_strike") && sum >= 24) {
           rewardMultipliers.push({ rewardId: "giants_strike", multiplier: 2 });
-        }
-        if (ownedRewards.includes("lucky_seven")) {
-          const maxDie = Math.max(...dice);
-          const minDie = Math.min(...dice);
-          if (maxDie + minDie === 7) {
-            rewardMultipliers.push({ rewardId: "lucky_seven", multiplier: 2 });
-          }
-        }
-        if (ownedRewards.includes("precise_strike") && sum === 12) {
-          rewardMultipliers.push({ rewardId: "precise_strike", multiplier: 3 });
-        }
-        if (ownedRewards.includes("three_straight") && hasThreeConsecutive(dice)) {
-          rewardMultipliers.push({ rewardId: "three_straight", multiplier: 2 });
         }
       }
       
@@ -1236,7 +1323,7 @@
     function getInitialPlayerState() {
       return {
         ownedRewards: [],
-        baseRerolls: 3,
+        baseRerolls: 2,
         diceTypes: ["normal", "normal", "normal", "normal", "normal"],
         holdDisabled: false,
         currentStage: 1,
@@ -1251,6 +1338,23 @@
       switch (type) {
         case "d8": return Math.floor(Math.random() * 8) + 1;
         case "d6_2_7": return Math.floor(Math.random() * 6) + 2;
+        case "all_two": return 2; // 항상 2
+        case "extreme": {
+          const extremeValues = [0, 0, 0, 0, 6, 6];
+          return extremeValues[Math.floor(Math.random() * 6)];
+        }
+        case "even": {
+          const evenValues = [2, 2, 2, 4, 4, 6];
+          return evenValues[Math.floor(Math.random() * 6)];
+        }
+        case "odd": {
+          const oddValues = [1, 3, 3, 3, 5, 5];
+          return oddValues[Math.floor(Math.random() * 6)];
+        }
+        case "middle": {
+          const middleValues = [3, 3, 3, 3, 4, 4];
+          return middleValues[Math.floor(Math.random() * 6)];
+        }
         default: return Math.floor(Math.random() * 6) + 1;
       }
     }
@@ -1267,26 +1371,50 @@
         case "skilled_hands":
           newState.baseRerolls += 1;
           break;
-        case "dimension_warp": {
-          const normalIndex = newState.diceTypes.findIndex(t => t === "normal");
-          if (normalIndex !== -1) {
-            newState.diceTypes = [...newState.diceTypes];
-            newState.diceTypes[normalIndex] = "d8";
-          }
-          break;
-        }
-        case "stable_engine": {
-          const normalIdx = newState.diceTypes.findIndex(t => t === "normal");
-          if (normalIdx !== -1) {
-            newState.diceTypes = [...newState.diceTypes];
-            newState.diceTypes[normalIdx] = "d6_2_7";
-          }
-          break;
-        }
         case "raging_power":
           newState.diceTypes = [...newState.diceTypes, "normal"];
           newState.holdDisabled = true;
           break;
+        case "all_two_dice": {
+          const normalIndex = newState.diceTypes.findIndex(t => t === "normal");
+          if (normalIndex !== -1) {
+            newState.diceTypes = [...newState.diceTypes];
+            newState.diceTypes[normalIndex] = "all_two";
+          }
+          break;
+        }
+        case "extreme_dice": {
+          const normalIndex = newState.diceTypes.findIndex(t => t === "normal");
+          if (normalIndex !== -1) {
+            newState.diceTypes = [...newState.diceTypes];
+            newState.diceTypes[normalIndex] = "extreme";
+          }
+          break;
+        }
+        case "even_dice": {
+          const normalIndex = newState.diceTypes.findIndex(t => t === "normal");
+          if (normalIndex !== -1) {
+            newState.diceTypes = [...newState.diceTypes];
+            newState.diceTypes[normalIndex] = "even";
+          }
+          break;
+        }
+        case "odd_dice": {
+          const normalIndex = newState.diceTypes.findIndex(t => t === "normal");
+          if (normalIndex !== -1) {
+            newState.diceTypes = [...newState.diceTypes];
+            newState.diceTypes[normalIndex] = "odd";
+          }
+          break;
+        }
+        case "middle_dice": {
+          const normalIndex = newState.diceTypes.findIndex(t => t === "normal");
+          if (normalIndex !== -1) {
+            newState.diceTypes = [...newState.diceTypes];
+            newState.diceTypes[normalIndex] = "middle";
+          }
+          break;
+        }
       }
       return newState;
     }
@@ -1317,7 +1445,7 @@
     // 주사위 눈 패턴 생성 함수
     function renderDicePips(value) {
       if (value === 0) {
-        return null; // 기절 상태
+        return <div style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 'bold' }}>0</div>; // 0 값 표시
       }
       
       const pips = [];
@@ -1372,8 +1500,23 @@
     }
 
     // Components
+    function getDiceTypeInfo(diceType) {
+      const typeInfo = {
+        "all_two": { name: "올 투 다이스", faces: [2,2,2,2,2,2] },
+        "extreme": { name: "익스트림 다이스", faces: [0,0,0,0,6,6] },
+        "even": { name: "짝수 다이스", faces: [2,2,2,4,4,6] },
+        "odd": { name: "홀수 다이스", faces: [1,3,3,3,5,5] },
+        "middle": { name: "중간 다이스", faces: [3,3,3,3,4,4] },
+        "d8": { name: "차원 왜곡", faces: [1,2,3,4,5,6,7,8] },
+        "d6_2_7": { name: "안정적인 엔진", faces: [2,3,4,5,6,7] },
+      };
+      return typeInfo[diceType] || null;
+    }
+
     function Die({ value, isSelected, isStunned, isRolling, diceType, onToggle, selectionDisabled, index }) {
       const [displayValue, setDisplayValue] = useState(value);
+      const diceTypeInfo = getDiceTypeInfo(diceType);
+      const isSpecialDice = diceTypeInfo !== null;
       
       useEffect(() => {
         if (isRolling) {
@@ -1388,7 +1531,7 @@
         }
       }, [isRolling, value]);
       
-      const dieClass = `die ${isSelected ? 'selected' : ''} ${isStunned ? 'stunned' : ''} ${isRolling ? 'rolling' : ''}`;
+      const dieClass = `die ${isSelected ? 'selected' : ''} ${isStunned ? 'stunned' : ''} ${isRolling ? 'rolling' : ''} ${isSpecialDice ? 'special-dice' : ''}`;
       const animationDelay = isRolling ? `${index * 0.05}s` : '0s';
       
       return (
@@ -1399,6 +1542,12 @@
         >
           {renderDicePips(displayValue)}
           {isStunned && <div className="stun-badge" />}
+          {isSpecialDice && (
+            <div className="die-tooltip">
+              <div style={{ fontWeight: 'bold', marginBottom: '0.25rem' }}>{diceTypeInfo.name}</div>
+              <div>눈금: {diceTypeInfo.faces.join(', ')}</div>
+            </div>
+          )}
         </div>
       );
     }
@@ -1539,9 +1688,12 @@
     // Main Game Component
     function Game() {
       const [playerState, setPlayerState] = useState(getInitialPlayerState);
-      const [currentDice, setCurrentDice] = useState([1, 1, 1, 1, 1]);
+      const [currentDice, setCurrentDice] = useState(() => {
+        const initialDiceCount = getInitialPlayerState().diceTypes.length;
+        return Array.from({ length: initialDiceCount }, (_, i) => i + 1);
+      });
       const [selectedIndices, setSelectedIndices] = useState(new Set());
-      const [rerollsLeft, setRerollsLeft] = useState(3);
+      const [rerollsLeft, setRerollsLeft] = useState(2);
       const [roundStarted, setRoundStarted] = useState(false);
       
       const currentStage = STAGES[playerState.currentStage - 1];
@@ -1556,7 +1708,7 @@
       const [showCounterattack, setShowCounterattack] = useState(false);
       const [isMonsterAttacking, setIsMonsterAttacking] = useState(false);
       const [isPlayerAttacking, setIsPlayerAttacking] = useState(false);
-      const [rerollPenalty, setRerollPenalty] = useState(0);
+      const [showRerollWarning, setShowRerollWarning] = useState(false);
       const [isRolling, setIsRolling] = useState(false);
       const [rollingDice, setRollingDice] = useState(new Set());
       
@@ -1567,7 +1719,14 @@
       const totalDiceCount = playerState.diceTypes.length;
       const stunnedDiceCount = stunnedIndices.size;
       const normalDiceCount = totalDiceCount - stunnedDiceCount;
-      const effectiveMaxRerolls = Math.max(0, playerState.baseRerolls - rerollPenalty);
+      const effectiveMaxRerolls = playerState.baseRerolls;
+
+      // 라운드가 시작되지 않았을 때 주사위를 순서대로 표시
+      useEffect(() => {
+        if (!roundStarted) {
+          setCurrentDice(Array.from({ length: totalDiceCount }, (_, i) => i + 1));
+        }
+      }, [roundStarted, totalDiceCount]);
 
       useEffect(() => {
         const stage = STAGES[playerState.currentStage - 1];
@@ -1606,20 +1765,19 @@
             setBeingStunnedIndex(null);
             setShowCounterattack(false);
             setIsMonsterAttacking(false);
-            setRerollPenalty(prev => prev + 1);
             setRoundStarted(false);
             setSelectedIndices(new Set());
-            setRerollsLeft(Math.max(0, playerState.baseRerolls - (rerollPenalty + 1)));
+            setRerollsLeft(playerState.baseRerolls);
           }, 800);
         }, 500);
-      }, [stunnedIndices, totalDiceCount, effectiveMaxRerolls, playerState.baseRerolls, rerollPenalty]);
+      }, [stunnedIndices, totalDiceCount, effectiveMaxRerolls, playerState.baseRerolls]);
 
       const handleMonsterDefeated = useCallback(() => {
         if (playerState.currentStage >= STAGES.length) {
           setShowVictory(true);
           triggerVictoryConfetti();
         } else {
-          setRewardOptions(getRandomRewards(2, playerState.ownedRewards));
+          setRewardOptions(getRandomRewards(3, playerState.ownedRewards));
           setShowRewardSelection(true);
         }
       }, [playerState.currentStage, playerState.ownedRewards]);
@@ -1704,6 +1862,15 @@
           }
         });
         
+        // 리롤할 주사위가 없고 강제 리롤이 아닌 경우 경고 표시
+        if (!forceFullReroll && diceToRoll.size === 0) {
+          setShowRerollWarning(true);
+          setTimeout(() => {
+            setShowRerollWarning(false);
+          }, 2000);
+          return;
+        }
+        
         setIsRolling(true);
         setRollingDice(diceToRoll);
         
@@ -1723,10 +1890,14 @@
         setPlayerState(newState);
         setShowRewardSelection(false);
         setStunnedIndices(new Set());
-        setRerollPenalty(0);
         setRerollsLeft(newState.baseRerolls);
         if (newState.diceTypes.length > currentDice.length) {
-          setCurrentDice([...currentDice, 1]);
+          const newDiceCount = newState.diceTypes.length;
+          setCurrentDice(Array.from({ length: newDiceCount }, (_, i) => i + 1));
+        } else {
+          // 주사위 개수가 같아도 순서대로 표시
+          const diceCount = newState.diceTypes.length;
+          setCurrentDice(Array.from({ length: diceCount }, (_, i) => i + 1));
         }
         const nextStage = STAGES[newState.currentStage - 1];
         if (nextStage) setMonsterHp(nextStage.hp);
@@ -1735,9 +1906,9 @@
       const handleRestart = () => {
         const initialState = getInitialPlayerState();
         setPlayerState(initialState);
-        setCurrentDice([1, 1, 1, 1, 1]);
+        const initialDiceCount = initialState.diceTypes.length;
+        setCurrentDice(Array.from({ length: initialDiceCount }, (_, i) => i + 1));
         setSelectedIndices(new Set());
-        setRerollPenalty(0);
         setRerollsLeft(initialState.baseRerolls);
         setRoundStarted(false);
         setStunnedIndices(new Set());
@@ -1799,18 +1970,23 @@
               </div>
             )}
 
+            {showRerollWarning && (
+              <div className="modal-overlay" style={{ pointerEvents: 'none' }}>
+                <div className="modal" style={{ background: 'linear-gradient(to right, #f59e0b, #f97316)', maxWidth: '350px', padding: '1.5rem' }}>
+                  <div style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>⚠ 리롤할 주사위를 선택하세요</div>
+                </div>
+              </div>
+            )}
+
             {showAttackResult && attackResult && (
               <div className="modal-overlay" style={{ pointerEvents: 'none' }}>
-                <div className="modal" style={{ background: attackResult.isCursed ? 'linear-gradient(to right, #374151, #111827)' : `linear-gradient(to right, #6366f1, #7c3aed)` }}>
-                  <div style={{ fontSize: '2.5rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>
-                    {attackResult.isCursed ? 'CURSED!' : attackResult.label}!
+                <div className="modal attack-result-modal" style={{ background: attackResult.isCursed ? 'linear-gradient(to right, #374151, #111827)' : `linear-gradient(to right, #6366f1, #7c3aed)` }}>
+                  <div className="attack-label" style={{ fontWeight: 'bold', marginBottom: '0.5rem' }}>
+                    {attackResult.isCursed ? 'CURSED!' : attackResult.labelKo.replace(/\s*\([^)]*\)/g, '')}!
                   </div>
-                  <div style={{ marginBottom: '1rem', fontSize: '1.25rem' }}>{attackResult.labelKo}</div>
-                  <div style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>
-                    ×{attackResult.multiplier}
-                    {attackResult.finalMultiplier > 1 && <span style={{ color: '#fbbf24' }}> ×{attackResult.finalMultiplier}</span>}
+                  <div className="attack-result" style={{ fontSize: '1.5rem' }}>
+                    {attackResult.sum} × {attackResult.multiplier * attackResult.finalMultiplier} = {attackResult.total}
                   </div>
-                  <div className="attack-result">{attackResult.total} DMG</div>
                 </div>
               </div>
             )}
@@ -1821,7 +1997,12 @@
             </p>
 
             {stunnedDiceCount > 0 && (
-              <div className="stun-counter">⚠ 기절된 주사위: {stunnedDiceCount} / {totalDiceCount}</div>
+              <div className="stun-counter">
+                ⚠ 기절된 주사위: {stunnedDiceCount} / {totalDiceCount}
+                <div className="stun-tooltip">
+                  기절된 주사위는 1,1,1,0,0,0 눈금을 가지고 있고 리롤시 재굴림됩니다. 모든 주사위가 기절되면 패배합니다.
+                </div>
+              </div>
             )}
 
             <div className={`dice-container ${isPlayerAttacking ? 'attacking' : ''}`}>
@@ -1907,12 +2088,29 @@
           <aside className="sidebar">
             <div className="guide-card">
               <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1rem' }}>족보 가이드</h2>
-              {Object.entries(COMBINATIONS).map(([key, combo]) => (
-                <div key={key} className="guide-item">
-                  <span>{combo.labelKo}</span>
-                  <span style={{ fontWeight: 'bold' }}>×{combo.multiplier}</span>
-                </div>
-              ))}
+              {Object.entries(COMBINATIONS).map(([key, combo]) => {
+                let displayMultiplier = combo.multiplier;
+                // 강화 보상 적용
+                if (key === "chance" && playerState.ownedRewards.includes("gamblers_chip")) {
+                  displayMultiplier = 2;
+                } else if (key === "threeOfAKind" && playerState.ownedRewards.includes("triple_boost")) {
+                  displayMultiplier = 3;
+                } else if (key === "twoPair" && playerState.ownedRewards.includes("two_pair_boost")) {
+                  displayMultiplier = 4;
+                } else if (key === "smallStraight" && playerState.ownedRewards.includes("small_straight_boost")) {
+                  displayMultiplier = 5;
+                }
+                const isBoosted = displayMultiplier !== combo.multiplier;
+                return (
+                  <div key={key} className="guide-item">
+                    <span>{combo.labelKo}</span>
+                    <span style={{ fontWeight: 'bold', color: isBoosted ? '#fbbf24' : 'inherit' }}>
+                      ×{displayMultiplier}
+                      {isBoosted && <span style={{ fontSize: '0.75rem', marginLeft: '0.25rem' }}>✨</span>}
+                    </span>
+                  </div>
+                );
+              })}
               <div style={{ marginTop: '0.75rem', fontSize: '0.75rem', color: 'rgba(255,255,255,0.8)' }}>
                 데미지 = 합계 × 배수 × 보상
               </div>
