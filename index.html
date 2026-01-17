@@ -1,0 +1,1929 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dice Battle - 주사위 전투 게임</title>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+      background: radial-gradient(ellipse at top, #eef2ff 0%, #f8fafc 100%);
+      min-height: 100vh;
+      padding: 1rem;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 350px;
+      gap: 2rem;
+      padding: 2rem;
+    }
+    @media (max-width: 1024px) {
+      .container { grid-template-columns: 1fr; }
+    }
+    .main-game {
+      background: rgba(255, 255, 255, 0.4);
+      backdrop-filter: blur(12px);
+      border-radius: 2.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      box-shadow: 0 20px 25px -5px rgba(99, 102, 241, 0.1);
+      padding: 2rem;
+      min-height: 750px;
+      position: relative;
+      overflow: hidden;
+    }
+    .bg-decoration {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(60px);
+      pointer-events: none;
+    }
+    .bg-1 { top: 0; left: 0; width: 256px; height: 256px; background: rgba(129, 140, 248, 0.1); transform: translate(-50%, -50%); }
+    .bg-2 { bottom: 0; right: 0; width: 384px; height: 384px; background: rgba(249, 168, 212, 0.1); transform: translate(33%, 33%); }
+    .title {
+      text-align: center;
+      margin-bottom: 1rem;
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: #1e293b;
+    }
+    .subtitle {
+      text-align: center;
+      font-size: 0.875rem;
+      color: #64748b;
+      margin-bottom: 1rem;
+    }
+    .stage-indicator {
+      text-align: center;
+      margin-bottom: 0.5rem;
+    }
+    .stage-badge {
+      background: #e0e7ff;
+      color: #4338ca;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      font-weight: bold;
+    }
+    .monster-section {
+      margin-bottom: 1rem;
+    }
+    .monster-container {
+      background: white;
+      border-radius: 1rem;
+      padding: 1.5rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    .monster-body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 1rem;
+      transition: transform 0.3s ease;
+    }
+    .monster-body.attacking {
+      animation: monsterAttack 0.5s ease-out;
+    }
+    @keyframes monsterAttack {
+      0% { transform: translateX(0) scale(1); }
+      50% { transform: translateX(30px) scale(1.1); }
+      100% { transform: translateX(0) scale(1); }
+    }
+    .dice-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      position: relative;
+    }
+    .dice-container.attacking {
+      animation: playerAttack 0.6s ease-out;
+    }
+    @keyframes playerAttack {
+      0% { transform: translateY(0); }
+      30% { transform: translateY(-20px) scale(1.1); }
+      60% { transform: translateY(-10px) scale(1.05); }
+      100% { transform: translateY(0) scale(1); }
+    }
+    .attack-effect {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 10;
+    }
+    .attack-flash {
+      position: absolute;
+      inset: -20px;
+      background: radial-gradient(circle, rgba(239, 68, 68, 0.3) 0%, transparent 70%);
+      border-radius: 50%;
+      animation: attackFlash 0.3s ease-out;
+      opacity: 0;
+    }
+    @keyframes attackFlash {
+      0% { transform: scale(0.5); opacity: 0; }
+      50% { transform: scale(1.2); opacity: 1; }
+      100% { transform: scale(1.5); opacity: 0; }
+    }
+    .monster-attack-effect {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 200%;
+      height: 200%;
+      pointer-events: none;
+      z-index: 10;
+    }
+    .monster-attack-flash {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle, rgba(245, 158, 11, 0.4) 0%, transparent 70%);
+      border-radius: 50%;
+      animation: monsterAttackFlash 0.4s ease-out;
+      opacity: 0;
+    }
+    @keyframes monsterAttackFlash {
+      0% { transform: scale(0.3); opacity: 0; }
+      50% { transform: scale(1); opacity: 1; }
+      100% { transform: scale(1.3); opacity: 0; }
+    }
+    .monster-slime {
+      width: 180px; height: 140px;
+      position: relative;
+      animation: slimeBounce 2s ease-in-out infinite;
+    }
+    @keyframes slimeBounce {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-10px) scale(1.05); }
+    }
+    .monster-slime::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, #bef264 0%, #84cc16 50%, #65a30d 100%);
+      border-radius: 60% 60% 50% 50% / 70% 70% 30% 30%;
+      box-shadow: 
+        0 15px 30px rgba(34, 197, 94, 0.4),
+        inset 0 -20px 40px rgba(22, 163, 74, 0.3),
+        inset 0 20px 20px rgba(254, 255, 255, 0.2);
+    }
+    .monster-slime::after {
+      content: '';
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 100px;
+      background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.4) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    .slime-eyes {
+      position: absolute;
+      top: 50px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 20px;
+      z-index: 2;
+    }
+    .slime-eye {
+      width: 24px;
+      height: 32px;
+      background: white;
+      border-radius: 50%;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+      position: relative;
+    }
+    .slime-eye::after {
+      content: '';
+      position: absolute;
+      top: 8px;
+      left: 6px;
+      width: 12px;
+      height: 16px;
+      background: #1e293b;
+      border-radius: 50%;
+    }
+    .slime-mouth {
+      position: absolute;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 40px;
+      height: 20px;
+      border: 3px solid #15803d;
+      border-top: none;
+      border-radius: 0 0 50% 50%;
+    }
+    .slime-bubbles {
+      position: absolute;
+      bottom: -10px;
+      right: 20px;
+      width: 12px;
+      height: 12px;
+      background: rgba(255, 255, 255, 0.6);
+      border-radius: 50%;
+      animation: bubbleFloat 3s ease-in-out infinite;
+    }
+    .slime-bubbles::after {
+      content: '';
+      position: absolute;
+      bottom: 15px;
+      right: 5px;
+      width: 8px;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.4);
+      border-radius: 50%;
+      animation: bubbleFloat 3s ease-in-out infinite 0.5s;
+    }
+    @keyframes bubbleFloat {
+      0%, 100% { transform: translateY(0) scale(1); opacity: 0.6; }
+      50% { transform: translateY(-15px) scale(1.2); opacity: 0.3; }
+    }
+    
+    .monster-goblin {
+      width: 160px; height: 200px;
+      position: relative;
+      animation: goblinSway 3s ease-in-out infinite;
+    }
+    @keyframes goblinSway {
+      0%, 100% { transform: rotate(-2deg); }
+      50% { transform: rotate(2deg); }
+    }
+    .monster-goblin::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, #4ade80 0%, #22c55e 40%, #16a34a 100%);
+      border-radius: 45% 45% 35% 35% / 50% 50% 40% 40%;
+      box-shadow: 
+        0 20px 40px rgba(34, 197, 94, 0.3),
+        inset 0 -30px 50px rgba(21, 128, 61, 0.4),
+        inset 0 10px 20px rgba(255, 255, 255, 0.15);
+    }
+    .goblin-ears {
+      position: absolute;
+      top: -10px;
+      z-index: 1;
+    }
+    .goblin-ear-left {
+      position: absolute;
+      left: -20px;
+      width: 30px;
+      height: 50px;
+      background: linear-gradient(135deg, #16a34a, #15803d);
+      border-radius: 50% 0 50% 50%;
+      transform: rotate(-25deg);
+      box-shadow: -2px 2px 8px rgba(0, 0, 0, 0.3);
+    }
+    .goblin-ear-right {
+      position: absolute;
+      right: -20px;
+      width: 30px;
+      height: 50px;
+      background: linear-gradient(225deg, #16a34a, #15803d);
+      border-radius: 0 50% 50% 50%;
+      transform: rotate(25deg);
+      box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+    }
+    .goblin-eyes {
+      position: absolute;
+      top: 50px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 16px;
+      z-index: 2;
+    }
+    .goblin-eye {
+      width: 28px;
+      height: 28px;
+      background: linear-gradient(135deg, #fef08a, #facc15);
+      border-radius: 50%;
+      border: 3px solid #ca8a04;
+      box-shadow: 
+        inset 0 2px 4px rgba(0, 0, 0, 0.2),
+        0 0 10px rgba(250, 204, 21, 0.5);
+      position: relative;
+    }
+    .goblin-eye::after {
+      content: '';
+      position: absolute;
+      top: 6px;
+      left: 6px;
+      width: 10px;
+      height: 10px;
+      background: #dc2626;
+      border-radius: 50%;
+    }
+    .goblin-nose {
+      position: absolute;
+      top: 85px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 20px;
+      height: 18px;
+      background: #15803d;
+      border-radius: 50%;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+    .goblin-mouth {
+      position: absolute;
+      bottom: 50px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 30px;
+      background: #991b1b;
+      border-radius: 0 0 50% 50% / 0 0 100% 100%;
+      box-shadow: inset 0 5px 10px rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding-top: 5px;
+    }
+    .goblin-tooth {
+      width: 6px;
+      height: 10px;
+      background: #fef3c7;
+      border-radius: 0 0 50% 50%;
+    }
+    
+    .monster-orc {
+      width: 200px; height: 220px;
+      position: relative;
+      animation: orcBreathe 2s ease-in-out infinite;
+    }
+    @keyframes orcBreathe {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+    }
+    .monster-orc::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%);
+      border-radius: 20px;
+      box-shadow: 
+        0 25px 50px rgba(5, 150, 105, 0.4),
+        inset 0 -40px 60px rgba(4, 120, 87, 0.5),
+        inset 0 15px 30px rgba(255, 255, 255, 0.1);
+    }
+    .orc-shoulders {
+      position: absolute;
+      top: 20px;
+      z-index: 1;
+    }
+    .orc-shoulder-left {
+      position: absolute;
+      left: -25px;
+      width: 50px;
+      height: 80px;
+      background: linear-gradient(135deg, #047857, #065f46);
+      border-radius: 50% 20% 50% 20%;
+      box-shadow: -5px 5px 15px rgba(0, 0, 0, 0.4);
+    }
+    .orc-shoulder-right {
+      position: absolute;
+      right: -25px;
+      width: 50px;
+      height: 80px;
+      background: linear-gradient(225deg, #047857, #065f46);
+      border-radius: 20% 50% 20% 50%;
+      box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.4);
+    }
+    .orc-forehead {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 25px;
+      background: #065f46;
+      border-radius: 0 0 50% 50%;
+      box-shadow: inset 0 5px 10px rgba(0, 0, 0, 0.3);
+    }
+    .orc-eyes {
+      position: absolute;
+      top: 60px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 30px;
+      z-index: 2;
+    }
+    .orc-eye {
+      width: 32px;
+      height: 24px;
+      background: #fee2e2;
+      border-radius: 50%;
+      border: 4px solid #065f46;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+      position: relative;
+    }
+    .orc-eye::after {
+      content: '';
+      position: absolute;
+      top: 4px;
+      left: 6px;
+      width: 12px;
+      height: 12px;
+      background: #b91c1c;
+      border-radius: 50%;
+    }
+    .orc-nose {
+      position: absolute;
+      top: 100px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 40px;
+      height: 25px;
+      background: #065f46;
+      border-radius: 50%;
+      box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.4);
+    }
+    .orc-tusks {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 20px;
+      z-index: 2;
+    }
+    .orc-tusk {
+      width: 12px;
+      height: 30px;
+      background: linear-gradient(to bottom, #fef3c7, #fde68a);
+      border-radius: 50% 50% 0 0;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+    .orc-tusk-left { transform: rotate(-15deg); }
+    .orc-tusk-right { transform: rotate(15deg); }
+    .orc-mouth {
+      position: absolute;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 70px;
+      height: 25px;
+      background: #7f1d1d;
+      border-radius: 0 0 50% 50%;
+      box-shadow: inset 0 5px 10px rgba(0, 0, 0, 0.6);
+    }
+    .orc-scar {
+      position: absolute;
+      top: 40px;
+      right: 30px;
+      width: 3px;
+      height: 40px;
+      background: #34d399;
+      border-radius: 2px;
+      transform: rotate(15deg);
+      opacity: 0.7;
+    }
+    
+    .monster-dragon {
+      width: 220px; height: 240px;
+      position: relative;
+      animation: dragonFloat 3s ease-in-out infinite;
+    }
+    @keyframes dragonFloat {
+      0%, 100% { transform: translateY(0) rotate(-2deg); }
+      50% { transform: translateY(-8px) rotate(2deg); }
+    }
+    .dragon-body {
+      position: absolute;
+      top: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 180px;
+      height: 180px;
+      background: linear-gradient(135deg, #f87171 0%, #ef4444 30%, #dc2626 70%, #991b1b 100%);
+      border-radius: 50% 50% 40% 40% / 60% 60% 30% 30%;
+      box-shadow: 
+        0 30px 60px rgba(239, 68, 68, 0.5),
+        inset 0 -50px 80px rgba(153, 27, 27, 0.6),
+        inset 0 20px 40px rgba(255, 255, 255, 0.15);
+    }
+    .dragon-scales {
+      position: absolute;
+      inset: 0;
+      background-image: 
+        radial-gradient(circle at 20% 30%, rgba(0, 0, 0, 0.1) 2px, transparent 2px),
+        radial-gradient(circle at 60% 50%, rgba(0, 0, 0, 0.1) 2px, transparent 2px),
+        radial-gradient(circle at 80% 70%, rgba(0, 0, 0, 0.1) 2px, transparent 2px);
+      background-size: 40px 40px, 50px 50px, 35px 35px;
+      border-radius: inherit;
+    }
+    .dragon-horns {
+      position: absolute;
+      top: 10px;
+      z-index: 2;
+    }
+    .dragon-horn-left {
+      position: absolute;
+      left: 40px;
+      width: 20px;
+      height: 50px;
+      background: linear-gradient(135deg, #525252, #404040);
+      border-radius: 50% 0 50% 50%;
+      transform: rotate(-20deg);
+      box-shadow: -2px 2px 8px rgba(0, 0, 0, 0.5);
+    }
+    .dragon-horn-right {
+      position: absolute;
+      right: 40px;
+      width: 20px;
+      height: 50px;
+      background: linear-gradient(225deg, #525252, #404040);
+      border-radius: 0 50% 50% 50%;
+      transform: rotate(20deg);
+      box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+    }
+    .dragon-eyes {
+      position: absolute;
+      top: 60px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 50px;
+      z-index: 3;
+    }
+    .dragon-eye {
+      width: 28px;
+      height: 36px;
+      background: linear-gradient(135deg, #fef08a, #facc15);
+      border-radius: 50% 50% 40% 40%;
+      box-shadow: 
+        0 0 20px rgba(250, 204, 21, 0.8),
+        inset 0 2px 4px rgba(0, 0, 0, 0.2);
+      position: relative;
+    }
+    .dragon-eye::after {
+      content: '';
+      position: absolute;
+      top: 6px;
+      left: 6px;
+      width: 10px;
+      height: 14px;
+      background: #000;
+      border-radius: 50%;
+    }
+    .dragon-snout {
+      position: absolute;
+      top: 100px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 50px;
+      height: 35px;
+      background: #dc2626;
+      border-radius: 50%;
+      box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.4);
+    }
+    .dragon-nostrils {
+      position: absolute;
+      top: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+    }
+    .dragon-nostril {
+      width: 6px;
+      height: 6px;
+      background: #000;
+      border-radius: 50%;
+    }
+    .dragon-mouth {
+      position: absolute;
+      bottom: 50px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 20px;
+      background: linear-gradient(to top, #f97316, #ea580c);
+      border-radius: 0 0 50% 50%;
+      box-shadow: 
+        inset 0 5px 10px rgba(0, 0, 0, 0.5),
+        0 0 15px rgba(249, 115, 22, 0.6);
+      animation: fireGlow 1.5s ease-in-out infinite;
+    }
+    @keyframes fireGlow {
+      0%, 100% { box-shadow: inset 0 5px 10px rgba(0, 0, 0, 0.5), 0 0 15px rgba(249, 115, 22, 0.6); }
+      50% { box-shadow: inset 0 5px 10px rgba(0, 0, 0, 0.5), 0 0 25px rgba(249, 115, 22, 0.9); }
+    }
+    .dragon-wings {
+      position: absolute;
+      top: 80px;
+      z-index: 1;
+    }
+    .dragon-wing-left {
+      position: absolute;
+      left: -40px;
+      width: 60px;
+      height: 100px;
+      background: linear-gradient(135deg, rgba(220, 38, 38, 0.6), rgba(153, 27, 27, 0.8));
+      border-radius: 50% 0 50% 50%;
+      transform: rotate(-30deg);
+      box-shadow: -5px 5px 15px rgba(0, 0, 0, 0.3);
+    }
+    .dragon-wing-right {
+      position: absolute;
+      right: -40px;
+      width: 60px;
+      height: 100px;
+      background: linear-gradient(225deg, rgba(220, 38, 38, 0.6), rgba(153, 27, 27, 0.8));
+      border-radius: 0 50% 50% 50%;
+      transform: rotate(30deg);
+      box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
+    }
+    
+    .monster-king {
+      width: 240px; height: 240px;
+      position: relative;
+      animation: kingPulse 2.5s ease-in-out infinite;
+    }
+    @keyframes kingPulse {
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 20px rgba(147, 51, 234, 0.5)); }
+      50% { transform: scale(1.03); filter: drop-shadow(0 0 30px rgba(147, 51, 234, 0.8)); }
+    }
+    .monster-king::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, #a855f7 0%, #9333ea 30%, #7c3aed 60%, #6d28d9 100%);
+      border-radius: 50%;
+      box-shadow: 
+        0 30px 60px rgba(147, 51, 234, 0.6),
+        inset 0 -50px 80px rgba(109, 40, 217, 0.7),
+        inset 0 30px 50px rgba(255, 255, 255, 0.2);
+    }
+    .king-crown {
+      position: absolute;
+      top: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 140px;
+      height: 60px;
+      background: linear-gradient(135deg, #fbbf24, #f59e0b);
+      clip-path: polygon(20% 100%, 30% 0%, 50% 20%, 70% 0%, 80% 100%);
+      box-shadow: 
+        0 10px 20px rgba(251, 191, 36, 0.5),
+        inset 0 -10px 20px rgba(217, 119, 6, 0.4);
+      z-index: 3;
+    }
+    .king-crown::before {
+      content: '👑';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 30px;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    }
+    .king-eyes {
+      position: absolute;
+      top: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 40px;
+      z-index: 2;
+    }
+    .king-eye {
+      width: 32px;
+      height: 40px;
+      background: linear-gradient(135deg, #fef3c7, #fde68a);
+      border-radius: 50% 50% 40% 40%;
+      box-shadow: 
+        0 0 25px rgba(250, 204, 21, 0.9),
+        inset 0 2px 4px rgba(0, 0, 0, 0.2);
+      position: relative;
+      animation: kingEyeGlow 2s ease-in-out infinite;
+    }
+    @keyframes kingEyeGlow {
+      0%, 100% { box-shadow: 0 0 25px rgba(250, 204, 21, 0.9), inset 0 2px 4px rgba(0, 0, 0, 0.2); }
+      50% { box-shadow: 0 0 35px rgba(250, 204, 21, 1), inset 0 2px 4px rgba(0, 0, 0, 0.2); }
+    }
+    .king-eye::after {
+      content: '';
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      width: 12px;
+      height: 16px;
+      background: #1e293b;
+      border-radius: 50%;
+    }
+    .king-mouth {
+      position: absolute;
+      bottom: 60px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 50px;
+      background: linear-gradient(to top, #7c3aed, #6d28d9);
+      border-radius: 50% 50% 0 0;
+      box-shadow: 
+        inset 0 10px 20px rgba(0, 0, 0, 0.5),
+        0 0 20px rgba(124, 58, 237, 0.6);
+    }
+    .king-teeth {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+    }
+    .king-tooth {
+      width: 8px;
+      height: 15px;
+      background: #fef3c7;
+      border-radius: 0 0 50% 50%;
+    }
+    .king-aura {
+      position: absolute;
+      inset: -20px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(147, 51, 234, 0.3) 0%, transparent 70%);
+      animation: auraPulse 3s ease-in-out infinite;
+      z-index: -1;
+    }
+    @keyframes auraPulse {
+      0%, 100% { transform: scale(1); opacity: 0.3; }
+      50% { transform: scale(1.1); opacity: 0.5; }
+    }
+    .hp-bar-container {
+      width: 100%;
+      padding: 0 1rem;
+    }
+    .hp-label {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.25rem;
+      font-size: 0.875rem;
+      font-weight: bold;
+      color: #64748b;
+    }
+    .hp-bar-bg {
+      width: 100%;
+      height: 1.5rem;
+      background: #e2e8f0;
+      border-radius: 9999px;
+      overflow: hidden;
+    }
+    .hp-bar-fill {
+      height: 100%;
+      transition: width 0.5s ease-out;
+      border-radius: 9999px;
+      background: linear-gradient(to right, #22c55e, #10b981);
+      position: relative;
+    }
+    .hp-bar-fill.low { background: linear-gradient(to right, #ef4444, #dc2626); }
+    .hp-bar-fill.medium { background: linear-gradient(to right, #eab308, #f59e0b); }
+    .die {
+      width: 80px; height: 80px;
+      background: white;
+      border: 2px solid #f1f5f9;
+      border-radius: 1rem;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+      gap: 4px;
+      padding: 8px;
+      cursor: pointer;
+      position: relative;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      transition: all 0.2s;
+    }
+    .die:hover { transform: scale(1.05); }
+    .die.selected {
+      border: 4px solid #60a5fa;
+      box-shadow: 0 0 20px rgba(96, 165, 250, 0.5), 0 8px 0 rgba(0, 0, 0, 0.15);
+    }
+    .die.stunned {
+      opacity: 0.6;
+      background: #fef3c7;
+    }
+    .die.rolling {
+      animation: rollDice 0.6s ease-in-out;
+      pointer-events: none;
+    }
+    @keyframes rollDice {
+      0% {
+        transform: rotate(0deg) scale(1) translateY(0);
+      }
+      25% {
+        transform: rotate(90deg) scale(0.9) translateY(-20px);
+      }
+      50% {
+        transform: rotate(180deg) scale(1.1) translateY(-10px);
+      }
+      75% {
+        transform: rotate(270deg) scale(0.9) translateY(-20px);
+      }
+      100% {
+        transform: rotate(360deg) scale(1) translateY(0);
+      }
+    }
+    .die-pip {
+      width: 10px;
+      height: 10px;
+      background: #1e293b;
+      border-radius: 50%;
+      transition: opacity 0.1s;
+      justify-self: center;
+      align-self: center;
+    }
+    .die.rolling .die-pip {
+      animation: valueFlash 0.1s infinite;
+    }
+    @keyframes valueFlash {
+      0%, 100% {
+        opacity: 0.3;
+      }
+      50% {
+        opacity: 0.8;
+      }
+    }
+    /* 주사위 눈 패턴을 위한 그리드 위치 */
+    .die-pip.pos-1 { grid-column: 2; grid-row: 2; }
+    .die-pip.pos-2-1 { grid-column: 1; grid-row: 1; }
+    .die-pip.pos-2-2 { grid-column: 3; grid-row: 3; }
+    .die-pip.pos-3-1 { grid-column: 1; grid-row: 1; }
+    .die-pip.pos-3-2 { grid-column: 2; grid-row: 2; }
+    .die-pip.pos-3-3 { grid-column: 3; grid-row: 3; }
+    .die-pip.pos-4-1 { grid-column: 1; grid-row: 1; }
+    .die-pip.pos-4-2 { grid-column: 3; grid-row: 1; }
+    .die-pip.pos-4-3 { grid-column: 1; grid-row: 3; }
+    .die-pip.pos-4-4 { grid-column: 3; grid-row: 3; }
+    .die-pip.pos-5-1 { grid-column: 1; grid-row: 1; }
+    .die-pip.pos-5-2 { grid-column: 3; grid-row: 1; }
+    .die-pip.pos-5-3 { grid-column: 2; grid-row: 2; }
+    .die-pip.pos-5-4 { grid-column: 1; grid-row: 3; }
+    .die-pip.pos-5-5 { grid-column: 3; grid-row: 3; }
+    .die-pip.pos-6-1 { grid-column: 1; grid-row: 1; }
+    .die-pip.pos-6-2 { grid-column: 1; grid-row: 2; }
+    .die-pip.pos-6-3 { grid-column: 1; grid-row: 3; }
+    .die-pip.pos-6-4 { grid-column: 3; grid-row: 1; }
+    .die-pip.pos-6-5 { grid-column: 3; grid-row: 2; }
+    .die-pip.pos-6-6 { grid-column: 3; grid-row: 3; }
+    .die-pip.pos-7-1 { grid-column: 1; grid-row: 1; }
+    .die-pip.pos-7-2 { grid-column: 1; grid-row: 2; }
+    .die-pip.pos-7-3 { grid-column: 1; grid-row: 3; }
+    .die-pip.pos-7-4 { grid-column: 2; grid-row: 2; }
+    .die-pip.pos-7-5 { grid-column: 3; grid-row: 1; }
+    .die-pip.pos-7-6 { grid-column: 3; grid-row: 2; }
+    .die-pip.pos-7-7 { grid-column: 3; grid-row: 3; }
+    .die-pip.pos-8-1 { grid-column: 1; grid-row: 1; }
+    .die-pip.pos-8-2 { grid-column: 1; grid-row: 2; }
+    .die-pip.pos-8-3 { grid-column: 1; grid-row: 3; }
+    .die-pip.pos-8-4 { grid-column: 2; grid-row: 1; }
+    .die-pip.pos-8-5 { grid-column: 2; grid-row: 3; }
+    .die-pip.pos-8-6 { grid-column: 3; grid-row: 1; }
+    .die-pip.pos-8-7 { grid-column: 3; grid-row: 2; }
+    .die-pip.pos-8-8 { grid-column: 3; grid-row: 3; }
+    .stun-badge {
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        45deg,
+        rgba(239, 68, 68, 0.1),
+        rgba(239, 68, 68, 0.1) 10px,
+        rgba(220, 38, 38, 0.2) 10px,
+        rgba(220, 38, 38, 0.2) 20px
+      );
+      border-radius: 1rem;
+      pointer-events: none;
+      z-index: 5;
+    }
+    .stun-badge::before {
+      content: '⚠';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 2rem;
+      color: #ef4444;
+      text-shadow: 0 0 10px rgba(239, 68, 68, 0.8);
+      animation: stunPulse 1s ease-in-out infinite;
+    }
+    @keyframes stunPulse {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
+      50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+    }
+    .die.stunned {
+      opacity: 0.6;
+      background: #fef3c7;
+      border: 2px solid #ef4444;
+    }
+    .score-preview {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(4px);
+      border-radius: 1rem;
+      padding: 1rem;
+      border: 1px solid #e2e8f0;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+    .controls {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      max-width: 320px;
+      margin: 0 auto;
+    }
+    .btn {
+      padding: 1rem 2rem;
+      border-radius: 9999px;
+      font-size: 1.125rem;
+      font-weight: bold;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+    .btn:hover:not(:disabled) { transform: scale(1.05) translateY(-2px); }
+    .btn:active:not(:disabled) { transform: scale(0.95); }
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .btn-roll {
+      background: linear-gradient(to right, #6366f1, #8b5cf6);
+    }
+    .btn-reroll {
+      background: linear-gradient(to right, #f59e0b, #f97316);
+    }
+    .btn-attack {
+      background: linear-gradient(to right, #ef4444, #ec4899);
+    }
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+      padding: 1rem;
+    }
+    .modal {
+      background: linear-gradient(to bottom right, #6366f1, #7c3aed);
+      border-radius: 1.5rem;
+      padding: 2rem;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+      color: white;
+    }
+    .reward-option {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 1rem;
+      padding: 1rem;
+      margin-top: 0.75rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: left;
+    }
+    .reward-option:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: scale(1.02);
+    }
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    .guide-card {
+      background: linear-gradient(to bottom right, #6366f1, #7c3aed);
+      border-radius: 1.5rem;
+      padding: 1.5rem;
+      color: white;
+      box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.2);
+    }
+    .guide-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 0.75rem;
+      border-radius: 0.5rem;
+      margin-bottom: 0.5rem;
+      background: rgba(255, 255, 255, 0.1);
+    }
+    .stun-counter {
+      text-align: center;
+      margin-bottom: 0.5rem;
+      font-size: 0.875rem;
+      font-weight: bold;
+      color: #f59e0b;
+    }
+    .rerolls-left {
+      text-align: center;
+      margin-bottom: 1rem;
+      font-size: 1.125rem;
+      font-weight: bold;
+      color: #6366f1;
+    }
+    .owned-rewards {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+    .reward-badge {
+      background: #e0e7ff;
+      color: #4338ca;
+      padding: 0.25rem 0.5rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: medium;
+    }
+    .attack-result {
+      font-size: 3rem;
+      font-weight: black;
+      margin-top: 1rem;
+    }
+    .counterattack-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+      pointer-events: none;
+    }
+    .counterattack-modal {
+      background: linear-gradient(to right, #dc2626, #ea580c);
+      border-radius: 1.5rem;
+      padding: 2rem;
+      color: white;
+      text-align: center;
+      font-size: 2rem;
+      font-weight: black;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useMemo, useCallback } = React;
+
+    // Game Data
+    const STAGES = [
+      { id: 1, name: "Slime", nameKo: "슬라임", hp: 100, iconName: "Droplet" },
+      { id: 2, name: "Goblin", nameKo: "고블린", hp: 150, iconName: "Skull" },
+      { id: 3, name: "Orc", nameKo: "오크", hp: 200, iconName: "Axe" },
+      { id: 4, name: "Dragon", nameKo: "드래곤", hp: 250, iconName: "Flame" },
+      { id: 5, name: "Demon King", nameKo: "마왕", hp: 300, iconName: "Crown" },
+    ];
+
+    const REWARDS = [
+      { id: "skilled_hands", name: "Skilled Hands", nameKo: "숙련된 손길", descriptionKo: "리롤 기회 영구 +1회 추가", iconName: "Hand" },
+      { id: "giants_strike", name: "Giant's Strike", nameKo: "거인의 일격", descriptionKo: "주사위 합계 23 이상 시 데미지 2배", iconName: "Dumbbell" },
+      { id: "lucky_seven", name: "Lucky Seven", nameKo: "럭키 세븐", descriptionKo: "최고 + 최저 눈금 = 7일 때 2배", iconName: "Clover" },
+      { id: "gamblers_chip", name: "Gambler's Chip", nameKo: "도박사의 칩", descriptionKo: "Chance 족보 배수 2배", iconName: "Coins" },
+      { id: "cursed_power", name: "Cursed Power", nameKo: "저주받은 힘", descriptionKo: "데미지 2배, 단 1이 있으면 0 데미지", iconName: "Skull" },
+      { id: "precise_strike", name: "Precise Strike", nameKo: "정밀한 타격", descriptionKo: "합계가 정확히 12일 때 3배", iconName: "Target" },
+      { id: "dimension_warp", name: "Dimension Warp", nameKo: "차원 왜곡", descriptionKo: "주사위 1개를 8면체(1-8)로 교체", iconName: "Orbit" },
+      { id: "stable_engine", name: "Stable Engine", nameKo: "안정적인 엔진", descriptionKo: "주사위 1개를 특수 6면체(2-7)로 교체", iconName: "Cog" },
+      { id: "raging_power", name: "Raging Power", nameKo: "폭주하는 힘", descriptionKo: "주사위 +1개, 단 Hold 사용 불가", iconName: "Flame" },
+      { id: "three_straight", name: "Three Straight", nameKo: "3 스트레이트", descriptionKo: "연속된 숫자 3개 포함 시 2배", iconName: "ArrowRight" },
+    ];
+
+    const COMBINATIONS = {
+      yahtzee: { multiplier: 20, label: "Yahtzee", labelKo: "야찌 (5개 동일)" },
+      largeStraight: { multiplier: 10, label: "Large Straight", labelKo: "라지 스트레이트 (5개 연속)" },
+      fourOfAKind: { multiplier: 8, label: "4 of a Kind", labelKo: "포카드 (4개 동일)" },
+      fullHouse: { multiplier: 6, label: "Full House", labelKo: "풀 하우스 (3+2)" },
+      smallStraight: { multiplier: 4, label: "Small Straight", labelKo: "스몰 스트레이트 (4개 연속)" },
+      twoPair: { multiplier: 3, label: "Two Pair", labelKo: "투페어 (2쌍)" },
+      threeOfAKind: { multiplier: 2, label: "3 of a Kind", labelKo: "쓰리카드 (3개 동일)" },
+      chance: { multiplier: 1, label: "Chance", labelKo: "찬스" },
+    };
+
+    // Scoring Logic
+    function getCounts(dice) {
+      const counts = new Map();
+      for (const die of dice) {
+        counts.set(die, (counts.get(die) || 0) + 1);
+      }
+      return counts;
+    }
+
+    function isYahtzee(counts, diceCount) {
+      return diceCount >= 5 && Array.from(counts.values()).some(count => count >= 5);
+    }
+
+    function isLargeStraight(dice) {
+      if (dice.length < 5) return false;
+      const sorted = [...dice].sort((a, b) => a - b);
+      const unique = Array.from(new Set(sorted));
+      if (unique.length < 5) return false;
+      for (let i = 0; i <= unique.length - 5; i++) {
+        let consecutive = true;
+        for (let j = 0; j < 4; j++) {
+          if (unique[i + j + 1] - unique[i + j] !== 1) {
+            consecutive = false;
+            break;
+          }
+        }
+        if (consecutive) return true;
+      }
+      return false;
+    }
+
+    function isSmallStraight(dice) {
+      const unique = Array.from(new Set(dice)).sort((a, b) => a - b);
+      const sequences = [[1,2,3,4], [2,3,4,5], [3,4,5,6], [4,5,6,7], [5,6,7,8]];
+      return sequences.some(seq => seq.every(num => unique.includes(num)));
+    }
+
+    function hasThreeConsecutive(dice) {
+      const unique = Array.from(new Set(dice)).sort((a, b) => a - b);
+      if (unique.length < 3) return false;
+      for (let i = 0; i <= unique.length - 3; i++) {
+        if (unique[i + 1] - unique[i] === 1 && unique[i + 2] - unique[i + 1] === 1) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    function detectCombination(dice) {
+      const counts = getCounts(dice);
+      const diceCount = dice.length;
+      if (isYahtzee(counts, diceCount)) return "yahtzee";
+      if (isLargeStraight(dice)) return "largeStraight";
+      if (Array.from(counts.values()).some(c => c >= 4)) return "fourOfAKind";
+      const sorted = Array.from(counts.values()).sort((a, b) => b - a);
+      if (diceCount >= 5 && sorted.length === 2 && sorted[0] === 3 && sorted[1] === 2) return "fullHouse";
+      if (isSmallStraight(dice)) return "smallStraight";
+      const pairs = Array.from(counts.values()).filter(c => c >= 2);
+      if (pairs.length >= 2) return "twoPair";
+      if (Array.from(counts.values()).some(c => c >= 3)) return "threeOfAKind";
+      return "chance";
+    }
+
+    function calculateScore(dice, options = {}) {
+      const { ownedRewards = [] } = options;
+      const sum = dice.reduce((a, b) => a + b, 0);
+      const combination = detectCombination(dice);
+      let { multiplier, label, labelKo } = COMBINATIONS[combination];
+      
+      if (combination === "chance" && ownedRewards.includes("gamblers_chip")) {
+        multiplier *= 2;
+      }
+      
+      const rewardMultipliers = [];
+      let isCursed = false;
+      
+      if (ownedRewards.includes("cursed_power")) {
+        if (dice.some(d => d === 1)) {
+          isCursed = true;
+        } else {
+          rewardMultipliers.push({ rewardId: "cursed_power", multiplier: 2 });
+        }
+      }
+      
+      if (!isCursed) {
+        if (ownedRewards.includes("giants_strike") && sum >= 23) {
+          rewardMultipliers.push({ rewardId: "giants_strike", multiplier: 2 });
+        }
+        if (ownedRewards.includes("lucky_seven")) {
+          const maxDie = Math.max(...dice);
+          const minDie = Math.min(...dice);
+          if (maxDie + minDie === 7) {
+            rewardMultipliers.push({ rewardId: "lucky_seven", multiplier: 2 });
+          }
+        }
+        if (ownedRewards.includes("precise_strike") && sum === 12) {
+          rewardMultipliers.push({ rewardId: "precise_strike", multiplier: 3 });
+        }
+        if (ownedRewards.includes("three_straight") && hasThreeConsecutive(dice)) {
+          rewardMultipliers.push({ rewardId: "three_straight", multiplier: 2 });
+        }
+      }
+      
+      const finalMultiplier = rewardMultipliers.reduce((acc, r) => acc * r.multiplier, 1);
+      const baseTotal = sum * multiplier;
+      const total = isCursed ? 0 : baseTotal * finalMultiplier;
+      
+      return { combination, multiplier, sum, total, label, labelKo, rewardMultipliers, finalMultiplier, isCursed };
+    }
+
+    // Game Logic
+    function getInitialPlayerState() {
+      return {
+        ownedRewards: [],
+        baseRerolls: 3,
+        diceTypes: ["normal", "normal", "normal", "normal", "normal"],
+        holdDisabled: false,
+        currentStage: 1,
+      };
+    }
+
+    function rollDieByType(type, isStunned = false) {
+      if (isStunned) {
+        const stunnedValues = [0, 0, 0, 1, 1, 1];
+        return stunnedValues[Math.floor(Math.random() * 6)];
+      }
+      switch (type) {
+        case "d8": return Math.floor(Math.random() * 8) + 1;
+        case "d6_2_7": return Math.floor(Math.random() * 6) + 2;
+        default: return Math.floor(Math.random() * 6) + 1;
+      }
+    }
+
+    function getRandomRewards(count, excludeIds = []) {
+      const available = REWARDS.filter(r => !excludeIds.includes(r.id));
+      const shuffled = [...available].sort(() => Math.random() - 0.5);
+      return shuffled.slice(0, count);
+    }
+
+    function applyReward(state, rewardId) {
+      const newState = { ...state, ownedRewards: [...state.ownedRewards, rewardId] };
+      switch (rewardId) {
+        case "skilled_hands":
+          newState.baseRerolls += 1;
+          break;
+        case "dimension_warp": {
+          const normalIndex = newState.diceTypes.findIndex(t => t === "normal");
+          if (normalIndex !== -1) {
+            newState.diceTypes = [...newState.diceTypes];
+            newState.diceTypes[normalIndex] = "d8";
+          }
+          break;
+        }
+        case "stable_engine": {
+          const normalIdx = newState.diceTypes.findIndex(t => t === "normal");
+          if (normalIdx !== -1) {
+            newState.diceTypes = [...newState.diceTypes];
+            newState.diceTypes[normalIdx] = "d6_2_7";
+          }
+          break;
+        }
+        case "raging_power":
+          newState.diceTypes = [...newState.diceTypes, "normal"];
+          newState.holdDisabled = true;
+          break;
+      }
+      return newState;
+    }
+
+    function triggerConfetti(scoreResult) {
+      if (scoreResult.multiplier >= 20) {
+        confetti({ particleCount: 200, spread: 100, origin: { y: 0.5 }, colors: ["#FFD700", "#FFA500", "#FF6347"] });
+      } else if (scoreResult.multiplier >= 10) {
+        confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 }, colors: ["#9333ea", "#6366f1", "#ec4899"] });
+      } else if (scoreResult.multiplier >= 6) {
+        confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: ["#3b82f6", "#06b6d4"] });
+      } else if (scoreResult.multiplier >= 4) {
+        confetti({ particleCount: 50, spread: 50, origin: { y: 0.6 }, colors: ["#22c55e", "#10b981"] });
+      }
+    }
+
+    function triggerVictoryConfetti() {
+      const duration = 3000;
+      const end = Date.now() + duration;
+      const frame = () => {
+        confetti({ particleCount: 7, angle: 60, spread: 55, origin: { x: 0 }, colors: ["#FFD700", "#FFA500", "#FF6347", "#9333ea", "#3b82f6"] });
+        confetti({ particleCount: 7, angle: 120, spread: 55, origin: { x: 1 }, colors: ["#FFD700", "#FFA500", "#FF6347", "#9333ea", "#3b82f6"] });
+        if (Date.now() < end) requestAnimationFrame(frame);
+      };
+      frame();
+    }
+
+    // 주사위 눈 패턴 생성 함수
+    function renderDicePips(value) {
+      if (value === 0) {
+        return null; // 기절 상태
+      }
+      
+      const pips = [];
+      
+      if (value === 1) {
+        pips.push(<div key="1" className="die-pip pos-1" />);
+      } else if (value === 2) {
+        pips.push(<div key="1" className="die-pip pos-2-1" />);
+        pips.push(<div key="2" className="die-pip pos-2-2" />);
+      } else if (value === 3) {
+        pips.push(<div key="1" className="die-pip pos-3-1" />);
+        pips.push(<div key="2" className="die-pip pos-3-2" />);
+        pips.push(<div key="3" className="die-pip pos-3-3" />);
+      } else if (value === 4) {
+        pips.push(<div key="1" className="die-pip pos-4-1" />);
+        pips.push(<div key="2" className="die-pip pos-4-2" />);
+        pips.push(<div key="3" className="die-pip pos-4-3" />);
+        pips.push(<div key="4" className="die-pip pos-4-4" />);
+      } else if (value === 5) {
+        pips.push(<div key="1" className="die-pip pos-5-1" />);
+        pips.push(<div key="2" className="die-pip pos-5-2" />);
+        pips.push(<div key="3" className="die-pip pos-5-3" />);
+        pips.push(<div key="4" className="die-pip pos-5-4" />);
+        pips.push(<div key="5" className="die-pip pos-5-5" />);
+      } else if (value === 6) {
+        pips.push(<div key="1" className="die-pip pos-6-1" />);
+        pips.push(<div key="2" className="die-pip pos-6-2" />);
+        pips.push(<div key="3" className="die-pip pos-6-3" />);
+        pips.push(<div key="4" className="die-pip pos-6-4" />);
+        pips.push(<div key="5" className="die-pip pos-6-5" />);
+        pips.push(<div key="6" className="die-pip pos-6-6" />);
+      } else if (value === 7) {
+        pips.push(<div key="1" className="die-pip pos-7-1" />);
+        pips.push(<div key="2" className="die-pip pos-7-2" />);
+        pips.push(<div key="3" className="die-pip pos-7-3" />);
+        pips.push(<div key="4" className="die-pip pos-7-4" />);
+        pips.push(<div key="5" className="die-pip pos-7-5" />);
+        pips.push(<div key="6" className="die-pip pos-7-6" />);
+        pips.push(<div key="7" className="die-pip pos-7-7" />);
+      } else if (value === 8) {
+        pips.push(<div key="1" className="die-pip pos-8-1" />);
+        pips.push(<div key="2" className="die-pip pos-8-2" />);
+        pips.push(<div key="3" className="die-pip pos-8-3" />);
+        pips.push(<div key="4" className="die-pip pos-8-4" />);
+        pips.push(<div key="5" className="die-pip pos-8-5" />);
+        pips.push(<div key="6" className="die-pip pos-8-6" />);
+        pips.push(<div key="7" className="die-pip pos-8-7" />);
+        pips.push(<div key="8" className="die-pip pos-8-8" />);
+      }
+      
+      return pips;
+    }
+
+    // Components
+    function Die({ value, isSelected, isStunned, isRolling, diceType, onToggle, selectionDisabled, index }) {
+      const [displayValue, setDisplayValue] = useState(value);
+      
+      useEffect(() => {
+        if (isRolling) {
+          // 애니메이션 중 값이 랜덤하게 바뀌는 효과
+          const interval = setInterval(() => {
+            const randomValue = Math.floor(Math.random() * 6) + 1;
+            setDisplayValue(randomValue);
+          }, 100);
+          return () => clearInterval(interval);
+        } else {
+          setDisplayValue(value);
+        }
+      }, [isRolling, value]);
+      
+      const dieClass = `die ${isSelected ? 'selected' : ''} ${isStunned ? 'stunned' : ''} ${isRolling ? 'rolling' : ''}`;
+      const animationDelay = isRolling ? `${index * 0.05}s` : '0s';
+      
+      return (
+        <div 
+          className={dieClass} 
+          onClick={!selectionDisabled && !isRolling && onToggle}
+          style={{ animationDelay }}
+        >
+          {renderDicePips(displayValue)}
+          {isStunned && <div className="stun-badge" />}
+        </div>
+      );
+    }
+
+    function Monster({ name, nameKo, maxHp, currentHp, showDamage, damage, isMonsterAttacking }) {
+      const hpPercentage = Math.max(0, (currentHp / maxHp) * 100);
+      const hpBarClass = `hp-bar-fill ${hpPercentage > 50 ? '' : hpPercentage > 25 ? 'medium' : 'low'}`;
+      let monsterBody;
+      
+      if (name === "Slime" || nameKo === "슬라임") {
+        monsterBody = (
+          <div className="monster-slime">
+            <div className="slime-eyes">
+              <div className="slime-eye" />
+              <div className="slime-eye" />
+            </div>
+            <div className="slime-mouth" />
+            <div className="slime-bubbles" />
+          </div>
+        );
+      } else if (name === "Goblin" || nameKo === "고블린") {
+        monsterBody = (
+          <div className="monster-goblin">
+            <div className="goblin-ears">
+              <div className="goblin-ear-left" />
+              <div className="goblin-ear-right" />
+            </div>
+            <div className="goblin-eyes">
+              <div className="goblin-eye" />
+              <div className="goblin-eye" />
+            </div>
+            <div className="goblin-nose" />
+            <div className="goblin-mouth">
+              <div className="goblin-tooth" />
+              <div className="goblin-tooth" />
+              <div className="goblin-tooth" />
+            </div>
+          </div>
+        );
+      } else if (name === "Orc" || nameKo === "오크") {
+        monsterBody = (
+          <div className="monster-orc">
+            <div className="orc-shoulders">
+              <div className="orc-shoulder-left" />
+              <div className="orc-shoulder-right" />
+            </div>
+            <div className="orc-forehead" />
+            <div className="orc-eyes">
+              <div className="orc-eye" />
+              <div className="orc-eye" />
+            </div>
+            <div className="orc-nose" />
+            <div className="orc-tusks">
+              <div className="orc-tusk orc-tusk-left" />
+              <div className="orc-tusk orc-tusk-right" />
+            </div>
+            <div className="orc-mouth" />
+            <div className="orc-scar" />
+          </div>
+        );
+      } else if (name === "Dragon" || nameKo === "드래곤") {
+        monsterBody = (
+          <div className="monster-dragon">
+            <div className="dragon-wings">
+              <div className="dragon-wing-left" />
+              <div className="dragon-wing-right" />
+            </div>
+            <div className="dragon-body">
+              <div className="dragon-scales" />
+            </div>
+            <div className="dragon-horns">
+              <div className="dragon-horn-left" />
+              <div className="dragon-horn-right" />
+            </div>
+            <div className="dragon-eyes">
+              <div className="dragon-eye" />
+              <div className="dragon-eye" />
+            </div>
+            <div className="dragon-snout">
+              <div className="dragon-nostrils">
+                <div className="dragon-nostril" />
+                <div className="dragon-nostril" />
+              </div>
+            </div>
+            <div className="dragon-mouth" />
+          </div>
+        );
+      } else {
+        monsterBody = (
+          <div className="monster-king">
+            <div className="king-aura" />
+            <div className="king-crown" />
+            <div className="king-eyes">
+              <div className="king-eye" />
+              <div className="king-eye" />
+            </div>
+            <div className="king-mouth">
+              <div className="king-teeth">
+                <div className="king-tooth" />
+                <div className="king-tooth" />
+                <div className="king-tooth" />
+                <div className="king-tooth" />
+              </div>
+            </div>
+          </div>
+        );
+      }
+      
+      return (
+        <div className="monster-container">
+          <div className={`monster-body ${isMonsterAttacking ? 'attacking' : ''}`}>
+            {monsterBody}
+            <div style={{ marginTop: '0.75rem', fontSize: '1.125rem', fontWeight: 'bold', color: '#1e293b' }}>{nameKo || name}</div>
+            {isMonsterAttacking && (
+              <div className="monster-attack-effect">
+                <div className="monster-attack-flash" />
+              </div>
+            )}
+          </div>
+          <div className="hp-bar-container">
+            <div className="hp-label">
+              <span>HP</span>
+              <span>{Math.max(0, currentHp)} / {maxHp}</span>
+            </div>
+            <div className="hp-bar-bg">
+              <div className={hpBarClass} style={{ width: `${hpPercentage}%` }} />
+            </div>
+            {showDamage && damage > 0 && (
+              <div style={{ textAlign: 'center', marginTop: '0.5rem', fontSize: '2rem', fontWeight: 'bold', color: '#ef4444' }}>
+                -{damage}
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    // Main Game Component
+    function Game() {
+      const [playerState, setPlayerState] = useState(getInitialPlayerState);
+      const [currentDice, setCurrentDice] = useState([1, 1, 1, 1, 1]);
+      const [selectedIndices, setSelectedIndices] = useState(new Set());
+      const [rerollsLeft, setRerollsLeft] = useState(3);
+      const [roundStarted, setRoundStarted] = useState(false);
+      
+      const currentStage = STAGES[playerState.currentStage - 1];
+      const [monsterHp, setMonsterHp] = useState(currentStage.hp);
+      const [lastDamage, setLastDamage] = useState(0);
+      const [showDamage, setShowDamage] = useState(false);
+      const [attackResult, setAttackResult] = useState(null);
+      const [showAttackResult, setShowAttackResult] = useState(false);
+      
+      const [stunnedIndices, setStunnedIndices] = useState(new Set());
+      const [beingStunnedIndex, setBeingStunnedIndex] = useState(null);
+      const [showCounterattack, setShowCounterattack] = useState(false);
+      const [isMonsterAttacking, setIsMonsterAttacking] = useState(false);
+      const [isPlayerAttacking, setIsPlayerAttacking] = useState(false);
+      const [rerollPenalty, setRerollPenalty] = useState(0);
+      const [isRolling, setIsRolling] = useState(false);
+      const [rollingDice, setRollingDice] = useState(new Set());
+      
+      const [showRewardSelection, setShowRewardSelection] = useState(false);
+      const [rewardOptions, setRewardOptions] = useState([]);
+      const [showVictory, setShowVictory] = useState(false);
+
+      const totalDiceCount = playerState.diceTypes.length;
+      const stunnedDiceCount = stunnedIndices.size;
+      const normalDiceCount = totalDiceCount - stunnedDiceCount;
+      const effectiveMaxRerolls = Math.max(0, playerState.baseRerolls - rerollPenalty);
+
+      useEffect(() => {
+        const stage = STAGES[playerState.currentStage - 1];
+        if (stage) setMonsterHp(stage.hp);
+      }, [playerState.currentStage]);
+
+      const currentScore = useMemo(() => {
+        return calculateScore(currentDice, { ownedRewards: playerState.ownedRewards });
+      }, [currentDice, playerState.ownedRewards]);
+
+      const toggleSelect = (index) => {
+        if (!roundStarted || rerollsLeft === 0) return;
+        setSelectedIndices(prev => {
+          const newSet = new Set(prev);
+          if (newSet.has(index)) newSet.delete(index);
+          else newSet.add(index);
+          return newSet;
+        });
+      };
+
+      const executeCounterattack = useCallback(() => {
+        const activeIndices = Array.from({ length: totalDiceCount }, (_, i) => i).filter(i => !stunnedIndices.has(i));
+        if (activeIndices.length === 0) {
+          setRoundStarted(false);
+          setSelectedIndices(new Set());
+          setRerollsLeft(effectiveMaxRerolls);
+          return;
+        }
+        setShowCounterattack(true);
+        setIsMonsterAttacking(true);
+        setTimeout(() => {
+          const randomIndex = activeIndices[Math.floor(Math.random() * activeIndices.length)];
+          setBeingStunnedIndex(randomIndex);
+          setTimeout(() => {
+            setStunnedIndices(prev => new Set([...Array.from(prev), randomIndex]));
+            setBeingStunnedIndex(null);
+            setShowCounterattack(false);
+            setIsMonsterAttacking(false);
+            setRerollPenalty(prev => prev + 1);
+            setRoundStarted(false);
+            setSelectedIndices(new Set());
+            setRerollsLeft(Math.max(0, playerState.baseRerolls - (rerollPenalty + 1)));
+          }, 800);
+        }, 500);
+      }, [stunnedIndices, totalDiceCount, effectiveMaxRerolls, playerState.baseRerolls, rerollPenalty]);
+
+      const handleMonsterDefeated = useCallback(() => {
+        if (playerState.currentStage >= STAGES.length) {
+          setShowVictory(true);
+          triggerVictoryConfetti();
+        } else {
+          setRewardOptions(getRandomRewards(2, playerState.ownedRewards));
+          setShowRewardSelection(true);
+        }
+      }, [playerState.currentStage, playerState.ownedRewards]);
+
+      const executeAttack = useCallback((dice) => {
+        setIsPlayerAttacking(true);
+        const score = calculateScore(dice, { ownedRewards: playerState.ownedRewards });
+        setAttackResult(score);
+        setShowAttackResult(true);
+        if (!score.isCursed) triggerConfetti(score);
+        
+        setTimeout(() => {
+          setIsPlayerAttacking(false);
+        }, 600);
+        
+        const newHp = Math.max(0, monsterHp - score.total);
+        setTimeout(() => {
+          setLastDamage(score.total);
+          setShowDamage(true);
+          setMonsterHp(newHp);
+          setTimeout(() => setShowDamage(false), 1000);
+        }, 800);
+        
+        setTimeout(() => {
+          setShowAttackResult(false);
+          setAttackResult(null);
+          if (newHp <= 0) {
+            setRoundStarted(false);
+            setSelectedIndices(new Set());
+            setRerollsLeft(effectiveMaxRerolls);
+            handleMonsterDefeated();
+          } else {
+            executeCounterattack();
+          }
+        }, 2000);
+      }, [monsterHp, executeCounterattack, playerState.ownedRewards, effectiveMaxRerolls, handleMonsterDefeated]);
+
+      const rollCustomDice = useCallback(() => {
+        const forceFullReroll = playerState.holdDisabled;
+        return playerState.diceTypes.map((type, idx) => {
+          const isStunned = stunnedIndices.has(idx);
+          if (forceFullReroll || selectedIndices.has(idx) || isStunned) {
+            return rollDieByType(type, isStunned);
+          }
+          return currentDice[idx];
+        });
+      }, [playerState.diceTypes, playerState.holdDisabled, selectedIndices, stunnedIndices, currentDice]);
+
+      const handleInitialRoll = () => {
+        setSelectedIndices(new Set());
+        setRerollsLeft(effectiveMaxRerolls);
+        setRoundStarted(true);
+        setShowAttackResult(false);
+        setAttackResult(null);
+        
+        // 모든 주사위를 굴리는 중으로 설정
+        setIsRolling(true);
+        setRollingDice(new Set(Array.from({ length: totalDiceCount }, (_, i) => i)));
+        
+        // 애니메이션 후 주사위 값 업데이트
+        setTimeout(() => {
+          const newDice = playerState.diceTypes.map((type, idx) => {
+            const isStunned = stunnedIndices.has(idx);
+            return rollDieByType(type, isStunned);
+          });
+          setCurrentDice(newDice);
+          setIsRolling(false);
+          setRollingDice(new Set());
+        }, 600);
+      };
+
+      const handleReroll = () => {
+        if (rerollsLeft <= 0) return;
+        
+        // 리롤할 주사위를 굴리는 중으로 설정
+        const forceFullReroll = playerState.holdDisabled;
+        const diceToRoll = new Set();
+        playerState.diceTypes.forEach((type, idx) => {
+          const isStunned = stunnedIndices.has(idx);
+          if (forceFullReroll || selectedIndices.has(idx) || isStunned) {
+            diceToRoll.add(idx);
+          }
+        });
+        
+        setIsRolling(true);
+        setRollingDice(diceToRoll);
+        
+        // 애니메이션 후 주사위 값 업데이트
+        setTimeout(() => {
+          setCurrentDice(rollCustomDice());
+          setSelectedIndices(new Set());
+          setRerollsLeft(prev => prev - 1);
+          setIsRolling(false);
+          setRollingDice(new Set());
+        }, 600);
+      };
+
+      const handleSelectReward = (reward) => {
+        const newState = applyReward(playerState, reward.id);
+        newState.currentStage += 1;
+        setPlayerState(newState);
+        setShowRewardSelection(false);
+        setStunnedIndices(new Set());
+        setRerollPenalty(0);
+        setRerollsLeft(newState.baseRerolls);
+        if (newState.diceTypes.length > currentDice.length) {
+          setCurrentDice([...currentDice, 1]);
+        }
+        const nextStage = STAGES[newState.currentStage - 1];
+        if (nextStage) setMonsterHp(nextStage.hp);
+      };
+
+      const handleRestart = () => {
+        const initialState = getInitialPlayerState();
+        setPlayerState(initialState);
+        setCurrentDice([1, 1, 1, 1, 1]);
+        setSelectedIndices(new Set());
+        setRerollPenalty(0);
+        setRerollsLeft(initialState.baseRerolls);
+        setRoundStarted(false);
+        setStunnedIndices(new Set());
+        setMonsterHp(STAGES[0].hp);
+        setShowVictory(false);
+        setShowRewardSelection(false);
+      };
+
+      const canReroll = roundStarted && rerollsLeft > 0 && !showAttackResult && !showCounterattack;
+      const canAttack = roundStarted && !showAttackResult && !showCounterattack;
+      const isMonsterDefeated = monsterHp <= 0;
+      const allDiceStunned = normalDiceCount <= 0;
+
+      return (
+        <div className="container">
+          <main className="main-game">
+            <div className="bg-decoration bg-1" />
+            <div className="bg-decoration bg-2" />
+            
+            <div className="stage-indicator">
+              <span className="stage-badge">Stage {playerState.currentStage} / 5</span>
+            </div>
+            
+            <div className="monster-section">
+              <Monster name={currentStage.name} nameKo={currentStage.nameKo} maxHp={currentStage.hp} currentHp={monsterHp} showDamage={showDamage} damage={lastDamage} isMonsterAttacking={isMonsterAttacking} />
+            </div>
+
+            {showVictory && (
+              <div className="modal-overlay" onClick={handleRestart}>
+                <div className="modal">
+                  <h2 style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '1rem' }}>🎉 승리! 🎉</h2>
+                  <p style={{ marginBottom: '1.5rem' }}>모든 스테이지를 클리어했습니다!</p>
+                  <button className="btn btn-attack" onClick={handleRestart}>다시 시작</button>
+                </div>
+              </div>
+            )}
+
+            {showRewardSelection && (
+              <div className="modal-overlay">
+                <div className="modal">
+                  <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1rem' }}>보상 선택</h2>
+                  <p style={{ marginBottom: '1rem', color: 'rgba(255,255,255,0.8)' }}>보상을 선택하세요:</p>
+                  {rewardOptions.map(reward => (
+                    <div key={reward.id} className="reward-option" onClick={() => handleSelectReward(reward)}>
+                      <div style={{ fontWeight: 'bold', marginBottom: '0.25rem' }}>{reward.nameKo}</div>
+                      <div style={{ fontSize: '0.875rem', color: 'rgba(255,255,255,0.9)' }}>{reward.descriptionKo}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {showCounterattack && (
+              <div className="counterattack-overlay">
+                <div className="counterattack-modal">
+                  ⚡ 반격! ⚡<br />
+                  <div style={{ fontSize: '1rem', marginTop: '0.5rem', opacity: 0.9 }}>⚠ 주사위가 기절합니다...</div>
+                </div>
+              </div>
+            )}
+
+            {showAttackResult && attackResult && (
+              <div className="modal-overlay" style={{ pointerEvents: 'none' }}>
+                <div className="modal" style={{ background: attackResult.isCursed ? 'linear-gradient(to right, #374151, #111827)' : `linear-gradient(to right, #6366f1, #7c3aed)` }}>
+                  <div style={{ fontSize: '2.5rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>
+                    {attackResult.isCursed ? 'CURSED!' : attackResult.label}!
+                  </div>
+                  <div style={{ marginBottom: '1rem', fontSize: '1.25rem' }}>{attackResult.labelKo}</div>
+                  <div style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>
+                    ×{attackResult.multiplier}
+                    {attackResult.finalMultiplier > 1 && <span style={{ color: '#fbbf24' }}> ×{attackResult.finalMultiplier}</span>}
+                  </div>
+                  <div className="attack-result">{attackResult.total} DMG</div>
+                </div>
+              </div>
+            )}
+
+            <h1 className="title">Dice<span style={{ color: '#6366f1' }}>Battle</span></h1>
+            <p className="subtitle">
+              {!roundStarted ? "주사위를 굴려 몬스터를 공격하세요!" : playerState.holdDisabled ? "모든 주사위가 리롤됩니다! 공격하세요!" : "리롤할 주사위를 선택하거나 공격하세요!"}
+            </p>
+
+            {stunnedDiceCount > 0 && (
+              <div className="stun-counter">⚠ 기절된 주사위: {stunnedDiceCount} / {totalDiceCount}</div>
+            )}
+
+            <div className={`dice-container ${isPlayerAttacking ? 'attacking' : ''}`}>
+              {isPlayerAttacking && (
+                <div className="attack-effect">
+                  <div className="attack-flash" />
+                </div>
+              )}
+              {currentDice.map((value, idx) => (
+                <Die
+                  key={idx}
+                  index={idx}
+                  value={value}
+                  isSelected={selectedIndices.has(idx)}
+                  isStunned={stunnedIndices.has(idx)}
+                  isRolling={isRolling && rollingDice.has(idx)}
+                  diceType={playerState.diceTypes[idx] || "normal"}
+                  onToggle={() => toggleSelect(idx)}
+                  selectionDisabled={playerState.holdDisabled}
+                />
+              ))}
+            </div>
+
+            {roundStarted && !showAttackResult && !showCounterattack && !allDiceStunned && (
+              <div className="score-preview">
+                <div style={{ fontSize: '0.75rem', color: '#64748b', marginBottom: '0.5rem' }}>현재 조합 ({totalDiceCount} 주사위)</div>
+                <div style={{ fontSize: '1.125rem', fontWeight: 'bold', marginBottom: '0.25rem', color: currentScore.isCursed ? '#6b7280' : '#6366f1' }}>
+                  {currentScore.isCursed ? 'CURSED!' : currentScore.label}
+                </div>
+                <div style={{ fontSize: '0.875rem', color: '#64748b', marginBottom: '0.5rem' }}>{currentScore.labelKo}</div>
+                <div style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#1e293b' }}>
+                  {currentScore.sum} ×{currentScore.multiplier}
+                  {currentScore.finalMultiplier > 1 && <span style={{ color: '#f59e0b' }}> ×{currentScore.finalMultiplier}</span>}
+                  {' = '}
+                  <span style={{ fontSize: '1.5rem' }}>{currentScore.total}</span>
+                </div>
+              </div>
+            )}
+
+            {allDiceStunned && !isMonsterDefeated && (
+              <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
+                <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#dc2626', marginBottom: '0.5rem' }}>패배!</div>
+                <div style={{ color: '#475569', marginBottom: '1rem' }}>⚠ 모든 주사위가 기절했습니다.</div>
+                <button className="btn btn-attack" onClick={handleRestart}>다시 시작</button>
+              </div>
+            )}
+
+            {roundStarted && !showAttackResult && !showCounterattack && !allDiceStunned && (
+              <div className="rerolls-left">남은 리롤: {rerollsLeft}</div>
+            )}
+
+            <div className="controls">
+              {!roundStarted && !isMonsterDefeated && !allDiceStunned && !showRewardSelection && !showVictory && (
+                <button className="btn btn-roll" onClick={handleInitialRoll}>주사위 굴리기</button>
+              )}
+              {roundStarted && !showAttackResult && !showCounterattack && !allDiceStunned && (
+                <>
+                  <button className="btn btn-reroll" onClick={handleReroll} disabled={!canReroll}>
+                    리롤 ({rerollsLeft})
+                  </button>
+                  <button className="btn btn-attack" onClick={() => executeAttack(currentDice)} disabled={!canAttack}>
+                    공격!
+                  </button>
+                </>
+              )}
+            </div>
+
+            {playerState.ownedRewards.length > 0 && (
+              <div className="owned-rewards">
+                {playerState.ownedRewards.map(rewardId => {
+                  const reward = REWARDS.find(r => r.id === rewardId);
+                  if (!reward) return null;
+                  return (
+                    <span key={rewardId} className="reward-badge" title={reward.descriptionKo}>
+                      {reward.nameKo}
+                    </span>
+                  );
+                })}
+              </div>
+            )}
+          </main>
+
+          <aside className="sidebar">
+            <div className="guide-card">
+              <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1rem' }}>족보 가이드</h2>
+              {Object.entries(COMBINATIONS).map(([key, combo]) => (
+                <div key={key} className="guide-item">
+                  <span>{combo.labelKo}</span>
+                  <span style={{ fontWeight: 'bold' }}>×{combo.multiplier}</span>
+                </div>
+              ))}
+              <div style={{ marginTop: '0.75rem', fontSize: '0.75rem', color: 'rgba(255,255,255,0.8)' }}>
+                데미지 = 합계 × 배수 × 보상
+              </div>
+            </div>
+          </aside>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<Game />);
+  </script>
+</body>
+</html>
