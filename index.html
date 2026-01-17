@@ -281,6 +281,11 @@
         width: 6px;
         height: 6px;
       }
+      .monster-slime::after {
+        top: 14px;
+        width: 84px;
+        height: 70px;
+      }
     }
     @keyframes slimeBounce {
       0%, 100% { transform: translateY(0) scale(1); }
@@ -386,14 +391,25 @@
         top: 7px;
         height: 42px;
       }
-      .goblin-ear-left, .goblin-ear-right {
+      .goblin-ear-left {
+        left: 14px;
         width: 22px;
         height: 29px;
-        left: 14px;
-        right: 14px;
       }
-      .goblin-ear-left::after, .goblin-ear-right::after {
+      .goblin-ear-right {
+        right: 14px;
+        width: 22px;
+        height: 29px;
+      }
+      .goblin-ear-left::after {
         top: 8px;
+        left: 7px;
+        width: 10px;
+        height: 13px;
+      }
+      .goblin-ear-right::after {
+        top: 8px;
+        right: 7px;
         width: 10px;
         height: 13px;
       }
@@ -592,14 +608,25 @@
         top: 7px;
         height: 35px;
       }
-      .orc-ear-left, .orc-ear-right {
+      .orc-ear-left {
+        left: 18px;
         width: 20px;
         height: 29px;
-        left: 18px;
-        right: 18px;
       }
-      .orc-ear-left::after, .orc-ear-right::after {
+      .orc-ear-right {
+        right: 18px;
+        width: 20px;
+        height: 29px;
+      }
+      .orc-ear-left::after {
         top: 8px;
+        left: 7px;
+        width: 8px;
+        height: 13px;
+      }
+      .orc-ear-right::after {
+        top: 8px;
+        right: 7px;
         width: 8px;
         height: 13px;
       }
@@ -625,9 +652,9 @@
         height: 4px;
       }
       .orc-nose {
-        top: 60px;
-        width: 32px;
-        height: 21px;
+        top: 63px;
+        width: 28px;
+        height: 20px;
       }
       .orc-tusks {
         top: 113px;
@@ -823,13 +850,21 @@
         width: 15px;
         height: 36px;
       }
-      .dragon-horn-left::after, .dragon-horn-right::after {
+      .dragon-horn-left::after {
+        top: 4px;
+        left: 4px;
+        width: 7px;
+        height: 11px;
+      }
+      .dragon-horn-right::after {
+        top: 4px;
+        right: 4px;
         width: 7px;
         height: 11px;
       }
       .dragon-eyes {
         top: 36px;
-        gap: 35px;
+        gap: 41px;
       }
       .dragon-eye {
         width: 22px;
@@ -848,12 +883,12 @@
         height: 5px;
       }
       .dragon-snout {
-        top: 74px;
-        width: 29px;
-        height: 21px;
+        top: 67px;
+        width: 34px;
+        height: 23px;
       }
       .dragon-nostrils {
-        top: 50%;
+        top: 78px;
         gap: 10px;
       }
       .dragon-nostril {
@@ -861,9 +896,9 @@
         height: 4px;
       }
       .dragon-mouth {
-        bottom: 42px;
-        width: 49px;
-        height: 14px;
+        bottom: 39px;
+        width: 55px;
+        height: 15px;
       }
     }
     @keyframes dragonFloat {
@@ -1073,6 +1108,9 @@
       .king-tooth {
         width: 6px;
         height: 11px;
+      }
+      .king-aura {
+        inset: -14px;
       }
     }
     @keyframes kingPulse {
