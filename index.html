@@ -130,8 +130,6 @@
     }
     @media (max-width: 768px) {
       .monster-body {
-        transform: scale(0.7);
-        transform-origin: center top;
         margin-bottom: 0.5rem;
       }
     }
@@ -222,6 +220,11 @@
       position: relative;
       animation: slimeBounce 2s ease-in-out infinite;
       max-width: 100%;
+    }
+    @media (max-width: 768px) {
+      .monster-slime {
+        width: 126px; height: 98px;
+      }
     }
     @keyframes slimeBounce {
       0%, 100% { transform: translateY(0) scale(1); }
@@ -319,6 +322,11 @@
       animation: goblinSway 3s ease-in-out infinite;
       max-width: 100%;
     }
+    @media (max-width: 768px) {
+      .monster-goblin {
+        width: 112px; height: 140px;
+      }
+    }
     @keyframes goblinSway {
       0%, 100% { transform: rotate(-2deg); }
       50% { transform: rotate(2deg); }
@@ -328,13 +336,7 @@
       position: absolute;
       inset: 0;
       background: linear-gradient(135deg, #4ade80 0%, #22c55e 40%, #16a34a 100%);
-      border-radius: 35% 45% 30% 40% / 45% 55% 35% 45%;
-      clip-path: polygon(
-        20% 0%, 50% 10%, 80% 0%,
-        100% 20%, 95% 50%, 100% 80%,
-        80% 100%, 50% 90%, 20% 100%,
-        0% 80%, 5% 50%, 0% 20%
-      );
+      border-radius: 40% 50% 35% 45% / 50% 55% 40% 45%;
       box-shadow: 
         0 20px 40px rgba(34, 197, 94, 0.3),
         inset 0 -30px 50px rgba(21, 128, 61, 0.4),
@@ -342,84 +344,140 @@
     }
     .goblin-ears {
       position: absolute;
-      top: -10px;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      height: 60px;
       z-index: 1;
     }
     .goblin-ear-left {
       position: absolute;
-      left: -20px;
-      width: 30px;
-      height: 50px;
+      left: 20px;
+      top: 0;
+      width: 32px;
+      height: 42px;
       background: linear-gradient(135deg, #16a34a, #15803d);
       border-radius: 50% 0 50% 50%;
-      transform: rotate(-25deg);
-      box-shadow: -2px 2px 8px rgba(0, 0, 0, 0.3);
+      transform: rotate(-15deg);
+      box-shadow: -3px 3px 10px rgba(0, 0, 0, 0.4);
+    }
+    .goblin-ear-left::after {
+      content: '';
+      position: absolute;
+      top: 12px;
+      left: 10px;
+      width: 14px;
+      height: 18px;
+      background: linear-gradient(to bottom, rgba(34, 197, 94, 0.4), transparent);
+      border-radius: 50%;
     }
     .goblin-ear-right {
       position: absolute;
-      right: -20px;
-      width: 30px;
-      height: 50px;
+      right: 20px;
+      top: 0;
+      width: 32px;
+      height: 42px;
       background: linear-gradient(225deg, #16a34a, #15803d);
       border-radius: 0 50% 50% 50%;
-      transform: rotate(25deg);
-      box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+      transform: rotate(15deg);
+      box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.4);
+    }
+    .goblin-ear-right::after {
+      content: '';
+      position: absolute;
+      top: 12px;
+      right: 10px;
+      width: 14px;
+      height: 18px;
+      background: linear-gradient(to bottom, rgba(34, 197, 94, 0.4), transparent);
+      border-radius: 50%;
     }
     .goblin-eyes {
       position: absolute;
-      top: 50px;
+      top: 45px;
       left: 50%;
       transform: translateX(-50%);
       display: flex;
-      gap: 16px;
+      gap: 20px;
       z-index: 2;
     }
     .goblin-eye {
-      width: 28px;
-      height: 28px;
+      width: 32px;
+      height: 36px;
       background: linear-gradient(135deg, #fef08a, #facc15);
-      border-radius: 50%;
-      border: 3px solid #ca8a04;
+      border-radius: 50% 50% 45% 45%;
+      border: 4px solid #ca8a04;
       box-shadow: 
-        inset 0 2px 4px rgba(0, 0, 0, 0.2),
-        0 0 10px rgba(250, 204, 21, 0.5);
+        inset 0 3px 6px rgba(0, 0, 0, 0.25),
+        0 0 15px rgba(250, 204, 21, 0.6);
       position: relative;
+    }
+    .goblin-eye::before {
+      content: '';
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      width: 12px;
+      height: 14px;
+      background: #dc2626;
+      border-radius: 50%;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     }
     .goblin-eye::after {
       content: '';
       position: absolute;
-      top: 6px;
-      left: 6px;
-      width: 10px;
-      height: 10px;
-      background: #dc2626;
+      top: 10px;
+      left: 10px;
+      width: 6px;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.4);
       border-radius: 50%;
     }
     .goblin-nose {
       position: absolute;
-      top: 85px;
+      top: 90px;
       left: 50%;
       transform: translateX(-50%);
-      width: 20px;
-      height: 18px;
-      background: #15803d;
+      width: 24px;
+      height: 22px;
+      background: linear-gradient(to bottom, #22c55e, #16a34a);
       border-radius: 50%;
-      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+      box-shadow: 
+        inset 0 3px 6px rgba(0, 0, 0, 0.4),
+        0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+    .goblin-nostrils {
+      position: absolute;
+      top: 95px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 6px;
+      z-index: 3;
+    }
+    .goblin-nostril {
+      width: 4px;
+      height: 6px;
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 50%;
     }
     .goblin-mouth {
       position: absolute;
-      bottom: 50px;
+      bottom: 55px;
       left: 50%;
       transform: translateX(-50%);
-      width: 60px;
-      height: 30px;
-      background: #991b1b;
+      width: 70px;
+      height: 35px;
+      background: linear-gradient(to top, #991b1b, #7f1d1d);
       border-radius: 0 0 50% 50% / 0 0 100% 100%;
-      box-shadow: inset 0 5px 10px rgba(0, 0, 0, 0.5);
+      box-shadow: 
+        inset 0 6px 12px rgba(0, 0, 0, 0.6),
+        0 2px 4px rgba(0, 0, 0, 0.3);
       display: flex;
       align-items: center;
       justify-content: space-around;
-      padding-top: 5px;
+      padding-top: 6px;
     }
     .goblin-tooth {
       width: 6px;
@@ -434,6 +492,11 @@
       animation: orcBreathe 2s ease-in-out infinite;
       max-width: 100%;
     }
+    @media (max-width: 768px) {
+      .monster-orc {
+        width: 140px; height: 154px;
+      }
+    }
     @keyframes orcBreathe {
       0%, 100% { transform: scale(1); }
       50% { transform: scale(1.02); }
@@ -443,131 +506,190 @@
       position: absolute;
       inset: 0;
       background: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%);
-      border-radius: 25% 35% 20% 30% / 40% 45% 35% 40%;
-      clip-path: polygon(
-        15% 5%, 40% 0%, 60% 5%, 85% 0%,
-        100% 15%, 95% 35%, 100% 60%,
-        90% 80%, 100% 95%,
-        85% 100%, 60% 95%, 40% 100%, 15% 95%,
-        0% 85%, 5% 60%, 0% 35%, 5% 15%
-      );
+      border-radius: 30% 40% 25% 35% / 45% 50% 40% 45%;
       box-shadow: 
         0 25px 50px rgba(5, 150, 105, 0.4),
         inset 0 -40px 60px rgba(4, 120, 87, 0.5),
         inset 0 15px 30px rgba(255, 255, 255, 0.1);
     }
-    .orc-shoulders {
-      position: absolute;
-      top: 20px;
-      z-index: 1;
-    }
-    .orc-shoulder-left {
-      position: absolute;
-      left: -25px;
-      width: 50px;
-      height: 80px;
-      background: linear-gradient(135deg, #047857, #065f46);
-      border-radius: 50% 20% 50% 20%;
-      box-shadow: -5px 5px 15px rgba(0, 0, 0, 0.4);
-    }
-    .orc-shoulder-right {
-      position: absolute;
-      right: -25px;
-      width: 50px;
-      height: 80px;
-      background: linear-gradient(225deg, #047857, #065f46);
-      border-radius: 20% 50% 20% 50%;
-      box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.4);
-    }
-    .orc-forehead {
+    .orc-ears {
       position: absolute;
       top: 10px;
       left: 50%;
       transform: translateX(-50%);
-      width: 120px;
-      height: 25px;
-      background: #065f46;
+      width: 100%;
+      height: 50px;
+      z-index: 1;
+    }
+    .orc-ear-left {
+      position: absolute;
+      left: 25px;
+      top: 0;
+      width: 28px;
+      height: 42px;
+      background: linear-gradient(135deg, #047857, #065f46);
+      border-radius: 50% 0 50% 50%;
+      transform: rotate(-15deg);
+      box-shadow: -3px 3px 10px rgba(0, 0, 0, 0.4);
+    }
+    .orc-ear-left::after {
+      content: '';
+      position: absolute;
+      top: 12px;
+      left: 10px;
+      width: 12px;
+      height: 18px;
+      background: linear-gradient(to bottom, rgba(5, 150, 105, 0.3), transparent);
+      border-radius: 50%;
+    }
+    .orc-ear-right {
+      position: absolute;
+      right: 25px;
+      top: 0;
+      width: 28px;
+      height: 42px;
+      background: linear-gradient(225deg, #047857, #065f46);
+      border-radius: 0 50% 50% 50%;
+      transform: rotate(15deg);
+      box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.4);
+    }
+    .orc-ear-right::after {
+      content: '';
+      position: absolute;
+      top: 12px;
+      right: 10px;
+      width: 12px;
+      height: 18px;
+      background: linear-gradient(to bottom, rgba(5, 150, 105, 0.3), transparent);
+      border-radius: 50%;
+    }
+    .orc-forehead {
+      position: absolute;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 125px;
+      height: 28px;
+      background: linear-gradient(to bottom, #065f46, #047857);
       border-radius: 0 0 50% 50%;
-      box-shadow: inset 0 5px 10px rgba(0, 0, 0, 0.3);
+      box-shadow: inset 0 6px 12px rgba(0, 0, 0, 0.4);
+      z-index: 1;
     }
     .orc-eyes {
       position: absolute;
-      top: 60px;
+      top: 48px;
       left: 50%;
       transform: translateX(-50%);
       display: flex;
-      gap: 30px;
+      gap: 40px;
       z-index: 2;
     }
     .orc-eye {
-      width: 32px;
-      height: 24px;
-      background: #fee2e2;
+      width: 38px;
+      height: 28px;
+      background: linear-gradient(135deg, #fee2e2, #fecaca);
       border-radius: 50%;
-      border: 4px solid #065f46;
-      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+      border: 5px solid #065f46;
+      box-shadow: 
+        inset 0 3px 6px rgba(0, 0, 0, 0.35),
+        0 2px 4px rgba(0, 0, 0, 0.2);
       position: relative;
+    }
+    .orc-eye::before {
+      content: '';
+      position: absolute;
+      top: 5px;
+      left: 7px;
+      width: 14px;
+      height: 14px;
+      background: #b91c1c;
+      border-radius: 50%;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
     }
     .orc-eye::after {
       content: '';
       position: absolute;
-      top: 4px;
-      left: 6px;
-      width: 12px;
-      height: 12px;
-      background: #b91c1c;
+      top: 6px;
+      left: 8px;
+      width: 6px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.5);
       border-radius: 50%;
     }
     .orc-nose {
       position: absolute;
-      top: 100px;
+      top: 85px;
       left: 50%;
       transform: translateX(-50%);
-      width: 40px;
-      height: 25px;
-      background: #065f46;
+      width: 46px;
+      height: 30px;
+      background: linear-gradient(to bottom, #047857, #065f46);
       border-radius: 50%;
-      box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.4);
+      box-shadow: 
+        inset 0 5px 10px rgba(0, 0, 0, 0.6),
+        0 3px 6px rgba(0, 0, 0, 0.3);
+      z-index: 2;
     }
-    .orc-tusks {
+    .orc-nostrils {
       position: absolute;
-      bottom: 40px;
+      top: 92px;
       left: 50%;
       transform: translateX(-50%);
       display: flex;
-      gap: 20px;
+      gap: 11px;
+      z-index: 3;
+    }
+    .orc-nostril {
+      width: 6px;
+      height: 8px;
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 50%;
+    }
+    .orc-tusks {
+      position: absolute;
+      bottom: 42px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 24px;
       z-index: 2;
     }
     .orc-tusk {
-      width: 12px;
+      width: 13px;
       height: 30px;
       background: linear-gradient(to bottom, #fef3c7, #fde68a);
       border-radius: 50% 50% 0 0;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      box-shadow: 
+        0 3px 6px rgba(0, 0, 0, 0.4),
+        inset 0 -2px 4px rgba(217, 119, 6, 0.3);
     }
-    .orc-tusk-left { transform: rotate(-15deg); }
-    .orc-tusk-right { transform: rotate(15deg); }
+    .orc-tusk-left { transform: rotate(-16deg); }
+    .orc-tusk-right { transform: rotate(16deg); }
     .orc-mouth {
       position: absolute;
-      bottom: 30px;
+      bottom: 32px;
       left: 50%;
       transform: translateX(-50%);
-      width: 70px;
-      height: 25px;
-      background: #7f1d1d;
+      width: 72px;
+      height: 26px;
+      background: linear-gradient(to top, #7f1d1d, #991b1b);
       border-radius: 0 0 50% 50%;
-      box-shadow: inset 0 5px 10px rgba(0, 0, 0, 0.6);
+      box-shadow: 
+        inset 0 6px 12px rgba(0, 0, 0, 0.7),
+        0 2px 4px rgba(0, 0, 0, 0.3);
+      z-index: 1;
     }
     .orc-scar {
       position: absolute;
-      top: 40px;
-      right: 30px;
-      width: 3px;
-      height: 40px;
-      background: #34d399;
+      top: 42px;
+      right: 38px;
+      width: 4px;
+      height: 42px;
+      background: linear-gradient(to bottom, #34d399, #10b981);
       border-radius: 2px;
-      transform: rotate(15deg);
-      opacity: 0.7;
+      transform: rotate(16deg);
+      opacity: 0.75;
+      z-index: 2;
     }
     
     .monster-dragon {
@@ -576,27 +698,20 @@
       animation: dragonFloat 3s ease-in-out infinite;
       max-width: 100%;
     }
+    @media (max-width: 768px) {
+      .monster-dragon {
+        width: 154px; height: 168px;
+      }
+    }
     @keyframes dragonFloat {
       0%, 100% { transform: translateY(0) rotate(-2deg); }
       50% { transform: translateY(-8px) rotate(2deg); }
     }
     .dragon-body {
       position: absolute;
-      top: 40px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 180px;
-      height: 180px;
+      inset: 0;
       background: linear-gradient(135deg, #f87171 0%, #ef4444 30%, #dc2626 70%, #991b1b 100%);
       border-radius: 45% 50% 35% 40% / 55% 60% 25% 35%;
-      clip-path: polygon(
-        25% 0%, 50% 5%, 75% 0%,
-        95% 15%, 100% 35%, 98% 55%,
-        100% 75%, 95% 90%, 100% 100%,
-        75% 95%, 50% 98%, 25% 95%,
-        5% 85%, 0% 65%, 2% 45%,
-        0% 25%, 5% 10%
-      );
       box-shadow: 
         0 30px 60px rgba(239, 68, 68, 0.5),
         inset 0 -50px 80px rgba(153, 27, 27, 0.6),
@@ -614,76 +729,118 @@
     }
     .dragon-horns {
       position: absolute;
-      top: 10px;
+      top: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      height: 60px;
       z-index: 2;
     }
     .dragon-horn-left {
       position: absolute;
-      left: 40px;
-      width: 20px;
-      height: 50px;
+      left: 50px;
+      top: 0;
+      width: 22px;
+      height: 52px;
       background: linear-gradient(135deg, #525252, #404040);
       border-radius: 50% 0 50% 50%;
-      transform: rotate(-20deg);
-      box-shadow: -2px 2px 8px rgba(0, 0, 0, 0.5);
+      transform: rotate(-18deg);
+      box-shadow: -3px 3px 10px rgba(0, 0, 0, 0.6);
+    }
+    .dragon-horn-left::after {
+      content: '';
+      position: absolute;
+      top: 5px;
+      left: 5px;
+      width: 10px;
+      height: 15px;
+      background: linear-gradient(to bottom, rgba(255, 255, 255, 0.2), transparent);
+      border-radius: 50%;
     }
     .dragon-horn-right {
       position: absolute;
-      right: 40px;
-      width: 20px;
-      height: 50px;
+      right: 50px;
+      top: 0;
+      width: 22px;
+      height: 52px;
       background: linear-gradient(225deg, #525252, #404040);
       border-radius: 0 50% 50% 50%;
-      transform: rotate(20deg);
-      box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+      transform: rotate(18deg);
+      box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.6);
+    }
+    .dragon-horn-right::after {
+      content: '';
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      width: 10px;
+      height: 15px;
+      background: linear-gradient(to bottom, rgba(255, 255, 255, 0.2), transparent);
+      border-radius: 50%;
     }
     .dragon-eyes {
       position: absolute;
-      top: 60px;
+      top: 52px;
       left: 50%;
       transform: translateX(-50%);
       display: flex;
-      gap: 50px;
+      gap: 58px;
       z-index: 3;
     }
     .dragon-eye {
-      width: 28px;
-      height: 36px;
+      width: 32px;
+      height: 40px;
       background: linear-gradient(135deg, #fef08a, #facc15);
-      border-radius: 50% 50% 40% 40%;
+      border-radius: 50% 50% 45% 45%;
       box-shadow: 
-        0 0 20px rgba(250, 204, 21, 0.8),
-        inset 0 2px 4px rgba(0, 0, 0, 0.2);
+        0 0 25px rgba(250, 204, 21, 0.9),
+        inset 0 3px 6px rgba(0, 0, 0, 0.25),
+        0 2px 4px rgba(0, 0, 0, 0.2);
       position: relative;
+    }
+    .dragon-eye::before {
+      content: '';
+      position: absolute;
+      top: 7px;
+      left: 7px;
+      width: 12px;
+      height: 16px;
+      background: #000;
+      border-radius: 50%;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
     }
     .dragon-eye::after {
       content: '';
       position: absolute;
-      top: 6px;
-      left: 6px;
-      width: 10px;
-      height: 14px;
-      background: #000;
+      top: 9px;
+      left: 9px;
+      width: 5px;
+      height: 7px;
+      background: rgba(255, 255, 255, 0.6);
       border-radius: 50%;
     }
     .dragon-snout {
       position: absolute;
-      top: 100px;
+      top: 95px;
       left: 50%;
       transform: translateX(-50%);
-      width: 50px;
-      height: 35px;
-      background: #dc2626;
+      width: 48px;
+      height: 33px;
+      background: linear-gradient(to bottom, #dc2626, #b91c1c);
       border-radius: 50%;
-      box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.4);
+      box-shadow: 
+        inset 0 3px 6px rgba(0, 0, 0, 0.5),
+        0 2px 4px rgba(0, 0, 0, 0.3);
+      z-index: 2;
     }
     .dragon-nostrils {
       position: absolute;
-      top: 8px;
+      top: 102px;
       left: 50%;
       transform: translateX(-50%);
       display: flex;
-      gap: 8px;
+      gap: 9px;
+      z-index: 3;
     }
     .dragon-nostril {
       width: 6px;
@@ -693,17 +850,18 @@
     }
     .dragon-mouth {
       position: absolute;
-      bottom: 50px;
+      bottom: 48px;
       left: 50%;
       transform: translateX(-50%);
-      width: 80px;
-      height: 20px;
+      width: 78px;
+      height: 22px;
       background: linear-gradient(to top, #f97316, #ea580c);
       border-radius: 0 0 50% 50%;
       box-shadow: 
-        inset 0 5px 10px rgba(0, 0, 0, 0.5),
+        inset 0 6px 12px rgba(0, 0, 0, 0.6),
         0 0 15px rgba(249, 115, 22, 0.6);
       animation: fireGlow 1.5s ease-in-out infinite;
+      z-index: 1;
     }
     @keyframes fireGlow {
       0%, 100% { box-shadow: inset 0 5px 10px rgba(0, 0, 0, 0.5), 0 0 15px rgba(249, 115, 22, 0.6); }
@@ -741,6 +899,11 @@
       animation: kingPulse 2.5s ease-in-out infinite;
       max-width: 100%;
     }
+    @media (max-width: 768px) {
+      .monster-king {
+        width: 168px; height: 168px;
+      }
+    }
     @keyframes kingPulse {
       0%, 100% { transform: scale(1); filter: drop-shadow(0 0 20px rgba(147, 51, 234, 0.5)); }
       50% { transform: scale(1.03); filter: drop-shadow(0 0 30px rgba(147, 51, 234, 0.8)); }
@@ -751,13 +914,6 @@
       inset: 0;
       background: linear-gradient(135deg, #a855f7 0%, #9333ea 30%, #7c3aed 60%, #6d28d9 100%);
       border-radius: 40% 45% 35% 40% / 45% 50% 40% 45%;
-      clip-path: polygon(
-        20% 0%, 35% 8%, 50% 3%, 65% 8%, 80% 0%,
-        95% 10%, 100% 25%, 98% 45%, 100% 65%,
-        95% 80%, 100% 95%,
-        80% 100%, 65% 92%, 50% 97%, 35% 92%, 20% 100%,
-        5% 90%, 0% 75%, 2% 55%, 0% 35%, 5% 20%, 10% 10%
-      );
       box-shadow: 
         0 30px 60px rgba(147, 51, 234, 0.6),
         inset 0 -50px 80px rgba(109, 40, 217, 0.7),
@@ -765,11 +921,11 @@
     }
     .king-crown {
       position: absolute;
-      top: -30px;
+      top: -25px;
       left: 50%;
       transform: translateX(-50%);
-      width: 140px;
-      height: 60px;
+      width: 135px;
+      height: 55px;
       background: linear-gradient(135deg, #fbbf24, #f59e0b);
       clip-path: polygon(20% 100%, 30% 0%, 50% 20%, 70% 0%, 80% 100%);
       box-shadow: 
@@ -788,21 +944,22 @@
     }
     .king-eyes {
       position: absolute;
-      top: 80px;
+      top: 72px;
       left: 50%;
       transform: translateX(-50%);
       display: flex;
-      gap: 40px;
+      gap: 48px;
       z-index: 2;
     }
     .king-eye {
-      width: 32px;
-      height: 40px;
+      width: 36px;
+      height: 44px;
       background: linear-gradient(135deg, #fef3c7, #fde68a);
-      border-radius: 50% 50% 40% 40%;
+      border-radius: 50% 50% 45% 45%;
       box-shadow: 
-        0 0 25px rgba(250, 204, 21, 0.9),
-        inset 0 2px 4px rgba(0, 0, 0, 0.2);
+        0 0 30px rgba(250, 204, 21, 0.95),
+        inset 0 3px 6px rgba(0, 0, 0, 0.25),
+        0 2px 4px rgba(0, 0, 0, 0.2);
       position: relative;
       animation: kingEyeGlow 2s ease-in-out infinite;
     }
@@ -810,28 +967,40 @@
       0%, 100% { box-shadow: 0 0 25px rgba(250, 204, 21, 0.9), inset 0 2px 4px rgba(0, 0, 0, 0.2); }
       50% { box-shadow: 0 0 35px rgba(250, 204, 21, 1), inset 0 2px 4px rgba(0, 0, 0, 0.2); }
     }
+    .king-eye::before {
+      content: '';
+      position: absolute;
+      top: 9px;
+      left: 9px;
+      width: 14px;
+      height: 18px;
+      background: #1e293b;
+      border-radius: 50%;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    }
     .king-eye::after {
       content: '';
       position: absolute;
-      top: 8px;
-      left: 8px;
-      width: 12px;
-      height: 16px;
-      background: #1e293b;
+      top: 11px;
+      left: 11px;
+      width: 5px;
+      height: 7px;
+      background: rgba(255, 255, 255, 0.6);
       border-radius: 50%;
     }
     .king-mouth {
       position: absolute;
-      bottom: 60px;
+      bottom: 58px;
       left: 50%;
       transform: translateX(-50%);
-      width: 100px;
-      height: 50px;
+      width: 95px;
+      height: 48px;
       background: linear-gradient(to top, #7c3aed, #6d28d9);
       border-radius: 50% 50% 0 0;
       box-shadow: 
         inset 0 10px 20px rgba(0, 0, 0, 0.5),
         0 0 20px rgba(124, 58, 237, 0.6);
+      z-index: 1;
     }
     .king-teeth {
       position: absolute;
@@ -1301,33 +1470,33 @@
     // Game Data
     const STAGES = [
       { id: 1, name: "Slime", nameKo: "슬라임", hp: 100, iconName: "Droplet" },
-      { id: 2, name: "Goblin", nameKo: "고블린", hp: 150, iconName: "Skull" },
-      { id: 3, name: "Orc", nameKo: "오크", hp: 200, iconName: "Axe" },
-      { id: 4, name: "Dragon", nameKo: "드래곤", hp: 250, iconName: "Flame" },
-      { id: 5, name: "Demon King", nameKo: "마왕", hp: 300, iconName: "Crown" },
+      { id: 2, name: "Goblin", nameKo: "고블린", hp: 200, iconName: "Skull" },
+      { id: 3, name: "Orc", nameKo: "오크", hp: 300, iconName: "Axe" },
+      { id: 4, name: "Dragon", nameKo: "드래곤", hp: 400, iconName: "Flame" },
+      { id: 5, name: "Demon King", nameKo: "마왕", hp: 500, iconName: "Crown" },
     ];
 
     const REWARDS = [
-      { id: "skilled_hands", name: "Skilled Hands", nameKo: "숙련된 손길", descriptionKo: "리롤 기회 영구 +1회 추가", iconName: "Hand" },
-      { id: "giants_strike", name: "Giant's Strike", nameKo: "거인의 일격", descriptionKo: "주사위 합계 24 이상 시 데미지 2배", iconName: "Dumbbell" },
+      { id: "skilled_hands", name: "Skilled Hands", nameKo: "숙련된 손길", descriptionKo: "리롤 기회가 영구적으로 +1회 추가됩니다.", iconName: "Hand" },
+      { id: "giants_strike", name: "Giant's Strike", nameKo: "거인의 일격", descriptionKo: "주사위 합계 24 이상시 데미지가 x2배 증가합니다.", iconName: "Dumbbell" },
       { id: "gamblers_chip", name: "Gambler's Chip", nameKo: "찬스 강화", descriptionKo: "찬스 배수가 x2로 변경됩니다", iconName: "Coins" },
-      { id: "cursed_power", name: "Cursed Power", nameKo: "저주받은 힘", descriptionKo: "데미지 2배, 단 1이 있으면 0 데미지", iconName: "Skull" },
-      { id: "raging_power", name: "Raging Power", nameKo: "폭주하는 힘", descriptionKo: "주사위 +1개, 단 Hold 사용 불가", iconName: "Flame" },
-      { id: "all_two_dice", name: "All Two Dice", nameKo: "올 투 다이스", descriptionKo: "1개의 일반 주사위를 2,2,2,2,2,2 면 구성 주사위로 바꿈", iconName: "Target" },
-      { id: "extreme_dice", name: "Extreme Dice", nameKo: "익스트림 다이스", descriptionKo: "1개의 일반 주사위를 0,0,0,0,6,6 면 구성 주사위로 바꿈", iconName: "Target" },
-      { id: "even_dice", name: "Even Dice", nameKo: "짝수 다이스", descriptionKo: "1개의 일반 주사위를 2,2,2,4,4,6 면 구성 주사위로 바꿈", iconName: "Target" },
-      { id: "odd_dice", name: "Odd Dice", nameKo: "홀수 다이스", descriptionKo: "1개의 일반 주사위를 1,3,3,3,5,5 면 구성 주사위로 바꿈", iconName: "Target" },
-      { id: "middle_dice", name: "Middle Dice", nameKo: "중간 다이스", descriptionKo: "1개의 일반 주사위를 3,3,3,3,4,4 면 구성 주사위로 바꿈", iconName: "Target" },
+      { id: "cursed_power", name: "Cursed Power", nameKo: "저주받은 힘", descriptionKo: "최종 데미지가 x2배 증가하지만, 1 주사위 포함시 피해를 줄 수 없습니다.", iconName: "Skull" },
+      { id: "raging_power", name: "Raging Power", nameKo: "폭주하는 힘", descriptionKo: "주사위 +1개, 리롤시 모든 주사위가 재굴림됩니다", iconName: "Flame" },
+      { id: "all_two_dice", name: "Triple Dice", nameKo: "트리플 다이스", descriptionKo: "2개의 일반 주사위를 3,3,3,3,3,3 면 구성 주사위로 교체합니다", iconName: "Target" },
+      { id: "extreme_dice", name: "Extreme Dice", nameKo: "익스트림 다이스", descriptionKo: "2개의 일반 주사위를 0,0,0,6,6,6 면 구성 주사위로 교체합니다", iconName: "Target" },
+      { id: "even_dice", name: "Even Dice", nameKo: "짝수 다이스", descriptionKo: "2개의 일반 주사위를 2,2,4,4,6,6 면 구성 주사위로 교체합니다", iconName: "Target" },
+      { id: "odd_dice", name: "Odd Dice", nameKo: "홀수 다이스", descriptionKo: "2개의 일반 주사위를 1,3,3,3,5,5 면 구성 주사위로 교체합니다", iconName: "Target" },
+      { id: "middle_dice", name: "Middle Dice", nameKo: "중간 다이스", descriptionKo: "2개의 일반 주사위를 3,3,3,4,4,4 면 구성 주사위로 교체합니다", iconName: "Target" },
       { id: "triple_boost", name: "Triple Boost", nameKo: "트리플 강화", descriptionKo: "트리플 배수가 x3로 변경됩니다", iconName: "Target" },
       { id: "two_pair_boost", name: "Two Pair Boost", nameKo: "투페어 강화", descriptionKo: "투페어 배수가 x4로 변경됩니다", iconName: "Target" },
       { id: "small_straight_boost", name: "Small Straight Boost", nameKo: "스몰 스트레이트 강화", descriptionKo: "스몰 스트레이트 배수가 x5로 변경됩니다", iconName: "Target" },
-      { id: "all_or_nothing", name: "All or Nothing", nameKo: "한판 승부", descriptionKo: "리롤 횟수 1회 감소, 최종 데미지 x2배 증가합니다", iconName: "Target" },
-      { id: "chaos_throw", name: "Chaos Throw", nameKo: "혼돈의 투척", descriptionKo: "주사위를 굴릴 때마다 무작위 주사위 1개의 눈금이 x2배가 됩니다", iconName: "Target" },
-      { id: "steel_armor", name: "Steel Armor", nameKo: "강철 외피", descriptionKo: "몬스터 첫 공격이 무효화됩니다. 주사위 홀드가 불가합니다", iconName: "Target" },
+      { id: "steel_armor", name: "Steel Armor", nameKo: "강철 외피", descriptionKo: "몬스터 첫 공격이 무효화됩니다. 리롤시 모든 주사위가 굴려집니다.", iconName: "Target" },
       { id: "overload", name: "Overload", nameKo: "과부하", descriptionKo: "주사위가 2개씩 기절됩니다. 데미지가 x2배 증가합니다", iconName: "Target" },
       { id: "final_strike", name: "Final Strike", nameKo: "마지막 일격", descriptionKo: "몬스터 체력이 50% 이하일 경우 데미지가 x2배 증가합니다", iconName: "Target" },
       { id: "blood_contract", name: "Blood Contract", nameKo: "피의 계약", descriptionKo: "주사위 1개를 영구적으로 파괴합니다. 데미지가 x3배 증가합니다", iconName: "Target" },
-      { id: "time_travel", name: "Time Travel", nameKo: "시간 여행", descriptionKo: "전투 패배시, 현재 대상과의 전투를 다시 시작하고, 이 능력을 삭제합니다", iconName: "Target" },
+      { id: "odd_power", name: "Odd Power", nameKo: "홀수의 힘", descriptionKo: "모든 주사위 눈이 홀수이면 데미지가 x2배 증가합니다", iconName: "Target" },
+      { id: "even_power", name: "Even Power", nameKo: "짝수의 힘", descriptionKo: "모든 주사위 눈이 짝수이면 데미지가 x2배 증가합니다", iconName: "Target" },
+      { id: "full_house_boost", name: "Full House Boost", nameKo: "풀 하우스 강화", descriptionKo: "풀 하우스 배수가 x8로 변경됩니다", iconName: "Target" },
     ];
 
     const COMBINATIONS = {
@@ -1420,6 +1589,9 @@
       if (combination === "smallStraight" && ownedRewards.includes("small_straight_boost")) {
         multiplier = 5;
       }
+      if (combination === "fullHouse" && ownedRewards.includes("full_house_boost")) {
+        multiplier = 8;
+      }
       
       if (combination === "chance" && ownedRewards.includes("gamblers_chip")) {
         multiplier *= 2;
@@ -1440,9 +1612,6 @@
         if (ownedRewards.includes("giants_strike") && sum >= 24) {
           rewardMultipliers.push({ rewardId: "giants_strike", multiplier: 2 });
         }
-        if (ownedRewards.includes("all_or_nothing")) {
-          rewardMultipliers.push({ rewardId: "all_or_nothing", multiplier: 2 });
-        }
         if (ownedRewards.includes("overload")) {
           rewardMultipliers.push({ rewardId: "overload", multiplier: 2 });
         }
@@ -1451,6 +1620,14 @@
         }
         if (ownedRewards.includes("blood_contract")) {
           rewardMultipliers.push({ rewardId: "blood_contract", multiplier: 3 });
+        }
+        // 홀수의 힘: 모든 주사위가 홀수인지 체크
+        if (ownedRewards.includes("odd_power") && dice.every(d => d % 2 === 1 && d > 0)) {
+          rewardMultipliers.push({ rewardId: "odd_power", multiplier: 2 });
+        }
+        // 짝수의 힘: 모든 주사위가 짝수인지 체크 (0은 제외)
+        if (ownedRewards.includes("even_power") && dice.every(d => d % 2 === 0 && d > 0)) {
+          rewardMultipliers.push({ rewardId: "even_power", multiplier: 2 });
         }
       }
       
@@ -1465,6 +1642,7 @@
     function getInitialPlayerState() {
       return {
         ownedRewards: [],
+        encounteredRewards: [],
         baseRerolls: 2,
         diceTypes: ["normal", "normal", "normal", "normal", "normal"],
         holdDisabled: false,
@@ -1481,13 +1659,13 @@
       switch (type) {
         case "d8": return Math.floor(Math.random() * 8) + 1;
         case "d6_2_7": return Math.floor(Math.random() * 6) + 2;
-        case "all_two": return 2; // 항상 2
+        case "all_two": return 3; // 항상 3
         case "extreme": {
-          const extremeValues = [0, 0, 0, 0, 6, 6];
+          const extremeValues = [0, 0, 0, 6, 6, 6];
           return extremeValues[Math.floor(Math.random() * 6)];
         }
         case "even": {
-          const evenValues = [2, 2, 2, 4, 4, 6];
+          const evenValues = [2, 2, 4, 4, 6, 6];
           return evenValues[Math.floor(Math.random() * 6)];
         }
         case "odd": {
@@ -1495,7 +1673,7 @@
           return oddValues[Math.floor(Math.random() * 6)];
         }
         case "middle": {
-          const middleValues = [3, 3, 3, 3, 4, 4];
+          const middleValues = [3, 3, 3, 4, 4, 4];
           return middleValues[Math.floor(Math.random() * 6)];
         }
         default: return Math.floor(Math.random() * 6) + 1;
@@ -1519,48 +1697,60 @@
           newState.holdDisabled = true;
           break;
         case "all_two_dice": {
-          const normalIndex = newState.diceTypes.findIndex(t => t === "normal");
-          if (normalIndex !== -1) {
-            newState.diceTypes = [...newState.diceTypes];
-            newState.diceTypes[normalIndex] = "all_two";
+          newState.diceTypes = [...newState.diceTypes];
+          let changed = 0;
+          for (let i = 0; i < newState.diceTypes.length && changed < 2; i++) {
+            if (newState.diceTypes[i] === "normal") {
+              newState.diceTypes[i] = "all_two";
+              changed++;
+            }
           }
           break;
         }
         case "extreme_dice": {
-          const normalIndex = newState.diceTypes.findIndex(t => t === "normal");
-          if (normalIndex !== -1) {
-            newState.diceTypes = [...newState.diceTypes];
-            newState.diceTypes[normalIndex] = "extreme";
+          newState.diceTypes = [...newState.diceTypes];
+          let changed = 0;
+          for (let i = 0; i < newState.diceTypes.length && changed < 2; i++) {
+            if (newState.diceTypes[i] === "normal") {
+              newState.diceTypes[i] = "extreme";
+              changed++;
+            }
           }
           break;
         }
         case "even_dice": {
-          const normalIndex = newState.diceTypes.findIndex(t => t === "normal");
-          if (normalIndex !== -1) {
-            newState.diceTypes = [...newState.diceTypes];
-            newState.diceTypes[normalIndex] = "even";
+          newState.diceTypes = [...newState.diceTypes];
+          let changed = 0;
+          for (let i = 0; i < newState.diceTypes.length && changed < 2; i++) {
+            if (newState.diceTypes[i] === "normal") {
+              newState.diceTypes[i] = "even";
+              changed++;
+            }
           }
           break;
         }
         case "odd_dice": {
-          const normalIndex = newState.diceTypes.findIndex(t => t === "normal");
-          if (normalIndex !== -1) {
-            newState.diceTypes = [...newState.diceTypes];
-            newState.diceTypes[normalIndex] = "odd";
+          newState.diceTypes = [...newState.diceTypes];
+          let changed = 0;
+          for (let i = 0; i < newState.diceTypes.length && changed < 2; i++) {
+            if (newState.diceTypes[i] === "normal") {
+              newState.diceTypes[i] = "odd";
+              changed++;
+            }
           }
           break;
         }
         case "middle_dice": {
-          const normalIndex = newState.diceTypes.findIndex(t => t === "normal");
-          if (normalIndex !== -1) {
-            newState.diceTypes = [...newState.diceTypes];
-            newState.diceTypes[normalIndex] = "middle";
+          newState.diceTypes = [...newState.diceTypes];
+          let changed = 0;
+          for (let i = 0; i < newState.diceTypes.length && changed < 2; i++) {
+            if (newState.diceTypes[i] === "normal") {
+              newState.diceTypes[i] = "middle";
+              changed++;
+            }
           }
           break;
         }
-        case "all_or_nothing":
-          newState.baseRerolls = Math.max(1, newState.baseRerolls - 1);
-          break;
         case "steel_armor":
           newState.holdDisabled = true;
           newState.firstAttackBlocked = true;
@@ -1657,11 +1847,11 @@
     // Components
     function getDiceTypeInfo(diceType) {
       const typeInfo = {
-        "all_two": { name: "올 투 다이스", faces: [2,2,2,2,2,2] },
-        "extreme": { name: "익스트림 다이스", faces: [0,0,0,0,6,6] },
-        "even": { name: "짝수 다이스", faces: [2,2,2,4,4,6] },
+        "all_two": { name: "트리플 다이스", faces: [3,3,3,3,3,3] },
+        "extreme": { name: "익스트림 다이스", faces: [0,0,0,6,6,6] },
+        "even": { name: "짝수 다이스", faces: [2,2,4,4,6,6] },
         "odd": { name: "홀수 다이스", faces: [1,3,3,3,5,5] },
-        "middle": { name: "중간 다이스", faces: [3,3,3,3,4,4] },
+        "middle": { name: "중간 다이스", faces: [3,3,3,4,4,4] },
         "d8": { name: "차원 왜곡", faces: [1,2,3,4,5,6,7,8] },
         "d6_2_7": { name: "안정적인 엔진", faces: [2,3,4,5,6,7] },
       };
@@ -1735,6 +1925,10 @@
               <div className="goblin-eye" />
             </div>
             <div className="goblin-nose" />
+            <div className="goblin-nostrils">
+              <div className="goblin-nostril" />
+              <div className="goblin-nostril" />
+            </div>
             <div className="goblin-mouth">
               <div className="goblin-tooth" />
               <div className="goblin-tooth" />
@@ -1745,9 +1939,9 @@
       } else if (name === "Orc" || nameKo === "오크") {
         monsterBody = (
           <div className="monster-orc">
-            <div className="orc-shoulders">
-              <div className="orc-shoulder-left" />
-              <div className="orc-shoulder-right" />
+            <div className="orc-ears">
+              <div className="orc-ear-left" />
+              <div className="orc-ear-right" />
             </div>
             <div className="orc-forehead" />
             <div className="orc-eyes">
@@ -1755,6 +1949,10 @@
               <div className="orc-eye" />
             </div>
             <div className="orc-nose" />
+            <div className="orc-nostrils">
+              <div className="orc-nostril" />
+              <div className="orc-nostril" />
+            </div>
             <div className="orc-tusks">
               <div className="orc-tusk orc-tusk-left" />
               <div className="orc-tusk orc-tusk-right" />
@@ -1888,26 +2086,14 @@
         if (stage) setMonsterHp(stage.hp);
       }, [playerState.currentStage]);
 
-      // 시간 여행: 패배 시 전투 다시 시작
-      useEffect(() => {
-        if (allDiceStunned && !isMonsterDefeated && playerState.ownedRewards.includes("time_travel")) {
-          setTimeout(() => {
-            const newRewards = playerState.ownedRewards.filter(r => r !== "time_travel");
-            const newState = { ...playerState, ownedRewards: newRewards };
-            setPlayerState(newState);
-            setStunnedIndices(new Set());
-            setSelectedIndices(new Set());
-            setRerollsLeft(newState.baseRerolls);
-            setRoundStarted(false);
-            setCurrentDice(Array.from({ length: totalDiceCount }, (_, i) => i + 1));
-            setMonsterHp(currentStage.hp);
-          }, 500);
-        }
-      }, [allDiceStunned, isMonsterDefeated, playerState, totalDiceCount, currentStage]);
 
       const currentScore = useMemo(() => {
-        return calculateScore(currentDice, { ownedRewards: playerState.ownedRewards });
-      }, [currentDice, playerState.ownedRewards]);
+        return calculateScore(currentDice, { 
+          ownedRewards: playerState.ownedRewards,
+          monsterHp: monsterHp,
+          maxMonsterHp: currentStage.hp
+        });
+      }, [currentDice, playerState.ownedRewards, monsterHp, currentStage]);
 
       const toggleSelect = (index) => {
         if (!roundStarted || rerollsLeft === 0) return;
@@ -1976,10 +2162,20 @@
           setShowVictory(true);
           triggerVictoryConfetti();
         } else {
-          setRewardOptions(getRandomRewards(3, playerState.ownedRewards));
+          const excludeIds = [...playerState.ownedRewards, ...playerState.encounteredRewards];
+          const newRewardOptions = getRandomRewards(3, excludeIds);
+          setRewardOptions(newRewardOptions);
+          
+          // 등장한 보상들을 encounteredRewards에 추가
+          const newEncounteredRewards = newRewardOptions.map(r => r.id);
+          setPlayerState(prevState => ({
+            ...prevState,
+            encounteredRewards: [...prevState.encounteredRewards, ...newEncounteredRewards]
+          }));
+          
           setShowRewardSelection(true);
         }
-      }, [playerState.currentStage, playerState.ownedRewards]);
+      }, [playerState.currentStage, playerState.ownedRewards, playerState.encounteredRewards]);
 
       const executeAttack = useCallback((dice) => {
         setIsPlayerAttacking(true);
@@ -2042,20 +2238,10 @@
         
         // 애니메이션 후 주사위 값 업데이트
         setTimeout(() => {
-          let newDice = playerState.diceTypes.map((type, idx) => {
+          const newDice = playerState.diceTypes.map((type, idx) => {
             const isStunned = stunnedIndices.has(idx);
             return rollDieByType(type, isStunned);
           });
-          
-          // 혼돈의 투척: 무작위 주사위 1개의 눈금 x2배
-          if (playerState.ownedRewards.includes("chaos_throw")) {
-            const validIndices = newDice.map((_, idx) => idx).filter(idx => !stunnedIndices.has(idx) && newDice[idx] > 0);
-            if (validIndices.length > 0) {
-              const randomIdx = validIndices[Math.floor(Math.random() * validIndices.length)];
-              newDice[randomIdx] = newDice[randomIdx] * 2;
-            }
-          }
-          
           setCurrentDice(newDice);
           setIsRolling(false);
           setRollingDice(new Set());
@@ -2089,17 +2275,7 @@
         
         // 애니메이션 후 주사위 값 업데이트
         setTimeout(() => {
-          let newDice = rollCustomDice();
-          
-          // 혼돈의 투척: 무작위 주사위 1개의 눈금 x2배
-          if (playerState.ownedRewards.includes("chaos_throw")) {
-            const validIndices = newDice.map((_, idx) => idx).filter(idx => !stunnedIndices.has(idx) && newDice[idx] > 0);
-            if (validIndices.length > 0) {
-              const randomIdx = validIndices[Math.floor(Math.random() * validIndices.length)];
-              newDice[randomIdx] = newDice[randomIdx] * 2;
-            }
-          }
-          
+          const newDice = rollCustomDice();
           setCurrentDice(newDice);
           setSelectedIndices(new Set());
           setRerollsLeft(prev => prev - 1);
@@ -2270,7 +2446,7 @@
               </div>
             )}
 
-            {allDiceStunned && !isMonsterDefeated && !playerState.ownedRewards.includes("time_travel") && (
+            {allDiceStunned && !isMonsterDefeated && (
               <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
                 <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#dc2626', marginBottom: '0.5rem' }}>패배!</div>
                 <div style={{ color: '#475569', marginBottom: '1rem' }}>⚠ 모든 주사위가 기절했습니다.</div>
@@ -2327,6 +2503,8 @@
                   displayMultiplier = 4;
                 } else if (key === "smallStraight" && playerState.ownedRewards.includes("small_straight_boost")) {
                   displayMultiplier = 5;
+                } else if (key === "fullHouse" && playerState.ownedRewards.includes("full_house_boost")) {
+                  displayMultiplier = 8;
                 }
                 const isBoosted = displayMultiplier !== combo.multiplier;
                 return (
