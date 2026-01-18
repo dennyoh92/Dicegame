@@ -1388,10 +1388,10 @@
 
     const STAGES = [
       { id: 1, name: "Slime", nameKo: "슬라임", hp: 100, iconName: "Droplet", imageUrl: MONSTER_IMAGES.slime },
-      { id: 2, name: "Goblin", nameKo: "고블린", hp: 200, iconName: "Skull", imageUrl: MONSTER_IMAGES.goblin },
-      { id: 3, name: "Orc", nameKo: "오크", hp: 300, iconName: "Axe", imageUrl: MONSTER_IMAGES.orc },
-      { id: 4, name: "Dragon", nameKo: "드래곤", hp: 400, iconName: "Flame", imageUrl: MONSTER_IMAGES.dragon },
-      { id: 5, name: "Demon King", nameKo: "마왕", hp: 500, iconName: "Crown", imageUrl: MONSTER_IMAGES.demon },
+      { id: 2, name: "Goblin", nameKo: "고블린", hp: 150, iconName: "Skull", imageUrl: MONSTER_IMAGES.goblin },
+      { id: 3, name: "Orc", nameKo: "오크", hp: 200, iconName: "Axe", imageUrl: MONSTER_IMAGES.orc },
+      { id: 4, name: "Dragon", nameKo: "드래곤", hp: 300, iconName: "Flame", imageUrl: MONSTER_IMAGES.dragon },
+      { id: 5, name: "Demon King", nameKo: "마왕", hp: 400, iconName: "Crown", imageUrl: MONSTER_IMAGES.demon },
     ];
 
     const REWARDS = [
@@ -1461,7 +1461,7 @@
 
     function isSmallStraight(dice) {
       const unique = Array.from(new Set(dice)).sort((a, b) => a - b);
-      const sequences = [[1,2,3,4], [2,3,4,5], [3,4,5,6], [4,5,6,7], [5,6,7,8]];
+      const sequences = [[0,1,2,3], [1,2,3,4], [2,3,4,5], [3,4,5,6], [4,5,6,7], [5,6,7,8]];
       return sequences.some(seq => seq.every(num => unique.includes(num)));
     }
 
