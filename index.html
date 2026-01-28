@@ -1855,7 +1855,6 @@
       { id: "small_straight_3", name: "Small Straight 3", nameKo: "축소 스트레이트", descriptionKo: "연속된 숫자 3개로도 스몰 스트레이트 가능", iconName: "Target" },
       { id: "triple_2", name: "Triple 2", nameKo: "이중 트리플", descriptionKo: "동일 숫자 2개로도 트리플 가능", iconName: "Target" },
       { id: "mega_enhance", name: "Mega Enhance", nameKo: "메가 강화", descriptionKo: "무작위 주사위 강화+10", iconName: "Target" },
-      { id: "dice_flip_5", name: "Dice Flip 5", nameKo: "뒤집기 대량 획득", descriptionKo: "주사위 뒤집기 획득+5", iconName: "Target" },
       { id: "reroll_burn", name: "Reroll Burn", nameKo: "리롤 화상", descriptionKo: "리롤시 리롤한 주사위 눈금만큼 피해(강화 반영)", iconName: "Target" },
       { id: "sum13_x5", name: "Sum 13 x5", nameKo: "13의 배율", descriptionKo: "주사위 합계가 13일시 x5", iconName: "Target" },
       { id: "dice_6_1", name: "6·1 Dice", nameKo: "6·1 다이스", descriptionKo: "1개의 일반 주사위를 [6,1][6,1][2,2] 면 구성으로 교체합니다", iconName: "Target" },
@@ -2047,7 +2046,7 @@
     }
 
     function calculateScore(dice, options = {}) {
-      const { ownedRewards = [], monsterHp = 0, maxMonsterHp = 0, diceEnhancements = [], combinationBoosts = {} } = options;
+      const { ownedRewards = [], monsterHp = 0, maxMonsterHp = 0, diceEnhancements = [], combinationBoosts = {}, usedFlipThisRound = false } = options;
       let sum = dice.reduce((a, b) => a + b, 0);
       const combination = detectCombination(dice, options);
       let enhancementBonus = 0;
@@ -2113,6 +2112,10 @@
         if (ownedRewards.includes("sum13_x5") && (sum - enhancementBonus) === 13) {
           rewardMultipliers.push({ rewardId: "sum13_x5", multiplier: 5 });
         }
+        // 뒤집기 배율: flip_double / flip_all_double 보유 시 이번 턴에 뒤집기 사용하면 x2
+        if ((ownedRewards.includes("flip_double") || ownedRewards.includes("flip_all_double")) && usedFlipThisRound) {
+          rewardMultipliers.push({ rewardId: "flip_double", multiplier: 2 });
+        }
       }
       
       const finalMultiplier = rewardMultipliers.reduce((acc, r) => acc * r.multiplier, 1);
@@ -2171,11 +2174,11 @@
 
     function getRandomRewards(count, excludeIds = [], currentStage = 1) {
       let available = REWARDS.filter(r => !excludeIds.includes(r.id));
-      // 1,3,5,7 라운드: 주사위 교체(dice_*) 보상만 / 2,4,6,8 라운드: 그 외 보상만
-      const isDiceOnlyRound = [1, 3, 5, 7].includes(currentStage);
-      const isOtherOnlyRound = [2, 4, 6, 8].includes(currentStage);
-      if (isDiceOnlyRound) available = available.filter(r => r.id.startsWith('dice_'));
-      else if (isOtherOnlyRound) available = available.filter(r => !r.id.startsWith('dice_'));
+      // 1,3,5,7 라운드: 주사위 변형(dice_*)만 / 2,4,6 라운드: 패시브 보상만
+      const isDiceVariantRound = [1, 3, 5, 7].includes(currentStage);
+      const isPassiveRound = [2, 4, 6].includes(currentStage);
+      if (isDiceVariantRound) available = available.filter(r => r.id.startsWith('dice_'));
+      else if (isPassiveRound) available = available.filter(r => !r.id.startsWith('dice_'));
       const shuffled = [...available].sort(() => Math.random() - 0.5);
       return shuffled.slice(0, count);
     }
@@ -2218,9 +2221,6 @@
           newState.diceEnhancements = e;
           break;
         }
-        case "dice_flip_5":
-          newState.diceFlipStacks = Math.min((newState.diceFlipStacks || 1) + 5, 99);
-          break;
         case "dice_6_1": case "dice_6_0": case "dice_5_3": case "dice_5_2": case "dice_5_1": case "dice_4_3": case "dice_4_2":
         case "dice_6_4_2": case "dice_5_4_3": case "dice_6_5_1": case "dice_6_4_1": case "dice_5_4_2": case "dice_6_4_0": case "dice_5_4_1":
         case "dice_6_3_1": case "dice_5_3_2": case "dice_5_4_0": case "dice_6_3_0": case "dice_5_3_1": case "dice_4_3_2": case "dice_6_2_1": {
@@ -2678,9 +2678,10 @@
           monsterHp: monsterHp,
           maxMonsterHp: currentStage.hp,
           diceEnhancements: playerState.diceEnhancements || [],
-          combinationBoosts: playerState.combinationBoosts || {}
+          combinationBoosts: playerState.combinationBoosts || {},
+          usedFlipThisRound: playerState.usedFlipThisRound
         });
-      }, [currentDice, playerState.ownedRewards, playerState.diceEnhancements, playerState.combinationBoosts, monsterHp, currentStage]);
+      }, [currentDice, playerState.ownedRewards, playerState.diceEnhancements, playerState.combinationBoosts, playerState.usedFlipThisRound, monsterHp, currentStage]);
 
       const toggleSelect = (index) => {
         if (!roundStarted) return;
@@ -2709,15 +2710,15 @@
         setIsMonsterAttacking(true);
         setTimeout(() => {
           let indicesToStun = [];
+          // 기본: 반격 시 주사위 1개 기절
+          if (activeIndices.length > 0)
+            indicesToStun.push(activeIndices[Math.floor(Math.random() * activeIndices.length)]);
+          // combo_out_stun 추가: 족보에 포함되지 않은 주사위 중 1개 추가 기절 (이미 뽑은 것 제외)
           if (currentBossType === 'combo_out_stun' && attackDice && usedCombination) {
             const comboIndices = getComboIndices(attackDice, usedCombination, { ownedRewards: playerState.ownedRewards });
-            const notInCombo = activeIndices.filter(i => !comboIndices.includes(i));
+            const notInCombo = activeIndices.filter(i => !comboIndices.includes(i) && !indicesToStun.includes(i));
             if (notInCombo.length > 0)
-              indicesToStun = [notInCombo[Math.floor(Math.random() * notInCombo.length)]];
-          } else {
-            const available = activeIndices.filter(idx => true);
-            if (available.length > 0)
-              indicesToStun = [available[Math.floor(Math.random() * available.length)]];
+              indicesToStun.push(notInCombo[Math.floor(Math.random() * notInCombo.length)]);
           }
           // 주사위 보호막: 기절 1회 무효
           const si = playerState.shieldIndex;
@@ -2781,7 +2782,10 @@
             return n;
           });
           const nonStunnedCount = Math.max(0, playerState.diceTypes.length - stunnedIndices.size);
-          setEnhancementOffer({ nonStunnedCount });
+          setEnhancementOffer({ 
+            nonStunnedCount, 
+            enhancementGroups: [...ENHANCEMENT_GROUPS].sort(() => Math.random() - 0.5).slice(0, 2) 
+          });
           setShowEnhancementChoice(true);
         }
       }, [playerState.currentStage, playerState.diceTypes.length, stunnedIndices]);
@@ -2793,7 +2797,8 @@
           monsterHp: monsterHp,
           maxMonsterHp: currentStage.hp,
           diceEnhancements: playerState.diceEnhancements || [],
-          combinationBoosts: playerState.combinationBoosts || {}
+          combinationBoosts: playerState.combinationBoosts || {},
+          usedFlipThisRound: playerState.usedFlipThisRound
         });
         setAttackResult(score);
         setShowAttackResult(true);
@@ -2814,9 +2819,6 @@
           actualDamage = Math.min(score.total, cap);
         } else if (currentBossType === 'cursed_dice' && cursedDiceIndex != null && getComboIndices(dice, score.combination, { ownedRewards: playerState.ownedRewards }).includes(cursedDiceIndex)) {
           actualDamage = 0;
-        }
-        if ((playerState.ownedRewards.includes('flip_double') || playerState.ownedRewards.includes('flip_all_double')) && playerState.usedFlipThisRound) {
-          actualDamage *= 2;
         }
         setLastUsedCombination(score.combination);
         const newHp = Math.max(0, monsterHp - actualDamage);
@@ -3144,7 +3146,7 @@
                   <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1rem' }}>⬆ 강화 선택</h2>
                   <p style={{ fontSize: '0.875rem', color: 'rgba(255,255,255,0.9)', marginBottom: '1.25rem' }}>하나를 선택하세요</p>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
-                    {ENHANCEMENT_GROUPS.map(grp => (
+                    {(enhancementOffer.enhancementGroups || ENHANCEMENT_GROUPS).map(grp => (
                       <button
                         key={grp.id}
                         className="btn"
@@ -3191,15 +3193,25 @@
               </div>
             )}
 
-            {showRewardSelection && (
+            {showRewardSelection && (() => {
+              const isDiceVariantRound = [1, 3, 5, 7].includes(playerState.currentStage);
+              return (
               <div className="modal-overlay">
                 <div className="modal" style={{ maxWidth: '700px', maxHeight: '90vh', overflow: 'auto' }}>
-                  <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1rem' }}>🎁 보상 선택</h2>
-                  <p style={{ fontSize: '0.875rem', color: 'rgba(255,255,255,0.9)', marginBottom: '1rem' }}>3개 중 하나를 선택하세요</p>
+                  <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '0.25rem' }}>
+                    {isDiceVariantRound ? '🎲 주사위 변형' : '✨ 패시브 보상'}
+                  </h2>
+                  <p style={{ fontSize: '0.875rem', color: 'rgba(255,255,255,0.85)', marginBottom: '1rem' }}>
+                    {isDiceVariantRound ? '1·3·5·7스테이지 – 일반 주사위 1개를 특수 주사위로 교체' : '2·4·6스테이지 – 능력 보상'}
+                  </p>
                   <div style={{ 
                     display: 'grid', 
                     gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', 
-                    gap: '1rem'
+                    gap: '1rem',
+                    padding: '1rem',
+                    borderRadius: '0.5rem',
+                    background: isDiceVariantRound ? 'rgba(99, 102, 241, 0.12)' : 'rgba(34, 197, 94, 0.12)',
+                    border: `1px solid ${isDiceVariantRound ? 'rgba(99, 102, 241, 0.35)' : 'rgba(34, 197, 94, 0.35)'}`
                   }}>
                     {rewardOptions.map(reward => {
                       const isOwned = playerState.ownedRewards.includes(reward.id);
@@ -3235,9 +3247,25 @@
                       );
                     })}
                   </div>
+                  <div style={{ display: 'flex', gap: '1rem', marginTop: '1.25rem', paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.2)' }}>
+                    <button
+                      className="btn"
+                      onClick={() => goToNextStage(playerState)}
+                      style={{ flex: 1, padding: '0.875rem', fontSize: '0.95rem', background: 'rgba(100, 100, 100, 0.5)', color: 'rgba(255,255,255,0.9)' }}
+                    >
+                      Pass
+                    </button>
+                    <button
+                      className="btn"
+                      onClick={() => goToNextStage({ ...playerState, diceFlipStacks: Math.min((playerState.diceFlipStacks || 1) + 1, 3) })}
+                      style={{ flex: 1, padding: '0.875rem', fontSize: '0.95rem', background: 'linear-gradient(to right, #8b5cf6, #7c3aed)' }}
+                    >
+                      주사위 뒤집기+1 획득
+                    </button>
+                  </div>
                 </div>
               </div>
-            )}
+            );})()}
 
             {showCounterattack && (
               <div className="counterattack-overlay">
