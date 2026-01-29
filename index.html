@@ -1812,7 +1812,7 @@
       { id: "reroll_max2", nameKo: "리롤 제한 보스", descriptionKo: "3개 주사위 이상 동시 리롤이 불가합니다." },
     ];
     const BOSS_TYPES_STAGE_4 = [
-      { id: "cursed_dice", nameKo: "저주 주사위 보스", descriptionKo: "주사위 1개에 저주. 저주 받은 주사위가 족보에 포함될 시 데미지 0." },
+      { id: "cursed_dice", nameKo: "저주 주사위 보스", descriptionKo: "주사위 1개에 저주. 저주 받은 주사위는 족보 판정에서 제외됩니다." },
       { id: "flip_all", nameKo: "전면 뒤집기 보스", descriptionKo: "뒤집기 사용 시 모든 주사위가 뒤집힙니다." },
       { id: "reroll_minus1", nameKo: "리롤 감소 보스", descriptionKo: "리롤 횟수가 1회 차감됩니다." },
     ];
@@ -1838,7 +1838,7 @@
 
     const REWARDS = [
       { id: "odd_power", name: "Odd Power", nameKo: "홀수의 힘", descriptionKo: "모든 주사위 홀수일시 x2", iconName: "Target" },
-      { id: "even_power", name: "Even Power", nameKo: "짝수의 힘", descriptionKo: "모든 주사위 짝수일시 x2", iconName: "Target" },
+      { id: "even_power", name: "Even Power", nameKo: "짝수의 힘", descriptionKo: "모든 주사위 짝수일시 x2 (0도 짝수)", iconName: "Target" },
       { id: "giants_strike", name: "Giant's Strike", nameKo: "거인의 일격", descriptionKo: "주사위 합계 24 이상일시 x2", iconName: "Dumbbell" },
       { id: "raging_power", name: "Raging Power", nameKo: "폭주하는 힘", descriptionKo: "주사위+1, 리롤시 모든 주사위 재굴림", iconName: "Flame" },
       { id: "final_strike", name: "Final Strike", nameKo: "마지막 일격", descriptionKo: "몬스터 체력 50% 이하일시 x2", iconName: "Target" },
@@ -1851,33 +1851,21 @@
       { id: "random_combo_boost", name: "Random Combo Boost", nameKo: "무작위 족보 강화", descriptionKo: "전투 후 무작위 족보+1", iconName: "Target" },
       { id: "random_die_enhance", name: "Random Die Enhance", nameKo: "공격 후 주사위 강화", descriptionKo: "공격 후 족보에 포함된 무작위 주사위 강화+1", iconName: "Target" },
       { id: "dice_flip_gain", name: "Dice Flip Gain", nameKo: "뒤집기 획득", descriptionKo: "전투 후 주사위 뒤집기 획득+1", iconName: "Target" },
-      { id: "dice_shield", name: "Dice Shield", nameKo: "주사위 보호막", descriptionKo: "1개 주사위 보호막 생성, 해당 주사위 기절시 기절 1회 무효, 전투 후 보호막 리필", iconName: "Target" },
       { id: "small_straight_3", name: "Small Straight 3", nameKo: "축소 스트레이트", descriptionKo: "연속된 숫자 3개로도 스몰 스트레이트 가능", iconName: "Target" },
       { id: "triple_2", name: "Triple 2", nameKo: "이중 트리플", descriptionKo: "동일 숫자 2개로도 트리플 가능", iconName: "Target" },
       { id: "mega_enhance", name: "Mega Enhance", nameKo: "메가 강화", descriptionKo: "무작위 주사위 강화+10", iconName: "Target" },
       { id: "reroll_burn", name: "Reroll Burn", nameKo: "리롤 화상", descriptionKo: "리롤시 리롤한 주사위 눈금만큼 피해(강화 반영)", iconName: "Target" },
       { id: "sum13_x5", name: "Sum 13 x5", nameKo: "13의 배율", descriptionKo: "주사위 합계가 13일시 x5", iconName: "Target" },
-      { id: "dice_6_1", name: "6·1 Dice", nameKo: "6·1 다이스", descriptionKo: "1개의 일반 주사위를 [6,1][6,1][2,2] 면 구성으로 교체합니다", iconName: "Target" },
-      { id: "dice_6_0", name: "6·0 Dice", nameKo: "6·0 다이스", descriptionKo: "1개의 일반 주사위를 [6,0][6,0][6,0] 면 구성으로 교체합니다", iconName: "Target" },
-      { id: "dice_5_3", name: "5·3 Dice", nameKo: "5·3 다이스", descriptionKo: "1개의 일반 주사위를 [5,3][5,3][5,3] 면 구성으로 교체합니다", iconName: "Target" },
-      { id: "dice_5_2", name: "5·2 Dice", nameKo: "5·2 다이스", descriptionKo: "1개의 일반 주사위를 [5,2][5,2][5,2] 면 구성으로 교체합니다", iconName: "Target" },
-      { id: "dice_5_1", name: "5·1 Dice", nameKo: "5·1 다이스", descriptionKo: "1개의 일반 주사위를 [5,1][5,1][5,1] 면 구성으로 교체합니다", iconName: "Target" },
-      { id: "dice_4_3", name: "4·3 Dice", nameKo: "4·3 다이스", descriptionKo: "1개의 일반 주사위를 [4,3][4,3][4,3] 면 구성으로 교체합니다", iconName: "Target" },
-      { id: "dice_4_2", name: "4·2 Dice", nameKo: "4·2 다이스", descriptionKo: "1개의 일반 주사위를 [4,2][4,2][4,2] 면 구성으로 교체합니다", iconName: "Target" },
-      { id: "dice_6_4_2", name: "6·4·2 Dice", nameKo: "6·4·2 다이스", descriptionKo: "1개의 일반 주사위를 [6,4][6,4][2,2] 면 구성으로 교체합니다", iconName: "Target" },
-      { id: "dice_5_4_3", name: "5·4·3 Dice", nameKo: "5·4·3 다이스", descriptionKo: "1개의 일반 주사위를 [5,4][5,4][3,3] 면 구성으로 교체합니다", iconName: "Target" },
-      { id: "dice_6_5_1", name: "6·5·1 Dice", nameKo: "6·5·1 다이스", descriptionKo: "1개의 일반 주사위를 [6,5][6,5][1,1] 면 구성으로 교체합니다", iconName: "Target" },
-      { id: "dice_6_4_1", name: "6·4·1 Dice", nameKo: "6·4·1 다이스", descriptionKo: "1개의 일반 주사위를 [6,4][6,4][1,1] 면 구성으로 교체합니다", iconName: "Target" },
-      { id: "dice_5_4_2", name: "5·4·2 Dice", nameKo: "5·4·2 다이스", descriptionKo: "1개의 일반 주사위를 [5,4][5,4][2,2] 면 구성으로 교체합니다", iconName: "Target" },
-      { id: "dice_6_4_0", name: "6·4·0 Dice", nameKo: "6·4·0 다이스", descriptionKo: "1개의 일반 주사위를 [6,4][6,4][0,0] 면 구성으로 교체합니다", iconName: "Target" },
-      { id: "dice_5_4_1", name: "5·4·1 Dice", nameKo: "5·4·1 다이스", descriptionKo: "1개의 일반 주사위를 [5,1][5,1][4,4] 면 구성으로 교체합니다", iconName: "Target" },
-      { id: "dice_6_3_1", name: "6·3·1 Dice", nameKo: "6·3·1 다이스", descriptionKo: "1개의 일반 주사위를 [6,1][6,1][3,3] 면 구성으로 교체합니다", iconName: "Target" },
-      { id: "dice_5_3_2", name: "5·3·2 Dice", nameKo: "5·3·2 다이스", descriptionKo: "1개의 일반 주사위를 [5,2][5,2][3,3] 면 구성으로 교체합니다", iconName: "Target" },
-      { id: "dice_5_4_0", name: "5·4·0 Dice", nameKo: "5·4·0 다이스", descriptionKo: "1개의 일반 주사위를 [5,4][5,4][0,0] 면 구성으로 교체합니다", iconName: "Target" },
-      { id: "dice_6_3_0", name: "6·3·0 Dice", nameKo: "6·3·0 다이스", descriptionKo: "1개의 일반 주사위를 [6,0][6,0][3,3] 면 구성으로 교체합니다", iconName: "Target" },
-      { id: "dice_5_3_1", name: "5·3·1 Dice", nameKo: "5·3·1 다이스", descriptionKo: "1개의 일반 주사위를 [5,1][5,1][3,3] 면 구성으로 교체합니다", iconName: "Target" },
-      { id: "dice_4_3_2", name: "4·3·2 Dice", nameKo: "4·3·2 다이스", descriptionKo: "1개의 일반 주사위를 [4,2][4,2][3,3] 면 구성으로 교체합니다", iconName: "Target" },
-      { id: "dice_6_2_1", name: "6·2·1 Dice", nameKo: "6·2·1 다이스", descriptionKo: "1개의 일반 주사위를 [6,1][6,1][2,2] 면 구성으로 교체합니다", iconName: "Target" },
+      { id: "dice_6_0", name: "6·0 Dice", nameKo: "6·0 다이스", descriptionKo: "[6,6,6,0,0,0] 면 구성으로 교체", iconName: "Target" },
+      { id: "dice_5_1", name: "5·1 Dice", nameKo: "5·1 다이스", descriptionKo: "[5,5,5,1,1,1] 면 구성으로 교체", iconName: "Target" },
+      { id: "dice_5_2", name: "5·2 Dice", nameKo: "5·2 다이스", descriptionKo: "[5,5,5,2,2,2] 면 구성으로 교체", iconName: "Target" },
+      { id: "dice_4_3", name: "4·3 Dice", nameKo: "4·3 다이스", descriptionKo: "[4,4,4,3,3,3] 면 구성으로 교체", iconName: "Target" },
+      { id: "dice_4_2", name: "4·2 Dice", nameKo: "4·2 다이스", descriptionKo: "[4,4,4,2,2,2] 면 구성으로 교체", iconName: "Target" },
+      { id: "dice_6_4_2", name: "6·4·2 Dice", nameKo: "6·4·2 다이스", descriptionKo: "[6,4,2,2,4,6] 면 구성으로 교체 (뒤집어도 같은 숫자!)", iconName: "Target" },
+      { id: "dice_5_4_3", name: "5·4·3 Dice", nameKo: "5·4·3 다이스", descriptionKo: "[5,4,3,3,4,5] 면 구성으로 교체 (뒤집어도 같은 숫자!)", iconName: "Target" },
+      { id: "dice_6_5_1", name: "6·5·1 Dice", nameKo: "6·5·1 다이스", descriptionKo: "[6,5,1,1,5,6] 면 구성으로 교체 (뒤집어도 같은 숫자!)", iconName: "Target" },
+      { id: "dice_6_3_0", name: "6·3·0 Dice", nameKo: "6·3·0 다이스", descriptionKo: "[6,0,3,3,0,6] 면 구성으로 교체 (6↔0 뒷면)", iconName: "Target" },
+      { id: "dice_5_4_0", name: "5·4·0 Dice", nameKo: "5·4·0 다이스", descriptionKo: "[5,0,4,4,0,5] 면 구성으로 교체 (5↔0 뒷면)", iconName: "Target" },
     ];
 
     const COMBINATIONS = {
@@ -1891,24 +1879,37 @@
       chance: { multiplier: 1, label: "Chance", labelKo: "찬스" },
     };
 
-    const ENHANCEMENT_GROUPS = [
-      { id: 'four_yahtzee', labelKo: '포카드/야찌 강화', comboKeys: ['fourOfAKind', 'yahtzee'] },
-      { id: 'straight', labelKo: '스트레이트 강화 (라지, 스몰)', comboKeys: ['largeStraight', 'smallStraight'] },
-      { id: 'full_house', labelKo: '풀하우스 강화', comboKeys: ['fullHouse'] },
-      { id: 'triple', labelKo: '트리플 강화', comboKeys: ['threeOfAKind'] },
-      { id: 'two_pair', labelKo: '투페어 강화', comboKeys: ['twoPair'] },
-      { id: 'chance', labelKo: '찬스 강화', comboKeys: ['chance'] },
+    // 강화 가능한 족보 (야추, 라지스트레이트 제외)
+    const ENHANCEABLE_COMBOS = [
+      { key: 'chance', labelKo: '찬스' },
+      { key: 'threeOfAKind', labelKo: '트리플' },
+      { key: 'twoPair', labelKo: '투페어' },
+      { key: 'smallStraight', labelKo: '스몰 스트레이트' },
+      { key: 'fullHouse', labelKo: '풀하우스' },
+      { key: 'fourOfAKind', labelKo: '포카드' },
     ];
 
+    // 6개 중 2개씩 묶어서 서로 다른 세트 2개 생성
+    function generateEnhancementSets() {
+      const shuffled = [...ENHANCEABLE_COMBOS].sort(() => Math.random() - 0.5);
+      // 첫 번째 세트: 0,1번 / 두 번째 세트: 2,3번
+      const set1 = [shuffled[0], shuffled[1]];
+      const set2 = [shuffled[2], shuffled[3]];
+      return [
+        { id: `${set1[0].key}_${set1[1].key}`, labelKo: `${set1[0].labelKo} + ${set1[1].labelKo} 강화`, comboKeys: [set1[0].key, set1[1].key] },
+        { id: `${set2[0].key}_${set2[1].key}`, labelKo: `${set2[0].labelKo} + ${set2[1].labelKo} 강화`, comboKeys: [set2[0].key, set2[1].key] },
+      ];
+    }
+
     const BATTLE_LOG_URL = 'https://script.google.com/macros/s/AKfycbxbvi_bo_IH8-XDGc_pGojpUFtNZfSvpYZFvwwWFy5_bhmQKVFAV81fGQvghi2P6ujr/exec';
-    function sendBattleLog(stage, bossType, result, enhancementChoice, rewardChoice) {
+    function sendBattleLog(playerId, stage, bossType, result, enhancementChoice, rewardChoice) {
       if (!BATTLE_LOG_URL) return;
       try {
         fetch(BATTLE_LOG_URL, {
           method: 'POST',
           mode: 'no-cors',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ stage, bossType, result, enhancementChoice, rewardChoice, timestamp: new Date().toISOString() })
+          body: JSON.stringify({ playerId, stage, bossType, result, enhancementChoice, rewardChoice, timestamp: new Date().toISOString() })
         }).catch(function() {});
       } catch (e) {}
     }
@@ -1921,27 +1922,16 @@
       even: [2,2,4,4,6,6],
       odd: [1,3,3,3,5,5],
       middle: [3,3,3,4,4,4],
-      dice_6_1: [6,6,2,2,1,1],
       dice_6_0: [6,6,6,0,0,0],
-      dice_5_3: [5,5,5,3,3,3],
-      dice_5_2: [5,5,5,2,2,2],
       dice_5_1: [5,5,5,1,1,1],
+      dice_5_2: [5,5,5,2,2,2],
       dice_4_3: [4,4,4,3,3,3],
       dice_4_2: [4,4,4,2,2,2],
-      dice_6_4_2: [6,6,2,2,4,4],
-      dice_5_4_3: [5,5,3,3,4,4],
-      dice_6_5_1: [6,6,1,1,5,5],
-      dice_6_4_1: [6,6,1,1,4,4],
-      dice_5_4_2: [5,5,2,2,4,4],
-      dice_6_4_0: [6,6,0,0,4,4],
-      dice_5_4_1: [5,5,4,4,1,1],
-      dice_6_3_1: [6,6,3,3,1,1],
-      dice_5_3_2: [5,5,3,3,2,2],
-      dice_5_4_0: [5,5,0,0,4,4],
-      dice_6_3_0: [6,6,3,3,0,0],
-      dice_5_3_1: [5,5,3,3,1,1],
-      dice_4_3_2: [4,4,3,3,2,2],
-      dice_6_2_1: [6,6,2,2,1,1],
+      dice_6_4_2: [6,4,2,2,4,6],
+      dice_5_4_3: [5,4,3,3,4,5],
+      dice_6_5_1: [6,5,1,1,5,6],
+      dice_6_3_0: [6,0,3,3,0,6],
+      dice_5_4_0: [5,0,4,4,0,5],
       abyss_cursed: [0,0,0,0,0,0],
     };
     function getDiceFaces(type) { return DICE_FACES[type] || null; }
@@ -2013,15 +2003,17 @@
     }
 
     function detectCombination(dice, options = {}) {
-      const { ownedRewards = [] } = options;
-      const counts = getCounts(dice);
-      const diceCount = dice.length;
+      const { ownedRewards = [], excludeIndex = null } = options;
+      // 저주 주사위 제외
+      const filteredDice = excludeIndex != null ? dice.filter((_, i) => i !== excludeIndex) : dice;
+      const counts = getCounts(filteredDice);
+      const diceCount = filteredDice.length;
       if (isYahtzee(counts, diceCount)) return "yahtzee";
-      if (isLargeStraight(dice)) return "largeStraight";
+      if (isLargeStraight(filteredDice)) return "largeStraight";
       if (Array.from(counts.values()).some(c => c >= 4)) return "fourOfAKind";
       const sorted = Array.from(counts.values()).sort((a, b) => b - a);
       if (diceCount >= 5 && sorted.length === 2 && sorted[0] === 3 && sorted[1] === 2) return "fullHouse";
-      if (isSmallStraight(dice, ownedRewards)) return "smallStraight";
+      if (isSmallStraight(filteredDice, ownedRewards)) return "smallStraight";
       const pairs = Array.from(counts.values()).filter(c => c >= 2);
       if (pairs.length >= 2) return "twoPair";
       if (Array.from(counts.values()).some(c => c >= 3 || (ownedRewards.includes('triple_2') && c >= 2))) return "threeOfAKind";
@@ -2059,9 +2051,9 @@
     }
 
     function calculateScore(dice, options = {}) {
-      const { ownedRewards = [], monsterHp = 0, maxMonsterHp = 0, diceEnhancements = [], combinationBoosts = {}, usedFlipThisRound = false } = options;
+      const { ownedRewards = [], monsterHp = 0, maxMonsterHp = 0, diceEnhancements = [], combinationBoosts = {}, usedFlipThisRound = false, cursedIndex = null } = options;
       let sum = dice.reduce((a, b) => a + b, 0);
-      const combination = detectCombination(dice, options);
+      const combination = detectCombination(dice, { ...options, excludeIndex: cursedIndex });
       let enhancementBonus = 0;
       if (diceEnhancements.length > 0) {
         const counts = getCounts(dice);
@@ -2118,7 +2110,7 @@
           rewardMultipliers.push({ rewardId: "odd_power", multiplier: 2 });
         }
         // 짝수의 힘: 모든 주사위가 짝수인지 체크 (0은 제외)
-        if (ownedRewards.includes("even_power") && dice.every(d => d % 2 === 0 && d > 0)) {
+        if (ownedRewards.includes("even_power") && dice.every(d => d % 2 === 0)) {
           rewardMultipliers.push({ rewardId: "even_power", multiplier: 2 });
         }
         // 13의 배율: 주사위 합계가 13일시 x5 (강화 제외)
@@ -2186,12 +2178,15 @@
     }
 
     function getRandomRewards(count, excludeIds = [], currentStage = 1) {
+      // 1라운드: 보상 없음 (강화만)
+      if (currentStage === 1) return [];
       let available = REWARDS.filter(r => !excludeIds.includes(r.id));
-      // 1,3,5,7 라운드: 주사위 변형(dice_*)만 / 2,4,6 라운드: 패시브 보상만
-      const isDiceVariantRound = [1, 3, 5, 7].includes(currentStage);
+      // 3,5,7 라운드: 주사위 변형(dice_숫자_*)만 / 2,4,6 라운드: 패시브 보상만
+      const isDiceVariantRound = [3, 5, 7].includes(currentStage);
       const isPassiveRound = [2, 4, 6].includes(currentStage);
-      if (isDiceVariantRound) available = available.filter(r => r.id.startsWith('dice_'));
-      else if (isPassiveRound) available = available.filter(r => !r.id.startsWith('dice_'));
+      const isDiceVariantReward = (id) => /^dice_\d/.test(id); // dice_6_1, dice_5_3_2 등
+      if (isDiceVariantRound) available = available.filter(r => isDiceVariantReward(r.id));
+      else if (isPassiveRound) available = available.filter(r => !isDiceVariantReward(r.id));
       const shuffled = [...available].sort(() => Math.random() - 0.5);
       return shuffled.slice(0, count);
     }
@@ -2234,9 +2229,8 @@
           newState.diceEnhancements = e;
           break;
         }
-        case "dice_6_1": case "dice_6_0": case "dice_5_3": case "dice_5_2": case "dice_5_1": case "dice_4_3": case "dice_4_2":
-        case "dice_6_4_2": case "dice_5_4_3": case "dice_6_5_1": case "dice_6_4_1": case "dice_5_4_2": case "dice_6_4_0": case "dice_5_4_1":
-        case "dice_6_3_1": case "dice_5_3_2": case "dice_5_4_0": case "dice_6_3_0": case "dice_5_3_1": case "dice_4_3_2": case "dice_6_2_1": {
+        case "dice_6_0": case "dice_5_1": case "dice_5_2": case "dice_4_3": case "dice_4_2":
+        case "dice_6_4_2": case "dice_5_4_3": case "dice_6_5_1": case "dice_6_3_0": case "dice_5_4_0": {
           const newType = rewardId;
           newState.diceTypes = [...newState.diceTypes];
           let changed = 0;
@@ -2342,27 +2336,16 @@
         "middle": { name: "중간 다이스", faces: [3,3,3,4,4,4] },
         "d8": { name: "차원 왜곡", faces: [1,2,3,4,5,6,7,8] },
         "d6_2_7": { name: "안정적인 엔진", faces: [2,3,4,5,6,7] },
-        "dice_6_1": { name: "6·1 다이스", faces: [6,6,2,2,1,1] },
         "dice_6_0": { name: "6·0 다이스", faces: [6,6,6,0,0,0] },
-        "dice_5_3": { name: "5·3 다이스", faces: [5,5,5,3,3,3] },
-        "dice_5_2": { name: "5·2 다이스", faces: [5,5,5,2,2,2] },
         "dice_5_1": { name: "5·1 다이스", faces: [5,5,5,1,1,1] },
+        "dice_5_2": { name: "5·2 다이스", faces: [5,5,5,2,2,2] },
         "dice_4_3": { name: "4·3 다이스", faces: [4,4,4,3,3,3] },
         "dice_4_2": { name: "4·2 다이스", faces: [4,4,4,2,2,2] },
-        "dice_6_4_2": { name: "6·4·2 다이스", faces: [6,6,2,2,4,4] },
-        "dice_5_4_3": { name: "5·4·3 다이스", faces: [5,5,3,3,4,4] },
-        "dice_6_5_1": { name: "6·5·1 다이스", faces: [6,6,1,1,5,5] },
-        "dice_6_4_1": { name: "6·4·1 다이스", faces: [6,6,1,1,4,4] },
-        "dice_5_4_2": { name: "5·4·2 다이스", faces: [5,5,2,2,4,4] },
-        "dice_6_4_0": { name: "6·4·0 다이스", faces: [6,6,0,0,4,4] },
-        "dice_5_4_1": { name: "5·4·1 다이스", faces: [5,5,4,4,1,1] },
-        "dice_6_3_1": { name: "6·3·1 다이스", faces: [6,6,3,3,1,1] },
-        "dice_5_3_2": { name: "5·3·2 다이스", faces: [5,5,3,3,2,2] },
-        "dice_5_4_0": { name: "5·4·0 다이스", faces: [5,5,0,0,4,4] },
-        "dice_6_3_0": { name: "6·3·0 다이스", faces: [6,6,3,3,0,0] },
-        "dice_5_3_1": { name: "5·3·1 다이스", faces: [5,5,3,3,1,1] },
-        "dice_4_3_2": { name: "4·3·2 다이스", faces: [4,4,3,3,2,2] },
-        "dice_6_2_1": { name: "6·2·1 다이스", faces: [6,6,2,2,1,1] },
+        "dice_6_4_2": { name: "6·4·2 다이스 (뒤집기 동일)", faces: [6,4,2,2,4,6] },
+        "dice_5_4_3": { name: "5·4·3 다이스 (뒤집기 동일)", faces: [5,4,3,3,4,5] },
+        "dice_6_5_1": { name: "6·5·1 다이스 (뒤집기 동일)", faces: [6,5,1,1,5,6] },
+        "dice_6_3_0": { name: "6·3·0 다이스 (6↔0)", faces: [6,0,3,3,0,6] },
+        "dice_5_4_0": { name: "5·4·0 다이스 (5↔0)", faces: [5,0,4,4,0,5] },
         "abyss_cursed": { name: "심연의 저주", faces: [0,0,0,0,0,0] },
       };
       return typeInfo[diceType] || null;
@@ -2622,6 +2605,10 @@
 
     // Main Game Component
     function Game() {
+      const [playerId, setPlayerId] = useState("");
+      const [playerIdInput, setPlayerIdInput] = useState("");
+      const [gameStarted, setGameStarted] = useState(false);
+      
       const [playerState, setPlayerState] = useState(getInitialPlayerState);
       const [currentDice, setCurrentDice] = useState(() => {
         const initialDiceCount = getInitialPlayerState().diceTypes.length;
@@ -2664,6 +2651,13 @@
       const [rerollWarningMessage, setRerollWarningMessage] = useState("리롤할 주사위를 선택하세요");
       const [cursedDiceIndex, setCursedDiceIndex] = useState(null);
       const [lastEnhancementChoice, setLastEnhancementChoice] = useState("");
+
+      const handleStartGame = () => {
+        if (playerIdInput.trim()) {
+          setPlayerId(playerIdInput.trim());
+          setGameStarted(true);
+        }
+      };
 
       const totalDiceCount = playerState.diceTypes.length;
       const isBossStage = !!(currentStage?.isBoss && currentBossType);
@@ -2781,7 +2775,7 @@
 
       const handleMonsterDefeated = useCallback(() => {
         if (playerState.currentStage >= STAGES.length) {
-          sendBattleLog(playerState.currentStage, currentBossType, "clear", "", "");
+          sendBattleLog(playerId, playerState.currentStage, currentBossType, "clear", "", "");
           setShowVictory(true);
           triggerVictoryConfetti();
         } else {
@@ -2799,7 +2793,7 @@
           const nonStunnedCount = Math.max(0, playerState.diceTypes.length - stunnedIndices.size);
           setEnhancementOffer({ 
             nonStunnedCount, 
-            enhancementGroups: [...ENHANCEMENT_GROUPS].sort(() => Math.random() - 0.5).slice(0, 2) 
+            enhancementGroups: generateEnhancementSets()
           });
           setShowEnhancementChoice(true);
         }
@@ -2813,7 +2807,8 @@
           maxMonsterHp: currentStage.hp,
           diceEnhancements: playerState.diceEnhancements || [],
           combinationBoosts: playerState.combinationBoosts || {},
-          usedFlipThisRound: playerState.usedFlipThisRound
+          usedFlipThisRound: playerState.usedFlipThisRound,
+          cursedIndex: currentBossType === 'cursed_dice' ? cursedDiceIndex : null
         });
         setAttackResult(score);
         setShowAttackResult(true);
@@ -2832,8 +2827,6 @@
         } else if (currentBossType === 'damage_cap_50') {
           const cap = Math.floor(currentStage.hp * 0.5);
           actualDamage = Math.min(score.total, cap);
-        } else if (currentBossType === 'cursed_dice' && cursedDiceIndex != null && getComboIndices(dice, score.combination, { ownedRewards: playerState.ownedRewards }).includes(cursedDiceIndex)) {
-          actualDamage = 0;
         }
         setLastUsedCombination(score.combination);
         const newHp = Math.max(0, monsterHp - actualDamage);
@@ -2971,11 +2964,15 @@
       };
 
       const goToNextStage = (stateAfterReward, rewardChoice) => {
-        sendBattleLog(stateAfterReward.currentStage, currentBossType, "win", lastEnhancementChoice || "", rewardChoice || "");
+        sendBattleLog(playerId, stateAfterReward.currentStage, currentBossType, "win", lastEnhancementChoice || "", rewardChoice || "");
         setLastEnhancementChoice("");
         const newState = { ...stateAfterReward };
         newState.currentStage += 1;
         if (newState.shieldIndex != null) newState.shieldUsed = false;
+        // 심연의 저주 보스로 변환된 주사위를 normal로 복구
+        if (currentBossType === 'abyss_curse') {
+          newState.diceTypes = newState.diceTypes.map(t => t === 'abyss_cursed' ? 'normal' : t);
+        }
         const newDiceCount = newState.diceTypes.length;
         const cur = newState.diceEnhancements || [];
         if (cur.length !== newDiceCount) {
@@ -3041,6 +3038,56 @@
       const isMonsterDefeated = monsterHp <= 0;
       const allDiceStunned = normalDiceCount <= 0;
 
+      if (!gameStarted) {
+        return (
+          <div className="container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+            <div className="main-game" style={{ maxWidth: '500px', textAlign: 'center', padding: '3rem' }}>
+              <div className="bg-decoration bg-1" />
+              <div className="bg-decoration bg-2" />
+              <h1 style={{ fontSize: '2.5rem', fontWeight: 'bold', marginBottom: '1rem', color: '#1e293b' }}>🎲 Dice Battle</h1>
+              <p style={{ fontSize: '1rem', color: '#64748b', marginBottom: '2rem' }}>주사위 전투 게임에 오신 것을 환영합니다!</p>
+              <div style={{ marginBottom: '1.5rem' }}>
+                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 'bold', color: '#374151', marginBottom: '0.5rem', textAlign: 'left' }}>
+                  플레이어 ID를 입력하세요
+                </label>
+                <input
+                  type="text"
+                  value={playerIdInput}
+                  onChange={(e) => setPlayerIdInput(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && handleStartGame()}
+                  placeholder="예: Player123"
+                  style={{
+                    width: '100%',
+                    padding: '0.875rem 1rem',
+                    fontSize: '1rem',
+                    border: '2px solid #e2e8f0',
+                    borderRadius: '0.75rem',
+                    outline: 'none',
+                    transition: 'border-color 0.2s',
+                  }}
+                  onFocus={(e) => e.target.style.borderColor = '#6366f1'}
+                  onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
+                />
+              </div>
+              <button
+                className="btn btn-attack"
+                onClick={handleStartGame}
+                disabled={!playerIdInput.trim()}
+                style={{
+                  width: '100%',
+                  padding: '1rem',
+                  fontSize: '1.125rem',
+                  opacity: playerIdInput.trim() ? 1 : 0.5,
+                  cursor: playerIdInput.trim() ? 'pointer' : 'not-allowed'
+                }}
+              >
+                게임 시작
+              </button>
+            </div>
+          </div>
+        );
+      }
+
       return (
         <div className="container">
           <main className="main-game">
@@ -3048,6 +3095,16 @@
             <div className="bg-decoration bg-2" />
             
             <div className="stage-indicator">
+              <span style={{ 
+                background: 'linear-gradient(135deg, #10b981, #059669)', 
+                color: 'white', 
+                padding: '0.25rem 0.75rem', 
+                borderRadius: '9999px', 
+                fontSize: '0.75rem', 
+                fontWeight: 'bold' 
+              }}>
+                👤 {playerId}
+              </span>
               <span className="stage-badge">Stage {playerState.currentStage} / 8{currentStage?.isBoss ? ' (보스)' : ''}</span>
               {playerState.diceFlipStacks > 0 && (
                 <div style={{
@@ -3078,6 +3135,25 @@
                 }}
               >
                 몬스터 미리보기
+              </button>
+              <button 
+                className="btn" 
+                onClick={() => {
+                  if (window.confirm('정말 포기하시겠습니까? 처음부터 다시 시작합니다.')) {
+                    sendBattleLog(playerId, playerState.currentStage, currentBossType, "give_up", "", "");
+                    handleRestart();
+                  }
+                }}
+                style={{ 
+                  marginLeft: '0.5rem', 
+                  padding: '0.5rem 1rem', 
+                  fontSize: '0.875rem',
+                  background: 'rgba(239, 68, 68, 0.15)',
+                  border: '1px solid rgba(239, 68, 68, 0.4)',
+                  color: '#ef4444'
+                }}
+              >
+                포기
               </button>
             </div>
 
@@ -3163,7 +3239,7 @@
                   <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1rem' }}>⬆ 강화 선택</h2>
                   <p style={{ fontSize: '0.875rem', color: 'rgba(255,255,255,0.9)', marginBottom: '1.25rem' }}>하나를 선택하세요</p>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
-                    {(enhancementOffer.enhancementGroups || ENHANCEMENT_GROUPS).map(grp => (
+                    {enhancementOffer.enhancementGroups.map(grp => (
                       <button
                         key={grp.id}
                         className="btn"
@@ -3213,75 +3289,87 @@
             )}
 
             {showRewardSelection && (() => {
-              const isDiceVariantRound = [1, 3, 5, 7].includes(playerState.currentStage);
+              const isDiceVariantRound = [3, 5, 7].includes(playerState.currentStage);
+              const isNoRewardRound = playerState.currentStage === 1;
               return (
               <div className="modal-overlay">
                 <div className="modal" style={{ maxWidth: '700px', maxHeight: '90vh', overflow: 'auto' }}>
-                  <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '0.25rem' }}>
-                    {isDiceVariantRound ? '🎲 주사위 변형' : '✨ 패시브 보상'}
-                  </h2>
-                  <p style={{ fontSize: '0.875rem', color: 'rgba(255,255,255,0.85)', marginBottom: '1rem' }}>
-                    {isDiceVariantRound ? '1·3·5·7스테이지 – 일반 주사위 1개를 특수 주사위로 교체' : '2·4·6스테이지 – 능력 보상'}
-                  </p>
-                  <div style={{ 
-                    display: 'grid', 
-                    gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', 
-                    gap: '1rem',
-                    padding: '1rem',
-                    borderRadius: '0.5rem',
-                    background: isDiceVariantRound ? 'rgba(99, 102, 241, 0.12)' : 'rgba(34, 197, 94, 0.12)',
-                    border: `1px solid ${isDiceVariantRound ? 'rgba(99, 102, 241, 0.35)' : 'rgba(34, 197, 94, 0.35)'}`
-                  }}>
-                    {rewardOptions.map(reward => {
-                      const isOwned = playerState.ownedRewards.includes(reward.id);
-                      const canSelect = !isOwned;
-                      return (
-                        <div 
-                          key={reward.id} 
-                          className="reward-option" 
-                          style={{
-                            opacity: canSelect ? 1 : 0.6,
-                            cursor: canSelect ? 'pointer' : 'default',
-                            background: canSelect ? 'rgba(255, 255, 255, 0.1)' : 'rgba(100, 100, 100, 0.2)'
-                          }}
-                        >
-                          <div style={{ fontWeight: 'bold', fontSize: '1rem', marginBottom: '0.5rem' }}>{reward.nameKo}</div>
-                          <div style={{ fontSize: '0.875rem', color: 'rgba(255,255,255,0.9)', marginBottom: '0.75rem' }}>
-                            {reward.descriptionKo}
-                          </div>
-                          {isOwned ? (
-                            <div style={{ textAlign: 'center', padding: '0.5rem', background: 'rgba(100, 100, 100, 0.3)', borderRadius: '0.5rem', fontSize: '0.875rem', fontWeight: 'bold' }}>
-                              이미 보유
-                            </div>
-                          ) : (
-                            <button
-                              className="btn"
-                              onClick={() => handleSelectReward(reward)}
-                              style={{ width: '100%', padding: '0.75rem', fontSize: '0.875rem', background: 'linear-gradient(to right, #6366f1, #8b5cf6)', cursor: 'pointer' }}
+                  {isNoRewardRound ? (
+                    <>
+                      <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '0.25rem' }}>⚔️ 스테이지 클리어!</h2>
+                      <p style={{ fontSize: '0.875rem', color: 'rgba(255,255,255,0.85)', marginBottom: '1rem' }}>
+                        1스테이지 – 강화 완료! 다음 스테이지로 진행합니다.
+                      </p>
+                      <button
+                        className="btn"
+                        onClick={() => goToNextStage({ ...playerState, diceFlipStacks: Math.min((playerState.diceFlipStacks || 1) + 1, 3) }, "none")}
+                        style={{ width: '100%', padding: '0.875rem', fontSize: '0.95rem', background: 'linear-gradient(to right, #8b5cf6, #7c3aed)' }}
+                      >
+                        다음 스테이지로 (🔄 뒤집기 +1 획득)
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '0.25rem' }}>
+                        {isDiceVariantRound ? '🎲 주사위 변형' : '✨ 패시브 보상'}
+                      </h2>
+                      <p style={{ fontSize: '0.875rem', color: 'rgba(255,255,255,0.85)', marginBottom: '1rem' }}>
+                        {isDiceVariantRound ? '3·5·7스테이지 – 일반 주사위 1개를 특수 주사위로 교체' : '2·4·6스테이지 – 능력 보상'}
+                      </p>
+                      <div style={{ 
+                        display: 'grid', 
+                        gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', 
+                        gap: '1rem',
+                        padding: '1rem',
+                        borderRadius: '0.5rem',
+                        background: isDiceVariantRound ? 'rgba(99, 102, 241, 0.12)' : 'rgba(34, 197, 94, 0.12)',
+                        border: `1px solid ${isDiceVariantRound ? 'rgba(99, 102, 241, 0.35)' : 'rgba(34, 197, 94, 0.35)'}`
+                      }}>
+                        {rewardOptions.map(reward => {
+                          const isOwned = playerState.ownedRewards.includes(reward.id);
+                          const canSelect = !isOwned;
+                          return (
+                            <div 
+                              key={reward.id} 
+                              className="reward-option" 
+                              style={{
+                                opacity: canSelect ? 1 : 0.6,
+                                cursor: canSelect ? 'pointer' : 'default',
+                                background: canSelect ? 'rgba(255, 255, 255, 0.1)' : 'rgba(100, 100, 100, 0.2)'
+                              }}
                             >
-                              선택
-                            </button>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                  <div style={{ display: 'flex', gap: '1rem', marginTop: '1.25rem', paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.2)' }}>
-                    <button
-                      className="btn"
-                      onClick={() => goToNextStage(playerState, "pass")}
-                      style={{ flex: 1, padding: '0.875rem', fontSize: '0.95rem', background: 'rgba(100, 100, 100, 0.5)', color: 'rgba(255,255,255,0.9)' }}
-                    >
-                      Pass
-                    </button>
-                    <button
-                      className="btn"
-                      onClick={() => goToNextStage({ ...playerState, diceFlipStacks: Math.min((playerState.diceFlipStacks || 1) + 1, 3) }, "flip_plus1")}
-                      style={{ flex: 1, padding: '0.875rem', fontSize: '0.95rem', background: 'linear-gradient(to right, #8b5cf6, #7c3aed)' }}
-                    >
-                      주사위 뒤집기+1 획득
-                    </button>
-                  </div>
+                              <div style={{ fontWeight: 'bold', fontSize: '1rem', marginBottom: '0.5rem' }}>{reward.nameKo}</div>
+                              <div style={{ fontSize: '0.875rem', color: 'rgba(255,255,255,0.9)', marginBottom: '0.75rem' }}>
+                                {reward.descriptionKo}
+                              </div>
+                              {isOwned ? (
+                                <div style={{ textAlign: 'center', padding: '0.5rem', background: 'rgba(100, 100, 100, 0.3)', borderRadius: '0.5rem', fontSize: '0.875rem', fontWeight: 'bold' }}>
+                                  이미 보유
+                                </div>
+                              ) : (
+                                <button
+                                  className="btn"
+                                  onClick={() => handleSelectReward(reward)}
+                                  style={{ width: '100%', padding: '0.75rem', fontSize: '0.875rem', background: 'linear-gradient(to right, #6366f1, #8b5cf6)', cursor: 'pointer' }}
+                                >
+                                  선택
+                                </button>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                      <div style={{ display: 'flex', gap: '1rem', marginTop: '1.25rem', paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.2)' }}>
+                        <button
+                          className="btn"
+                          onClick={() => goToNextStage({ ...playerState, diceFlipStacks: Math.min((playerState.diceFlipStacks || 1) + 1, 3) }, "pass")}
+                          style={{ flex: 1, padding: '0.875rem', fontSize: '0.95rem', background: 'linear-gradient(to right, #8b5cf6, #7c3aed)' }}
+                        >
+                          Pass (🔄 뒤집기 +1 획득)
+                        </button>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             );})()}
