@@ -1901,7 +1901,7 @@
       ];
     }
 
-    const BATTLE_LOG_URL = 'https://script.google.com/macros/s/AKfycbxbvi_bo_IH8-XDGc_pGojpUFtNZfSvpYZFvwwWFy5_bhmQKVFAV81fGQvghi2P6ujr/exec';
+    const BATTLE_LOG_URL = 'https://script.google.com/macros/s/AKfycbwDFhtsNl7GXLBIehl2gmGyutvlGYtqtiryoOKCqMQ-9C1AK7dojz_XMzGJz6Vcf97R/exec';
     function sendBattleLog(playerId, stage, bossType, result, enhancementChoice, rewardChoice) {
       if (!BATTLE_LOG_URL) return;
       try {
@@ -1912,6 +1912,31 @@
           body: JSON.stringify({ playerId, stage, bossType, result, enhancementChoice, rewardChoice, timestamp: new Date().toISOString() })
         }).catch(function() {});
       } catch (e) {}
+    }
+
+    // 메시지 관련 함수
+    function sendVictoryMessage(playerId, message) {
+      if (!BATTLE_LOG_URL || !message.trim()) return;
+      try {
+        fetch(BATTLE_LOG_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'message', playerId, message: message.trim(), timestamp: new Date().toISOString() })
+        }).catch(function() {});
+      } catch (e) {}
+    }
+
+    async function fetchVictoryMessages() {
+      if (!BATTLE_LOG_URL) return [];
+      try {
+        const res = await fetch(BATTLE_LOG_URL + '?action=getMessages');
+        if (res.ok) {
+          const data = await res.json();
+          return data.messages || [];
+        }
+      } catch (e) {}
+      return [];
     }
 
     // 6면 주사위 faces[6]: 인덱스 쌍 (0,5), (1,4), (2,3)이 마주봄. 뒤집기 시 5-i 인덱스 값 사용.
@@ -2651,6 +2676,29 @@
       const [rerollWarningMessage, setRerollWarningMessage] = useState("리롤할 주사위를 선택하세요");
       const [cursedDiceIndex, setCursedDiceIndex] = useState(null);
       const [lastEnhancementChoice, setLastEnhancementChoice] = useState("");
+      const [victoryMessages, setVictoryMessages] = useState([]);
+      const [victoryMessageInput, setVictoryMessageInput] = useState("");
+      const [messageSent, setMessageSent] = useState(false);
+
+      // 메시지 목록 가져오기 (게임 시작 시, 주기적으로)
+      useEffect(() => {
+        if (gameStarted) {
+          fetchVictoryMessages().then(setVictoryMessages);
+          const interval = setInterval(() => {
+            fetchVictoryMessages().then(setVictoryMessages);
+          }, 30000); // 30초마다 새로고침
+          return () => clearInterval(interval);
+        }
+      }, [gameStarted]);
+
+      const handleSendVictoryMessage = () => {
+        if (victoryMessageInput.trim() && !messageSent) {
+          sendVictoryMessage(playerId, victoryMessageInput);
+          setMessageSent(true);
+          // 바로 로컬에도 추가
+          setVictoryMessages(prev => [{ playerId, message: victoryMessageInput.trim(), timestamp: new Date().toISOString() }, ...prev].slice(0, 20));
+        }
+      };
 
       const handleStartGame = () => {
         if (playerIdInput.trim()) {
@@ -2766,7 +2814,9 @@
 
       const proceedToRewardSelection = useCallback(() => {
         const excludeIds = [...playerState.ownedRewards];
-        const finalRewards = getRandomRewards(3, excludeIds, playerState.currentStage);
+        const isDiceVariantRound = [3, 5, 7].includes(playerState.currentStage);
+        const rewardCount = isDiceVariantRound ? 2 : 3;
+        const finalRewards = getRandomRewards(rewardCount, excludeIds, playerState.currentStage);
         setRewardOptions(finalRewards);
         setShowEnhancementChoice(false);
         setEnhancementOffer(null);
@@ -3031,6 +3081,8 @@
         setCurrentBossType(null);
         setLastUsedCombination(null);
         setCursedDiceIndex(null);
+        setVictoryMessageInput("");
+        setMessageSent(false);
       };
 
       const canReroll = roundStarted && rerollsLeft > 0 && !showAttackResult && !showCounterattack;
@@ -3224,10 +3276,52 @@
             )}
 
             {showVictory && (
-              <div className="modal-overlay" onClick={handleRestart}>
-                <div className="modal">
+              <div className="modal-overlay">
+                <div className="modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '450px' }}>
                   <h2 style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '1rem' }}>🎉 승리! 🎉</h2>
-                  <p style={{ marginBottom: '1.5rem' }}>모든 스테이지를 클리어했습니다!</p>
+                  <p style={{ marginBottom: '1rem' }}>모든 스테이지를 클리어했습니다!</p>
+                  {!messageSent ? (
+                    <div style={{ marginBottom: '1.5rem' }}>
+                      <label style={{ display: 'block', fontSize: '0.875rem', color: 'rgba(255,255,255,0.8)', marginBottom: '0.5rem', textAlign: 'left' }}>
+                        축하 메시지를 남겨보세요! (다른 플레이어들이 볼 수 있습니다)
+                      </label>
+                      <input
+                        type="text"
+                        value={victoryMessageInput}
+                        onChange={(e) => setVictoryMessageInput(e.target.value.slice(0, 50))}
+                        onKeyPress={(e) => e.key === 'Enter' && handleSendVictoryMessage()}
+                        placeholder="예: 드디어 클리어!"
+                        maxLength={50}
+                        style={{
+                          width: '100%',
+                          padding: '0.75rem',
+                          fontSize: '1rem',
+                          border: '2px solid rgba(255,255,255,0.3)',
+                          borderRadius: '0.5rem',
+                          background: 'rgba(255,255,255,0.1)',
+                          color: 'white',
+                          marginBottom: '0.75rem',
+                          outline: 'none'
+                        }}
+                      />
+                      <button
+                        className="btn"
+                        onClick={handleSendVictoryMessage}
+                        disabled={!victoryMessageInput.trim()}
+                        style={{
+                          width: '100%',
+                          padding: '0.75rem',
+                          background: victoryMessageInput.trim() ? 'linear-gradient(to right, #10b981, #059669)' : 'rgba(100,100,100,0.5)',
+                          marginBottom: '0.75rem',
+                          cursor: victoryMessageInput.trim() ? 'pointer' : 'not-allowed'
+                        }}
+                      >
+                        메시지 남기기
+                      </button>
+                    </div>
+                  ) : (
+                    <p style={{ marginBottom: '1.5rem', color: '#10b981', fontWeight: 'bold' }}>✓ 메시지가 전송되었습니다!</p>
+                  )}
                   <button className="btn btn-attack" onClick={handleRestart}>다시 시작</button>
                 </div>
               </div>
@@ -3601,6 +3695,32 @@
                 데미지 = 합계 × 배수 × 보상
               </div>
             </div>
+
+            {victoryMessages.length > 0 && (
+              <div className="guide-card" style={{ marginTop: '1rem' }}>
+                <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  🏆 클리어 메시지
+                </h2>
+                <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                  {victoryMessages.slice(0, 10).map((msg, idx) => (
+                    <div key={idx} style={{
+                      padding: '0.5rem',
+                      marginBottom: '0.5rem',
+                      background: 'rgba(255,255,255,0.05)',
+                      borderRadius: '0.5rem',
+                      fontSize: '0.8rem'
+                    }}>
+                      <div style={{ fontWeight: 'bold', color: '#10b981', marginBottom: '0.25rem' }}>
+                        {msg.playerId}
+                      </div>
+                      <div style={{ color: 'rgba(255,255,255,0.9)' }}>
+                        {msg.message}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </aside>
         </div>
       );
