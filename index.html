@@ -2784,7 +2784,7 @@
               <span>HP</span>
               <span>
                 {previewDamage > 0 ? (
-                  <><span style={{ color: '#ef4444', fontWeight: 'bold' }}>{Math.max(0, currentHp - previewDamage)}</span> ← {currentHp} / {maxHp}</>
+                  <>{currentHp} → <span style={{ color: '#ef4444', fontWeight: 'bold' }}>{Math.max(0, currentHp - previewDamage)}</span> / {maxHp}</>
                 ) : (
                   <>{Math.max(0, currentHp)} / {maxHp}</>
                 )}
@@ -3156,16 +3156,17 @@
       }, [monsterHp, currentStage, currentBossType, lastUsedCombination, executeCounterattack, playerState.ownedRewards, effectiveMaxRerolls, handleMonsterDefeated, stunnedIndices, cursedDiceIndex]);
 
       const rollCustomDice = useCallback(() => {
-        const hasStunnedReroll = playerState.ownedRewards.includes('stunned_hold');
+        const hasStunnedHold = playerState.ownedRewards.includes('stunned_hold');
         const newDice = [];
         const newFaceIndices = [];
         playerState.diceTypes.forEach((type, idx) => {
           const isStunned = stunnedIndices.has(idx);
           const isSelected = selectedIndices.has(idx);
           // 리롤 시스템: 선택된 주사위가 리롤됨
-          // 기절 주사위: stunned_hold 패시브가 있어야 리롤 가능
-          const canReroll = isSelected && (!isStunned || hasStunnedReroll);
-          if (canReroll) {
+          // 기절 주사위: 기본적으로 항상 리롤됨 (stunned_hold 패시브가 있고 선택하면 홀드 가능)
+          const stunnedAndHeld = isStunned && hasStunnedHold && isSelected;
+          const shouldReroll = isStunned ? !stunnedAndHeld : isSelected;
+          if (shouldReroll) {
             const { value, faceIndex } = rollDieWithIndex(type, isStunned);
             newDice.push(value);
             newFaceIndices.push(faceIndex);
@@ -3219,28 +3220,32 @@
 
       const handleReroll = () => {
         if (rerollsLeft <= 0) return;
-        const hasStunnedReroll = playerState.ownedRewards.includes('stunned_hold');
+        const hasStunnedHold = playerState.ownedRewards.includes('stunned_hold');
 
-        // 리롤 시스템: 선택된 주사위가 리롤됨
+        // 리롤 시스템: 선택된 주사위 + 기절한 주사위(홀드되지 않은)가 리롤됨
         const diceToRoll = new Set();
         playerState.diceTypes.forEach((type, idx) => {
           const isStunned = stunnedIndices.has(idx);
           const isSelected = selectedIndices.has(idx);
-          const canReroll = isSelected && (!isStunned || hasStunnedReroll);
-          if (canReroll) {
+          // 기절 주사위: 기본적으로 항상 리롤됨 (stunned_hold 패시브가 있고 선택하면 홀드 가능)
+          const stunnedAndHeld = isStunned && hasStunnedHold && isSelected;
+          const shouldReroll = isStunned ? !stunnedAndHeld : isSelected;
+          if (shouldReroll) {
             diceToRoll.add(idx);
           }
         });
 
-        // 리롤 2개 제한 보스: 3개 이상 동시 리롤 불가
-        if (currentBossType === 'reroll_max2' && diceToRoll.size > 2) {
+        // 리롤 2개 제한 보스: 선택한 주사위만 카운트 (기절 주사위 제외)
+        const selectedNonStunned = Array.from(selectedIndices).filter(idx => !stunnedIndices.has(idx)).length;
+        if (currentBossType === 'reroll_max2' && selectedNonStunned > 2) {
           setRerollWarningMessage("3개 이상 동시 리롤 불가 (2개 이하만 선택하세요)");
           setShowRerollWarning(true);
           setTimeout(() => setShowRerollWarning(false), 2000);
           return;
         }
 
-        if (diceToRoll.size === 0) {
+        // 기절 주사위 외에 선택된 주사위가 없으면 경고
+        if (selectedNonStunned === 0 && !Array.from(diceToRoll).some(idx => stunnedIndices.has(idx))) {
           setRerollWarningMessage("리롤할 주사위를 선택하세요");
           setShowRerollWarning(true);
           setTimeout(() => setShowRerollWarning(false), 2000);
@@ -3885,10 +3890,6 @@
                   handleRestart();
                 }}>다시 시작</button>
               </div>
-            )}
-
-            {roundStarted && !showAttackResult && !showCounterattack && !allDiceStunned && (
-              <div className="rerolls-left">남은 리롤: {rerollsLeft}</div>
             )}
 
             <div className="controls">
