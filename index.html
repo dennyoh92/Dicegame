@@ -1,4 +1,4 @@
-<!DOCTYPE html>g
+<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
@@ -1894,20 +1894,20 @@
 
     const BOSS_TYPES_STAGE_2 = [
       { id: "damage_cap_50", nameKo: "피해량 상한 보스", descriptionKo: "1회 최대 피해가 체력 50%를 넘지 못합니다." },
-      { id: "over21_zero", nameKo: "과잉 눈금 보스", descriptionKo: "주사위 눈금이 21 초과인 경우 피해가 0이 됩니다." },
+      { id: "over21_zero", nameKo: "과잉 눈금 보스", descriptionKo: "주사위 눈금이 22 이상인 경우 피해가 0이 됩니다." },
       { id: "reroll_max2", nameKo: "리롤 제한 보스", descriptionKo: "3개 주사위 이상 동시 리롤이 불가합니다." },
       { id: "six_exclude", nameKo: "6 제외 보스", descriptionKo: "눈금이 6인 주사위는 족보 판정에서 제외됩니다." },
-      { id: "four_extra_stun", nameKo: "4의 저주 보스", descriptionKo: "눈금이 4인 주사위가 있으면 무작위 주사위 1개 추가 기절." },
+      { id: "four_extra_stun", nameKo: "4의 저주 보스", descriptionKo: "눈금이 4인 주사위가 있으면 무작위 주사위 1개가 기절합니다." },
     ];
     const BOSS_TYPES_STAGE_4 = [
       { id: "cursed_dice", nameKo: "저주 주사위 보스", descriptionKo: "주사위 1개에 저주. 저주 받은 주사위는 족보 판정에서 제외됩니다." },
       { id: "flip_all", nameKo: "전면 뒤집기 보스", descriptionKo: "뒤집기 사용 시 모든 주사위가 뒤집힙니다." },
       { id: "reroll_minus1", nameKo: "리롤 감소 보스", descriptionKo: "리롤 횟수가 1회 차감됩니다." },
-      { id: "combo_seal", nameKo: "족보 봉인 보스", descriptionKo: "매 턴 무작위 족보 1개 사용 불가 (찬스로 처리)." },
+      { id: "combo_seal", nameKo: "족보 봉인 보스", descriptionKo: "매 턴 무작위 족보 1개가 사용 불가합니다." },
     ];
     const BOSS_TYPES_STAGE_6 = [
       { id: "combo_out_stun", nameKo: "미포함 기절 보스", descriptionKo: "족보에 포함되지 않은 주사위 중 하나는 기절합니다." },
-      { id: "pattern_limit", nameKo: "패턴 고착 방지 보스", descriptionKo: "전 턴과 동일한 족보 사용 불가(같으면 찬스로 처리)." },
+      { id: "pattern_limit", nameKo: "패턴 고착 방지 보스", descriptionKo: "전 턴에 사용한 족보는 찬스로 처리됩니다." },
       { id: "double_stun", nameKo: "이중 기절 보스", descriptionKo: "매 턴 주사위가 2개씩 기절합니다." },
     ];
     const BOSS_TYPES_STAGE_8 = [
@@ -1928,42 +1928,42 @@
     ];
 
     const REWARDS = [
-      { id: "odd_power", name: "Odd Power", nameKo: "홀수의 힘", descriptionKo: "모든 주사위 홀수일시 x2", iconName: "Target" },
-      { id: "even_power", name: "Even Power", nameKo: "짝수의 힘", descriptionKo: "모든 주사위 짝수일시 x2 (0도 짝수)", iconName: "Target" },
-      { id: "giants_strike", name: "Giant's Strike", nameKo: "거인의 일격", descriptionKo: "주사위 합계 24 이상일시 x2", iconName: "Dumbbell" },
-      { id: "final_strike", name: "Final Strike", nameKo: "마지막 일격", descriptionKo: "몬스터 체력 50% 이하일시 x2", iconName: "Target" },
-      { id: "skilled_hands", name: "Skilled Hands", nameKo: "숙련된 손길", descriptionKo: "리롤 +1", iconName: "Hand" },
-      { id: "cursed_power", name: "Cursed Power", nameKo: "저주받은 힘", descriptionKo: "주사위 1 포함시 족보 완성 불가, 1 미포함시 x2", iconName: "Skull" },
-      { id: "multi_flip", name: "Multi Flip", nameKo: "다중 뒤집기", descriptionKo: "뒤집기 사용시 1회에 여러 주사위 사용 가능", iconName: "Target" },
-      { id: "flip_double", name: "Flip Double", nameKo: "뒤집기 배율", descriptionKo: "뒤집기 사용시 x2", iconName: "Target" },
-      { id: "random_combo_boost", name: "Random Combo Boost", nameKo: "무작위 족보 강화", descriptionKo: "전투 후 무작위 족보+1", iconName: "Target" },
-      { id: "random_die_enhance", name: "Random Die Enhance", nameKo: "공격 후 주사위 강화", descriptionKo: "공격 후 족보에 포함된 무작위 주사위 강화+1", iconName: "Target" },
-      { id: "dice_flip_gain", name: "Dice Flip Gain", nameKo: "뒤집기 획득", descriptionKo: "전투 후 주사위 뒤집기 획득+1", iconName: "Target" },
-      { id: "small_straight_3", name: "Small Straight 3", nameKo: "축소 스트레이트", descriptionKo: "연속된 숫자 3개로도 스몰 스트레이트 가능", iconName: "Target" },
-      { id: "triple_2", name: "Triple 2", nameKo: "이중 트리플", descriptionKo: "동일 숫자 2개로도 트리플 가능", iconName: "Target" },
-      { id: "mega_enhance", name: "Mega Enhance", nameKo: "메가 강화", descriptionKo: "무작위 주사위 강화+10", iconName: "Target" },
-      { id: "reroll_burn", name: "Reroll Burn", nameKo: "리롤 화상", descriptionKo: "리롤시 리롤한 주사위 눈금만큼 피해(강화 수치 포함)", iconName: "Target" },
-      { id: "sum13_x5", name: "Sum 13 x5", nameKo: "13의 배율", descriptionKo: "주사위 합계가 13일시 x5", iconName: "Target" },
-      { id: "dice_6_0", name: "6·0 Dice", nameKo: "6·0 다이스", descriptionKo: "[6,6,6,0,0,0] 면 구성으로 교체", iconName: "Target" },
-      { id: "dice_5_1", name: "5·1 Dice", nameKo: "5·1 다이스", descriptionKo: "[5,5,5,1,1,1] 면 구성으로 교체", iconName: "Target" },
-      { id: "dice_5_2", name: "5·2 Dice", nameKo: "5·2 다이스", descriptionKo: "[5,5,5,2,2,2] 면 구성으로 교체", iconName: "Target" },
-      { id: "dice_4_3", name: "4·3 Dice", nameKo: "4·3 다이스", descriptionKo: "[4,4,4,3,3,3] 면 구성으로 교체", iconName: "Target" },
-      { id: "dice_4_2", name: "4·2 Dice", nameKo: "4·2 다이스", descriptionKo: "[4,4,4,2,2,2] 면 구성으로 교체", iconName: "Target" },
-      { id: "dice_6_4_2", name: "6·4·2 Dice", nameKo: "6·4·2 다이스", descriptionKo: "[6,4,2,2,4,6] 면 구성으로 교체 (주사위 양면이 동일합니다)", iconName: "Target" },
-      { id: "dice_5_4_3", name: "5·4·3 Dice", nameKo: "5·4·3 다이스", descriptionKo: "[5,4,3,3,4,5] 면 구성으로 교체 (주사위 양면이 동일합니다)", iconName: "Target" },
-      { id: "dice_6_5_1", name: "6·5·1 Dice", nameKo: "6·5·1 다이스", descriptionKo: "[6,5,1,1,5,6] 면 구성으로 교체 (주사위 양면이 동일합니다)", iconName: "Target" },
-      { id: "dice_6_3_0", name: "6·3·0 Dice", nameKo: "6·3·0 다이스", descriptionKo: "[6,0,3,3,0,6] 면 구성으로 교체 (6↔0 뒷면)", iconName: "Target" },
-      { id: "dice_5_4_0", name: "5·4·0 Dice", nameKo: "5·4·0 다이스", descriptionKo: "[5,0,4,4,0,5] 면 구성으로 교체 (5↔0 뒷면)", iconName: "Target" },
-      { id: "stunned_hold", name: "Stunned Hold", nameKo: "기절 저항", descriptionKo: "기절된 주사위도 홀드 가능", iconName: "Shield" },
-      { id: "fullhouse_boost", name: "Full House Boost", nameKo: "풀 하우스 강화", descriptionKo: "풀 하우스 배율 +3", iconName: "Target" },
-      { id: "small_straight_boost", name: "Small Straight Boost", nameKo: "스몰 스트레이트 강화", descriptionKo: "스몰 스트레이트 배율 +3", iconName: "Target" },
-      { id: "two_pair_boost", name: "Two Pair Boost", nameKo: "투페어 강화", descriptionKo: "투페어 배율 +2", iconName: "Target" },
-      { id: "triple_boost", name: "Triple Boost", nameKo: "트리플 강화", descriptionKo: "트리플 배율 +2", iconName: "Target" },
-      { id: "reroll_save_boost", name: "Reroll Save Boost", nameKo: "리롤 절약", descriptionKo: "리롤 횟수가 남은 상태로 공격 시 x2", iconName: "Target" },
-      { id: "reroll_carryover", name: "Reroll Carryover", nameKo: "리롤 이월", descriptionKo: "사용하지 않은 리롤이 다음 전투로 이월됨", iconName: "Target" },
-      { id: "random_passive_2", name: "Random Passive 2", nameKo: "행운의 선물", descriptionKo: "무작위 패시브 2개를 추가로 획득", iconName: "Gift" },
-      { id: "low_dice_boost", name: "Low Dice Boost", nameKo: "약자의 힘", descriptionKo: "모든 주사위 눈금이 3 이하일 때 x2", iconName: "Target" },
-      { id: "stun_immunity_no_flip", name: "Stun Immunity No Flip", nameKo: "철벽 수비", descriptionKo: "첫 번째 기절 무효화 (대신 뒤집기 사용 불가)", iconName: "Shield" },
+      { id: "odd_power", name: "Odd Power", nameKo: "홀수의 힘", descriptionKo: "모든 주사위 눈이 홀수일시 피해량이 2배 증가합니다.", iconName: "Target" },
+      { id: "even_power", name: "Even Power", nameKo: "짝수의 힘", descriptionKo: "모든 주사위 눈이 짝수일시 피해량이 2배 증가합니다. (0 포함)", iconName: "Target" },
+      { id: "giants_strike", name: "Giant's Strike", nameKo: "거인의 일격", descriptionKo: "주사위 눈 합계가 24 이상일시 피해량이 2배 증가합니다.", iconName: "Dumbbell" },
+      { id: "final_strike", name: "Final Strike", nameKo: "마지막 일격", descriptionKo: "몬스터 체력이 50% 이하일시 피해량이 2배 증가합니다.", iconName: "Target" },
+      { id: "skilled_hands", name: "Skilled Hands", nameKo: "숙련된 손길", descriptionKo: "기본 리롤 횟수가 1회 추가됩니다.", iconName: "Hand" },
+      { id: "cursed_power", name: "Cursed Power", nameKo: "저주받은 힘", descriptionKo: "피해량이 2배 증가합니다. 주사위 눈 1이 있으면 족보가 완성되지 않습니다.", iconName: "Skull" },
+      { id: "multi_flip", name: "Multi Flip", nameKo: "다중 뒤집기", descriptionKo: "여러 주사위를 한번에 뒤집을 수 있습니다.", iconName: "Target" },
+      { id: "flip_double", name: "Flip Double", nameKo: "뒤집기 배율", descriptionKo: "뒤집기를 사용한 턴의 피해량이 2배 증가합니다.", iconName: "Target" },
+      { id: "random_combo_boost", name: "Random Combo Boost", nameKo: "무작위 족보 강화", descriptionKo: "전투 후 무작위 족보가 +1 증가합니다.", iconName: "Target" },
+      { id: "random_die_enhance", name: "Random Die Enhance", nameKo: "공격 후 주사위 강화", descriptionKo: "공격 후 족보에 포함된 무작위 주사위가 +1 강화됩니다.", iconName: "Target" },
+      { id: "dice_flip_gain", name: "Dice Flip Gain", nameKo: "뒤집기 획득", descriptionKo: "전투 종료 후 뒤집기 획득량이 1개 더 늘어납니다.", iconName: "Target" },
+      { id: "small_straight_3", name: "Small Straight 3", nameKo: "축소 스트레이트", descriptionKo: "연속된 숫자 3개로도 스몰 스트레이트가 가능합니다.", iconName: "Target" },
+      { id: "triple_2", name: "Triple 2", nameKo: "이중 트리플", descriptionKo: "동일 숫자 2개로도 트리플이 가능합니다.", iconName: "Target" },
+      { id: "mega_enhance", name: "Mega Enhance", nameKo: "메가 강화", descriptionKo: "무작위 주사위가 +10 강화됩니다.", iconName: "Target" },
+      { id: "reroll_burn", name: "Reroll Burn", nameKo: "리롤 화상", descriptionKo: "리롤시 리롤한 주사위의 눈+강화 수치만큼 몬스터에게 피해를 입힙니다.", iconName: "Target" },
+      { id: "sum13_x5", name: "Sum 13 x5", nameKo: "13의 배율", descriptionKo: "주사위 합계가 정확히 13일 경우, 피해량이 5배 증가합니다.", iconName: "Target" },
+      { id: "dice_6_0", name: "6·0 Dice", nameKo: "6·0 다이스", descriptionKo: "[6,0] 면 구성으로 교체", iconName: "Target" },
+      { id: "dice_5_1", name: "5·1 Dice", nameKo: "5·1 다이스", descriptionKo: "[5,1] 면 구성으로 교체", iconName: "Target" },
+      { id: "dice_5_2", name: "5·2 Dice", nameKo: "5·2 다이스", descriptionKo: "[5,2] 면 구성으로 교체", iconName: "Target" },
+      { id: "dice_4_3", name: "4·3 Dice", nameKo: "4·3 다이스", descriptionKo: "[4,3] 면 구성으로 교체", iconName: "Target" },
+      { id: "dice_4_2", name: "4·2 Dice", nameKo: "4·2 다이스", descriptionKo: "[4,2] 면 구성으로 교체", iconName: "Target" },
+      { id: "dice_6_4_2", name: "6·4·2 Dice", nameKo: "6·4·2 다이스", descriptionKo: "[6,4,2] 면 구성으로 교체 (양면 동일)", iconName: "Target" },
+      { id: "dice_5_4_3", name: "5·4·3 Dice", nameKo: "5·4·3 다이스", descriptionKo: "[5,4,3] 면 구성으로 교체 (양면 동일)", iconName: "Target" },
+      { id: "dice_6_5_1", name: "6·5·1 Dice", nameKo: "6·5·1 다이스", descriptionKo: "[6,5,1] 면 구성으로 교체 (양면 동일)", iconName: "Target" },
+      { id: "dice_6_3_0", name: "6·3·0 Dice", nameKo: "6·3·0 다이스", descriptionKo: "[6,3,0] 면 구성으로 교체 (6↔0)", iconName: "Target" },
+      { id: "dice_5_4_0", name: "5·4·0 Dice", nameKo: "5·4·0 다이스", descriptionKo: "[5,4,0] 면 구성으로 교체 (5↔0)", iconName: "Target" },
+      { id: "stunned_hold", name: "Stunned Hold", nameKo: "기절 저항", descriptionKo: "기절한 주사위가 자동으로 리롤되지 않습니다.", iconName: "Shield" },
+      { id: "fullhouse_boost", name: "Full House Boost", nameKo: "풀 하우스 강화", descriptionKo: "풀 하우스 배율이 +3 증가합니다.", iconName: "Target" },
+      { id: "small_straight_boost", name: "Small Straight Boost", nameKo: "스몰 스트레이트 강화", descriptionKo: "스몰 스트레이트 배율이 +3 증가합니다.", iconName: "Target" },
+      { id: "two_pair_boost", name: "Two Pair Boost", nameKo: "투페어 강화", descriptionKo: "투페어 배율이 +2 증가합니다.", iconName: "Target" },
+      { id: "triple_boost", name: "Triple Boost", nameKo: "트리플 강화", descriptionKo: "트리플 배율이 +2 증가합니다.", iconName: "Target" },
+      { id: "reroll_save_boost", name: "Reroll Save Boost", nameKo: "리롤 절약", descriptionKo: "리롤 횟수가 남은 상태에서 공격시 피해량이 2배 증가합니다.", iconName: "Target" },
+      { id: "reroll_carryover", name: "Reroll Carryover", nameKo: "리롤 이월", descriptionKo: "사용하지 않은 리롤이 다음 전투로 이월됩니다.", iconName: "Target" },
+      { id: "random_passive_2", name: "Random Passive 2", nameKo: "행운의 선물", descriptionKo: "무작위 패시브 2개를 획득합니다.", iconName: "Gift" },
+      { id: "low_dice_boost", name: "Low Dice Boost", nameKo: "약자의 힘", descriptionKo: "모든 주사위 눈이 3 이하일시 피해량이 2배 증가합니다.", iconName: "Target" },
+      { id: "stun_immunity_no_flip", name: "Stun Immunity No Flip", nameKo: "철벽 수비", descriptionKo: "첫 번째 몬스터 공격이 무효화됩니다. 뒤집기 사용이 불가합니다.", iconName: "Shield" },
     ];
 
     const COMBINATIONS = {
@@ -3196,9 +3196,9 @@
           const isStunned = stunnedIndices.has(idx);
           const isSelected = selectedIndices.has(idx);
           // 리롤 시스템: 선택된 주사위가 리롤됨
-          // 기절 주사위: 기본적으로 항상 리롤됨 (stunned_hold 패시브가 있고 선택하면 홀드 가능)
-          const stunnedAndHeld = isStunned && hasStunnedHold && isSelected;
-          const shouldReroll = isStunned ? !stunnedAndHeld : isSelected;
+          // 기절 주사위: 기본적으로 항상 리롤됨 (stunned_hold 패시브가 있으면 자동 리롤 안됨, 단 선택하면 리롤)
+          const stunnedAutoHeld = isStunned && hasStunnedHold && !isSelected;
+          const shouldReroll = isStunned ? (hasStunnedHold ? isSelected : true) : isSelected;
           if (shouldReroll) {
             const { value, faceIndex } = rollDieWithIndex(type, isStunned);
             newDice.push(value);
@@ -3260,9 +3260,8 @@
         playerState.diceTypes.forEach((type, idx) => {
           const isStunned = stunnedIndices.has(idx);
           const isSelected = selectedIndices.has(idx);
-          // 기절 주사위: 기본적으로 항상 리롤됨 (stunned_hold 패시브가 있고 선택하면 홀드 가능)
-          const stunnedAndHeld = isStunned && hasStunnedHold && isSelected;
-          const shouldReroll = isStunned ? !stunnedAndHeld : isSelected;
+          // 기절 주사위: 기본적으로 항상 리롤됨 (stunned_hold 패시브가 있으면 자동 리롤 안됨, 단 선택하면 리롤)
+          const shouldReroll = isStunned ? (hasStunnedHold ? isSelected : true) : isSelected;
           if (shouldReroll) {
             diceToRoll.add(idx);
           }
@@ -3542,6 +3541,11 @@
               }}>
                 <div style={{ fontWeight: 'bold', marginBottom: '0.25rem', color: '#a78bfa' }}>👹 보스 특성: {bossInfo.nameKo}</div>
                 <div style={{ color: 'rgba(30, 41, 59, 0.9)' }}>{bossInfo.descriptionKo}</div>
+                {currentBossType === 'pattern_limit' && lastUsedCombination && (
+                  <div style={{ marginTop: '0.5rem', padding: '0.5rem', background: 'rgba(239, 68, 68, 0.2)', borderRadius: '0.5rem', color: '#ef4444', fontWeight: 'bold' }}>
+                    ⚠️ 사용 불가: {COMBINATIONS[lastUsedCombination]?.labelKo || lastUsedCombination}
+                  </div>
+                )}
               </div>
             )}
             
