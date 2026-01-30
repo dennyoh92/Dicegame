@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html>g
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
@@ -1955,12 +1955,11 @@
       { id: "dice_6_3_0", name: "6·3·0 Dice", nameKo: "6·3·0 다이스", descriptionKo: "[6,0,3,3,0,6] 면 구성으로 교체 (6↔0 뒷면)", iconName: "Target" },
       { id: "dice_5_4_0", name: "5·4·0 Dice", nameKo: "5·4·0 다이스", descriptionKo: "[5,0,4,4,0,5] 면 구성으로 교체 (5↔0 뒷면)", iconName: "Target" },
       { id: "stunned_hold", name: "Stunned Hold", nameKo: "기절 저항", descriptionKo: "기절된 주사위도 홀드 가능", iconName: "Shield" },
-      { id: "fullhouse_boost", name: "Full House Boost", nameKo: "풀 하우스 강화", descriptionKo: "풀 하우스 배율 x6 → x9", iconName: "Target" },
-      { id: "small_straight_boost", name: "Small Straight Boost", nameKo: "스몰 스트레이트 강화", descriptionKo: "스몰 스트레이트 배율 x4 → x7", iconName: "Target" },
-      { id: "two_pair_boost", name: "Two Pair Boost", nameKo: "투페어 강화", descriptionKo: "투페어 배율 x3 → x5", iconName: "Target" },
-      { id: "triple_boost", name: "Triple Boost", nameKo: "트리플 강화", descriptionKo: "트리플 배율 x2 → x4", iconName: "Target" },
+      { id: "fullhouse_boost", name: "Full House Boost", nameKo: "풀 하우스 강화", descriptionKo: "풀 하우스 배율 +3", iconName: "Target" },
+      { id: "small_straight_boost", name: "Small Straight Boost", nameKo: "스몰 스트레이트 강화", descriptionKo: "스몰 스트레이트 배율 +3", iconName: "Target" },
+      { id: "two_pair_boost", name: "Two Pair Boost", nameKo: "투페어 강화", descriptionKo: "투페어 배율 +2", iconName: "Target" },
+      { id: "triple_boost", name: "Triple Boost", nameKo: "트리플 강화", descriptionKo: "트리플 배율 +2", iconName: "Target" },
       { id: "reroll_save_boost", name: "Reroll Save Boost", nameKo: "리롤 절약", descriptionKo: "리롤 횟수가 남은 상태로 공격 시 x2", iconName: "Target" },
-      { id: "chance_boost", name: "Chance Boost", nameKo: "찬스 강화", descriptionKo: "찬스 배율 x1 → x3", iconName: "Target" },
       { id: "reroll_carryover", name: "Reroll Carryover", nameKo: "리롤 이월", descriptionKo: "사용하지 않은 리롤이 다음 전투로 이월됨", iconName: "Target" },
       { id: "random_passive_2", name: "Random Passive 2", nameKo: "행운의 선물", descriptionKo: "무작위 패시브 2개를 추가로 획득", iconName: "Gift" },
       { id: "low_dice_boost", name: "Low Dice Boost", nameKo: "약자의 힘", descriptionKo: "모든 주사위 눈금이 3 이하일 때 x2", iconName: "Target" },
@@ -2000,7 +1999,7 @@
       ];
     }
 
-    const BATTLE_LOG_URL = 'https://script.google.com/macros/s/AKfycbwDFhtsNl7GXLBIehl2gmGyutvlGYtqtiryoOKCqMQ-9C1AK7dojz_XMzGJz6Vcf97R/exec';
+    const BATTLE_LOG_URL = 'https://script.google.com/macros/s/AKfycbwbIP46nIOBNf8ogU5Kl50HnWZ1267bjGw8QvgzC_HpLbveCqgWz907VqW9iza_lX82/exec';
     
     // 보스 타입 ID를 한글 이름으로 변환
     function getBossNameKo(bossId) {
@@ -2283,9 +2282,6 @@
       }
       if (ownedRewards.includes("triple_boost") && combination === "threeOfAKind") {
         multiplier += 2; // x2 → x4
-      }
-      if (ownedRewards.includes("chance_boost") && combination === "chance") {
-        multiplier += 2; // x1 → x3
       }
       const rewardMultipliers = [];
       let isCursed = false;
@@ -3088,7 +3084,7 @@
         } else {
           const nonStunnedCount = Math.max(0, playerState.diceTypes.length - stunnedIndices.size);
           // 전투 종료 보너스: 남은 주사위 수에 따라 무작위 주사위 1개 강화
-          const survivalBonus = nonStunnedCount <= 3 ? 2 : nonStunnedCount === 4 ? 3 : 4;
+          const survivalBonus = nonStunnedCount <= 2 ? 1 : nonStunnedCount <= 4 ? 2 : 3;
           
           setPlayerState(prev => {
             let n = prev;
@@ -3970,12 +3966,30 @@
             <div className="guide-card">
               <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1rem' }}>족보 가이드</h2>
               {Object.entries(COMBINATIONS).map(([key, combo]) => {
-                const boost = (playerState.combinationBoosts || {})[key] || 0;
-                const mult = combo.multiplier + boost;
+                // combinationBoosts (무작위 족보 강화 등)
+                const comboBoost = (playerState.combinationBoosts || {})[key] || 0;
+                // 패시브로 인한 고정 배율 증가
+                let passiveBoost = 0;
+                if (key === 'fullHouse' && playerState.ownedRewards.includes('fullhouse_boost')) passiveBoost = 3;
+                if (key === 'smallStraight' && playerState.ownedRewards.includes('small_straight_boost')) passiveBoost = 3;
+                if (key === 'twoPair' && playerState.ownedRewards.includes('two_pair_boost')) passiveBoost = 2;
+                if (key === 'threeOfAKind' && playerState.ownedRewards.includes('triple_boost')) passiveBoost = 2;
+                const totalBoost = comboBoost + passiveBoost;
+                const decay = (comboDecay || {})[key] || 0;
+                const mult = Math.max(1, combo.multiplier + totalBoost - decay);
+                const hasBoost = totalBoost > 0;
+                const hasDecay = decay > 0;
+                let color = 'inherit';
+                if (hasDecay) color = '#ef4444';
+                else if (hasBoost) color = '#fbbf24';
                 return (
                   <div key={key} className="guide-item">
                     <span>{combo.labelKo}</span>
-                    <span style={{ fontWeight: 'bold', color: boost > 0 ? '#fbbf24' : 'inherit' }}>×{mult}{boost > 0 && ' ⬆'}</span>
+                    <span style={{ fontWeight: 'bold', color }}>
+                      ×{mult}
+                      {hasBoost && !hasDecay && ` (+${totalBoost})`}
+                      {hasDecay && ` ⬇-${decay}`}
+                    </span>
                   </div>
                 );
               })}
