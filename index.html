@@ -1488,7 +1488,7 @@
       background: #fef3c7;
     }
     .die.enhanced {
-      background: linear-gradient(135deg, #fffbeb, #fef3c7);
+      /* 배경색 없음 - 오른쪽 위 배지로만 표시 */
     }
     .die-enhancement-label {
       position: absolute;
@@ -2782,7 +2782,13 @@
           <div className="hp-bar-container">
             <div className="hp-label">
               <span>HP</span>
-              <span>{Math.max(0, currentHp)} / {maxHp}</span>
+              <span>
+                {previewDamage > 0 ? (
+                  <><span style={{ color: '#ef4444', fontWeight: 'bold' }}>{Math.max(0, currentHp - previewDamage)}</span> ← {currentHp} / {maxHp}</>
+                ) : (
+                  <>{Math.max(0, currentHp)} / {maxHp}</>
+                )}
+              </span>
             </div>
             <div className="hp-bar-bg" style={{ position: 'relative' }}>
               {/* 데미지 프리뷰 (깎일 부분) */}
@@ -2909,8 +2915,15 @@
 
       useEffect(() => {
         const stage = STAGES[playerState.currentStage - 1];
-        if (stage) setMonsterHp(stage.hp);
-      }, [playerState.currentStage]);
+        if (stage) {
+          // 특정 보스는 체력 감소 (goToNextStage에서 이미 설정하지만 초기 로드 시에도 필요)
+          let hp = stage.hp;
+          if (currentBossType === 'cursed_dice') hp = 300;
+          if (currentBossType === 'double_stun') hp = 500;
+          if (currentBossType === 'combo_out_stun') hp = 500;
+          setMonsterHp(hp);
+        }
+      }, [playerState.currentStage, currentBossType]);
 
 
       const currentScore = useMemo(() => {
