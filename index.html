@@ -1905,12 +1905,12 @@
       { id: "flip_all", nameKo: "전면 뒤집기 보스", descriptionKo: "뒤집기 사용 시 모든 주사위가 뒤집힙니다.", monsterNameKo: "은 쟁반", imageUrl: "./4-2_silver_platter.svg" },
       { id: "reroll_minus1", nameKo: "리롤 감소 보스", descriptionKo: "리롤 횟수가 1회 차감됩니다.", monsterNameKo: "말발굽 자석", imageUrl: "./4-3_horshoe_magnet.svg" },
       { id: "combo_seal", nameKo: "족보 봉인 보스", descriptionKo: "매 턴 무작위 족보 1개가 사용 불가합니다.", monsterNameKo: "자물쇠", imageUrl: "./4-4_chained_lock.svg" },
-      { id: "five_missing_stun", nameKo: "5의 부재 보스", descriptionKo: "눈금이 5인 주사위가 없으면 무작위 주사위 1개가 기절합니다.", monsterNameKo: "5번 부재" },
+      { id: "five_missing_stun", nameKo: "5의 부재 보스", descriptionKo: "눈금이 5인 주사위가 없으면 무작위 주사위 1개가 기절합니다.", monsterNameKo: "레드 칩", imageUrl: "./4-5_red_chip.svg" },
     ];
     const BOSS_TYPES_STAGE_6 = [
-      { id: "combo_out_stun", nameKo: "미포함 기절 보스", descriptionKo: "족보에 포함되지 않은 주사위 중 하나는 기절합니다." },
-      { id: "pattern_limit", nameKo: "패턴 고착 방지 보스", descriptionKo: "전 턴에 사용한 족보는 사용 불가합니다." },
-      { id: "double_stun", nameKo: "이중 기절 보스", descriptionKo: "매 턴 주사위가 2개씩 기절합니다." },
+      { id: "combo_out_stun", nameKo: "미포함 기절 보스", descriptionKo: "족보에 포함되지 않은 주사위 중 하나는 기절합니다.", monsterNameKo: "오렌지 소다", imageUrl: "./6-1_orange_soda.svg" },
+      { id: "pattern_limit", nameKo: "패턴 고착 방지 보스", descriptionKo: "전 턴에 사용한 족보는 사용 불가합니다.", monsterNameKo: "다트보드", imageUrl: "./6-2_dartboard.svg" },
+      { id: "double_stun", nameKo: "이중 기절 보스", descriptionKo: "매 턴 주사위가 2개씩 기절합니다.", monsterNameKo: "스모킹 건", imageUrl: "./6-3_smoking_gun.svg" },
     ];
     const BOSS_TYPES_STAGE_8 = [
       { id: "despair_heal", nameKo: "절망의 회복 보스", descriptionKo: "리롤 시 보스 체력 10% 회복." },
@@ -4173,14 +4173,25 @@
             </div>
 
             {playerState.ownedRewards.filter(id => !/^dice_\d/.test(id)).length > 0 && (
-              <div className="owned-rewards">
+              <div className="owned-rewards" style={{ flexDirection: 'column', alignItems: 'stretch', gap: '0.5rem' }}>
                 {playerState.ownedRewards.filter(id => !/^dice_\d/.test(id)).map(rewardId => {
                   const reward = REWARDS.find(r => r.id === rewardId);
                   if (!reward) return null;
                   return (
-                    <span key={rewardId} className="reward-badge" title={reward.descriptionKo}>
-                      {reward.nameKo} ({reward.name})
-                    </span>
+                    <div key={rewardId} style={{ 
+                      background: 'rgba(99, 102, 241, 0.1)', 
+                      border: '1px solid rgba(99, 102, 241, 0.3)',
+                      borderRadius: '0.5rem',
+                      padding: '0.5rem 0.75rem',
+                      textAlign: 'left'
+                    }}>
+                      <div style={{ fontWeight: 'bold', fontSize: '0.875rem', color: '#6366f1' }}>
+                        {reward.nameKo} ({reward.name})
+                      </div>
+                      <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '0.25rem' }}>
+                        {reward.descriptionKo}
+                      </div>
+                    </div>
                   );
                 })}
               </div>
