@@ -1886,7 +1886,7 @@
     // Game Data
     // 몬스터 이미지 파일 경로 (null로 설정하면 원본 CSS 방식 사용)
     const MONSTER_IMAGES = {
-      slime: "./1_dice_1.svg",   // 루키 다이스 이미지
+      slime: "./1_dice.svg",   // 루키 다이스 이미지
       goblin: null,  // 원본 CSS 방식 사용
       orc: null,     // 원본 CSS 방식 사용
       dragon: null,  // 원본 CSS 방식 사용
@@ -1894,17 +1894,17 @@
     };
 
     const BOSS_TYPES_STAGE_2 = [
-      { id: "damage_cap_50", nameKo: "피해량 상한 보스", descriptionKo: "1회 최대 피해가 체력 50%를 넘지 못합니다.", monsterNameKo: "금고쟁이", imageUrl: "./2-1_vault.svg" },
+      { id: "damage_cap_50", nameKo: "피해량 상한 보스", descriptionKo: "1회 최대 피해가 체력 50%를 넘지 못합니다.", monsterNameKo: "금고지기", imageUrl: "./2-1_vault.svg" },
       { id: "over21_zero", nameKo: "과잉 눈금 보스", descriptionKo: "주사위 눈금이 21을 넘는 경우 피해가 0이 됩니다.", monsterNameKo: "블랙잭", imageUrl: "./2-2_blackjack.svg" },
-      { id: "reroll_max2", nameKo: "리롤 제한 보스", descriptionKo: "3개 주사위 이상 동시 리롤이 불가합니다.", monsterNameKo: "슬롯 머신", imageUrl: "./2-3_slot_machine.svg" },
+      { id: "reroll_max2", nameKo: "리롤 제한 보스", descriptionKo: "3개 주사위 이상 동시 리롤이 불가합니다.", monsterNameKo: "망가진 슬롯 머신", imageUrl: "./2-3_slot_machine.svg" },
       { id: "six_exclude", nameKo: "6 제외 보스", descriptionKo: "눈금이 6인 주사위는 족보 판정에서 제외됩니다.", monsterNameKo: "6번 공", imageUrl: "./2-4_billiard_ball.svg" },
-      { id: "four_extra_stun", nameKo: "4의 저주 보스", descriptionKo: "눈금이 4인 주사위가 있으면 무작위 주사위 1개가 기절합니다.", monsterNameKo: "4번 관짝", imageUrl: "./2-5_coffin.svg" },
+      { id: "four_extra_stun", nameKo: "4의 저주 보스", descriptionKo: "눈금이 4인 주사위가 있으면 무작위 주사위 1개가 기절합니다.", monsterNameKo: "관짝", imageUrl: "./2-5_coffin.svg" },
     ];
     const BOSS_TYPES_STAGE_4 = [
-      { id: "cursed_dice", nameKo: "저주 주사위 보스", descriptionKo: "주사위 1개에 저주. 저주 받은 주사위는 족보 판정에서 제외됩니다.", monsterNameKo: "깨진 거울", imageUrl: "./3-1_broken_mirror.svg" },
-      { id: "flip_all", nameKo: "전면 뒤집기 보스", descriptionKo: "뒤집기 사용 시 모든 주사위가 뒤집힙니다.", monsterNameKo: "은 쟁반", imageUrl: "./3-2_silver_platter.svg" },
-      { id: "reroll_minus1", nameKo: "리롤 감소 보스", descriptionKo: "리롤 횟수가 1회 차감됩니다.", monsterNameKo: "말발굽 자석", imageUrl: "./3-3_horshoe_magnet.svg" },
-      { id: "combo_seal", nameKo: "족보 봉인 보스", descriptionKo: "매 턴 무작위 족보 1개가 사용 불가합니다.", monsterNameKo: "잠긴 자물쇠", imageUrl: "./3-4_chained_lock.svg" },
+      { id: "cursed_dice", nameKo: "저주 주사위 보스", descriptionKo: "주사위 1개에 저주. 저주 받은 주사위는 족보 판정에서 제외됩니다.", monsterNameKo: "깨진 거울", imageUrl: "./4-1_broken_mirror.svg" },
+      { id: "flip_all", nameKo: "전면 뒤집기 보스", descriptionKo: "뒤집기 사용 시 모든 주사위가 뒤집힙니다.", monsterNameKo: "은 쟁반", imageUrl: "./4-2_silver_platter.svg" },
+      { id: "reroll_minus1", nameKo: "리롤 감소 보스", descriptionKo: "리롤 횟수가 1회 차감됩니다.", monsterNameKo: "말발굽 자석", imageUrl: "./4-3_horshoe_magnet.svg" },
+      { id: "combo_seal", nameKo: "족보 봉인 보스", descriptionKo: "매 턴 무작위 족보 1개가 사용 불가합니다.", monsterNameKo: "자물쇠", imageUrl: "./4-4_chained_lock.svg" },
       { id: "five_missing_stun", nameKo: "5의 부재 보스", descriptionKo: "눈금이 5인 주사위가 없으면 무작위 주사위 1개가 기절합니다.", monsterNameKo: "5번 부재" },
     ];
     const BOSS_TYPES_STAGE_6 = [
@@ -2651,6 +2651,11 @@
       const previewHpPercentage = Math.max(0, ((currentHp - previewDamage) / maxHp) * 100);
       const [imageError, setImageError] = useState(false);
       
+      // imageUrl이 변경되면 imageError 초기화
+      useEffect(() => {
+        setImageError(false);
+      }, [imageUrl]);
+      
       let monsterBody;
       
       if (imageUrl && !imageError) {
@@ -2857,7 +2862,7 @@
                   zIndex: 1
                 }} />
               )}
-              <div className={hpBarClass} style={{ width: `${previewDamage > 0 ? previewHpPercentage : hpPercentage}%`, position: 'relative', zIndex: 2 }} />
+              <div className={hpBarClass} style={{ width: `${previewDamage > 0 ? previewHpPercentage : hpPercentage}%`, position: 'relative', zIndex: 2, transition: previewDamage > 0 ? 'none' : 'width 0.5s ease-out' }} />
             </div>
             {showDamage && damage > 0 && (
               <div style={{ textAlign: 'center', marginTop: '0.5rem', fontSize: '2rem', fontWeight: 'bold', color: '#ef4444' }}>
@@ -3579,12 +3584,12 @@
             )}
             
             <div className="monster-section">
-              <Monster name={currentStage.name} nameKo={bossInfo?.monsterNameKo || currentStage.nameKo} maxHp={currentBossType === 'cursed_dice' ? 300 : currentBossType === 'double_stun' ? 500 : currentBossType === 'combo_out_stun' ? 500 : currentStage.hp} currentHp={monsterHp} showDamage={showDamage} damage={lastDamage} isMonsterAttacking={isMonsterAttacking} imageUrl={bossInfo?.imageUrl || currentStage.imageUrl} previewDamage={roundStarted && !showAttackResult && !showCounterattack && !allDiceStunned ? (currentBossType === 'damage_cap_50' ? Math.min(currentScore.total, Math.floor(currentStage.hp * 0.5)) : currentScore.total) : 0} />
+              <Monster name={currentStage.name} nameKo={bossInfo?.monsterNameKo || currentStage.nameKo} maxHp={currentBossType === 'cursed_dice' ? 300 : currentBossType === 'double_stun' ? 500 : currentBossType === 'combo_out_stun' ? 500 : currentStage.hp} currentHp={monsterHp} showDamage={showDamage} damage={lastDamage} isMonsterAttacking={isMonsterAttacking} imageUrl={bossInfo?.imageUrl || currentStage.imageUrl} previewDamage={roundStarted && !showAttackResult && !showCounterattack && !allDiceStunned ? (currentBossType === 'over21_zero' && (currentScore.sum - (currentScore.enhancementBonus || 0)) > 21 ? 0 : currentBossType === 'damage_cap_50' ? Math.min(currentScore.total, Math.floor(currentStage.hp * 0.5)) : currentScore.total) : 0} />
             </div>
 
             {showMonsterPreview && (
               <div className="modal-overlay" onClick={() => setShowMonsterPreview(false)}>
-                <div className="modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '900px', maxHeight: '90vh', overflow: 'auto' }}>
+                <div className="modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '1000px', maxHeight: '90vh', overflow: 'auto' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
                     <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>몬스터 미리보기</h2>
                     <button 
@@ -3595,20 +3600,24 @@
                       닫기
                     </button>
                   </div>
+                  
+                  {/* 일반 스테이지 */}
+                  <h3 style={{ fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '1rem', color: '#a78bfa' }}>📍 일반 스테이지</h3>
                   <div style={{ 
                     display: 'grid', 
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
-                    gap: '2rem',
-                    padding: '1rem'
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', 
+                    gap: '1rem',
+                    padding: '0.5rem',
+                    marginBottom: '2rem'
                   }}>
-                    {STAGES.map(stage => (
+                    {STAGES.filter(s => !s.isBoss).map(stage => (
                       <div key={stage.id} style={{ 
                         display: 'flex', 
                         flexDirection: 'column', 
                         alignItems: 'center',
                         background: 'rgba(255, 255, 255, 0.1)',
                         borderRadius: '1rem',
-                        padding: '1.5rem'
+                        padding: '1rem'
                       }}>
                         <Monster 
                           name={stage.name} 
@@ -3620,8 +3629,151 @@
                           isMonsterAttacking={false} 
                           imageUrl={stage.imageUrl} 
                         />
-                        <div style={{ marginTop: '0.5rem', fontSize: '0.875rem', color: 'rgba(255,255,255,0.8)' }}>
-                          Stage {stage.id}
+                        <div style={{ marginTop: '0.5rem', fontSize: '0.75rem', color: 'rgba(255,255,255,0.6)' }}>
+                          {stage.id}라운드
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* 2라운드 보스 */}
+                  <h3 style={{ fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '1rem', color: '#f59e0b' }}>👹 2라운드 보스</h3>
+                  <div style={{ 
+                    display: 'grid', 
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', 
+                    gap: '1rem',
+                    padding: '0.5rem',
+                    marginBottom: '2rem'
+                  }}>
+                    {BOSS_TYPES_STAGE_2.map(boss => (
+                      <div key={boss.id} style={{ 
+                        display: 'flex', 
+                        flexDirection: 'column', 
+                        alignItems: 'center',
+                        background: 'rgba(245, 158, 11, 0.1)',
+                        borderRadius: '1rem',
+                        padding: '1rem',
+                        border: '1px solid rgba(245, 158, 11, 0.3)'
+                      }}>
+                        <Monster 
+                          name={boss.id} 
+                          nameKo={boss.monsterNameKo || boss.nameKo} 
+                          maxHp={200} 
+                          currentHp={200} 
+                          showDamage={false} 
+                          damage={0} 
+                          isMonsterAttacking={false} 
+                          imageUrl={boss.imageUrl} 
+                        />
+                        <div style={{ marginTop: '0.25rem', fontSize: '0.7rem', color: 'rgba(255,255,255,0.5)', textAlign: 'center' }}>
+                          {boss.descriptionKo}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* 4라운드 보스 */}
+                  <h3 style={{ fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '1rem', color: '#ef4444' }}>👹 4라운드 보스</h3>
+                  <div style={{ 
+                    display: 'grid', 
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', 
+                    gap: '1rem',
+                    padding: '0.5rem',
+                    marginBottom: '2rem'
+                  }}>
+                    {BOSS_TYPES_STAGE_4.map(boss => (
+                      <div key={boss.id} style={{ 
+                        display: 'flex', 
+                        flexDirection: 'column', 
+                        alignItems: 'center',
+                        background: 'rgba(239, 68, 68, 0.1)',
+                        borderRadius: '1rem',
+                        padding: '1rem',
+                        border: '1px solid rgba(239, 68, 68, 0.3)'
+                      }}>
+                        <Monster 
+                          name={boss.id} 
+                          nameKo={boss.monsterNameKo || boss.nameKo} 
+                          maxHp={400} 
+                          currentHp={400} 
+                          showDamage={false} 
+                          damage={0} 
+                          isMonsterAttacking={false} 
+                          imageUrl={boss.imageUrl} 
+                        />
+                        <div style={{ marginTop: '0.25rem', fontSize: '0.7rem', color: 'rgba(255,255,255,0.5)', textAlign: 'center' }}>
+                          {boss.descriptionKo}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* 6라운드 보스 */}
+                  <h3 style={{ fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '1rem', color: '#8b5cf6' }}>👹 6라운드 보스</h3>
+                  <div style={{ 
+                    display: 'grid', 
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', 
+                    gap: '1rem',
+                    padding: '0.5rem',
+                    marginBottom: '2rem'
+                  }}>
+                    {BOSS_TYPES_STAGE_6.map(boss => (
+                      <div key={boss.id} style={{ 
+                        display: 'flex', 
+                        flexDirection: 'column', 
+                        alignItems: 'center',
+                        background: 'rgba(139, 92, 246, 0.1)',
+                        borderRadius: '1rem',
+                        padding: '1rem',
+                        border: '1px solid rgba(139, 92, 246, 0.3)'
+                      }}>
+                        <Monster 
+                          name={boss.id} 
+                          nameKo={boss.monsterNameKo || boss.nameKo} 
+                          maxHp={600} 
+                          currentHp={600} 
+                          showDamage={false} 
+                          damage={0} 
+                          isMonsterAttacking={false} 
+                          imageUrl={boss.imageUrl} 
+                        />
+                        <div style={{ marginTop: '0.25rem', fontSize: '0.7rem', color: 'rgba(255,255,255,0.5)', textAlign: 'center' }}>
+                          {boss.descriptionKo}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* 8라운드 보스 */}
+                  <h3 style={{ fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '1rem', color: '#ec4899' }}>👹 8라운드 보스</h3>
+                  <div style={{ 
+                    display: 'grid', 
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', 
+                    gap: '1rem',
+                    padding: '0.5rem'
+                  }}>
+                    {BOSS_TYPES_STAGE_8.map(boss => (
+                      <div key={boss.id} style={{ 
+                        display: 'flex', 
+                        flexDirection: 'column', 
+                        alignItems: 'center',
+                        background: 'rgba(236, 72, 153, 0.1)',
+                        borderRadius: '1rem',
+                        padding: '1rem',
+                        border: '1px solid rgba(236, 72, 153, 0.3)'
+                      }}>
+                        <Monster 
+                          name={boss.id} 
+                          nameKo={boss.monsterNameKo || boss.nameKo} 
+                          maxHp={800} 
+                          currentHp={800} 
+                          showDamage={false} 
+                          damage={0} 
+                          isMonsterAttacking={false} 
+                          imageUrl={boss.imageUrl} 
+                        />
+                        <div style={{ marginTop: '0.25rem', fontSize: '0.7rem', color: 'rgba(255,255,255,0.5)', textAlign: 'center' }}>
+                          {boss.descriptionKo}
                         </div>
                       </div>
                     ))}
