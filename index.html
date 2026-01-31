@@ -1888,9 +1888,9 @@
     const MONSTER_IMAGES = {
       slime: "./1_dice.svg",   // 루키 다이스 이미지
       goblin: null,  // 원본 CSS 방식 사용
-      orc: null,     // 원본 CSS 방식 사용
+      orc: "./3-1_gold_coin.svg",     // 3라운드 일반 몬스터
       dragon: null,  // 원본 CSS 방식 사용
-      demon: null    // 원본 CSS 방식 사용
+      demon: "./5-1_VIP_Card.svg"    // 5라운드 일반 몬스터
     };
 
     const BOSS_TYPES_STAGE_2 = [
@@ -1921,11 +1921,11 @@
     const STAGES = [
       { id: 1, name: "Rookie Dice", nameKo: "루키 다이스", hp: 100, iconName: "Droplet", imageUrl: MONSTER_IMAGES.slime, isBoss: false },
       { id: 2, name: "Goblin", nameKo: "고블린", hp: 200, iconName: "Skull", imageUrl: MONSTER_IMAGES.goblin, isBoss: true },
-      { id: 3, name: "Orc", nameKo: "오크", hp: 300, iconName: "Axe", imageUrl: MONSTER_IMAGES.orc, isBoss: false },
+      { id: 3, name: "Gold Coin", nameKo: "골드 코인", hp: 300, iconName: "Axe", imageUrl: MONSTER_IMAGES.orc, isBoss: false },
       { id: 4, name: "Dragon", nameKo: "드래곤", hp: 400, iconName: "Flame", imageUrl: MONSTER_IMAGES.dragon, isBoss: true },
-      { id: 5, name: "Demon King", nameKo: "마왕", hp: 500, iconName: "Crown", imageUrl: MONSTER_IMAGES.demon, isBoss: false },
+      { id: 5, name: "VIP Card", nameKo: "VIP 카드", hp: 500, iconName: "Crown", imageUrl: MONSTER_IMAGES.demon, isBoss: false },
       { id: 6, name: "Lich", nameKo: "리치", hp: 600, iconName: "Skull", imageUrl: null, isBoss: true },
-      { id: 7, name: "Behemoth", nameKo: "베히모스", hp: 700, iconName: "Axe", imageUrl: null, isBoss: false },
+      { id: 7, name: "Roulette", nameKo: "룰렛", hp: 700, iconName: "Axe", imageUrl: "./7-1_roulette_wheel.svg", isBoss: false },
       { id: 8, name: "Chaos Lord", nameKo: "카오스 로드", hp: 800, iconName: "Crown", imageUrl: null, isBoss: true },
     ];
 
