@@ -141,6 +141,7 @@
       width: 200px;
       height: 200px;
       object-fit: contain;
+      animation: slimeBounce 2s ease-in-out infinite;
     }
     .monster-image-sprite {
       width: 200px;
@@ -1885,7 +1886,7 @@
     // Game Data
     // 몬스터 이미지 파일 경로 (null로 설정하면 원본 CSS 방식 사용)
     const MONSTER_IMAGES = {
-      slime: null,   // 원본 CSS 방식 사용
+      slime: "../1_dice_1.svg",   // 루키 다이스 이미지
       goblin: null,  // 원본 CSS 방식 사용
       orc: null,     // 원본 CSS 방식 사용
       dragon: null,  // 원본 CSS 방식 사용
@@ -1893,31 +1894,32 @@
     };
 
     const BOSS_TYPES_STAGE_2 = [
-      { id: "damage_cap_50", nameKo: "피해량 상한 보스", descriptionKo: "1회 최대 피해가 체력 50%를 넘지 못합니다." },
-      { id: "over21_zero", nameKo: "과잉 눈금 보스", descriptionKo: "주사위 눈금이 22 이상인 경우 피해가 0이 됩니다." },
-      { id: "reroll_max2", nameKo: "리롤 제한 보스", descriptionKo: "3개 주사위 이상 동시 리롤이 불가합니다." },
-      { id: "six_exclude", nameKo: "6 제외 보스", descriptionKo: "눈금이 6인 주사위는 족보 판정에서 제외됩니다." },
-      { id: "four_extra_stun", nameKo: "4의 저주 보스", descriptionKo: "눈금이 4인 주사위가 있으면 무작위 주사위 1개가 기절합니다." },
+      { id: "damage_cap_50", nameKo: "피해량 상한 보스", descriptionKo: "1회 최대 피해가 체력 50%를 넘지 못합니다.", monsterNameKo: "금고쟁이", imageUrl: "../2-1_vault.svg" },
+      { id: "over21_zero", nameKo: "과잉 눈금 보스", descriptionKo: "주사위 눈금이 21을 넘는 경우 피해가 0이 됩니다.", monsterNameKo: "블랙잭", imageUrl: "../2-2_blackjack.svg" },
+      { id: "reroll_max2", nameKo: "리롤 제한 보스", descriptionKo: "3개 주사위 이상 동시 리롤이 불가합니다.", monsterNameKo: "슬롯 머신", imageUrl: "../2-3_slot machine.svg" },
+      { id: "six_exclude", nameKo: "6 제외 보스", descriptionKo: "눈금이 6인 주사위는 족보 판정에서 제외됩니다.", monsterNameKo: "6번 공", imageUrl: "../2-4_billiard ball.svg" },
+      { id: "four_extra_stun", nameKo: "4의 저주 보스", descriptionKo: "눈금이 4인 주사위가 있으면 무작위 주사위 1개가 기절합니다.", monsterNameKo: "4번 관짝", imageUrl: "../2-5_coffin.svg" },
     ];
     const BOSS_TYPES_STAGE_4 = [
-      { id: "cursed_dice", nameKo: "저주 주사위 보스", descriptionKo: "주사위 1개에 저주. 저주 받은 주사위는 족보 판정에서 제외됩니다." },
-      { id: "flip_all", nameKo: "전면 뒤집기 보스", descriptionKo: "뒤집기 사용 시 모든 주사위가 뒤집힙니다." },
-      { id: "reroll_minus1", nameKo: "리롤 감소 보스", descriptionKo: "리롤 횟수가 1회 차감됩니다." },
-      { id: "combo_seal", nameKo: "족보 봉인 보스", descriptionKo: "매 턴 무작위 족보 1개가 사용 불가합니다." },
+      { id: "cursed_dice", nameKo: "저주 주사위 보스", descriptionKo: "주사위 1개에 저주. 저주 받은 주사위는 족보 판정에서 제외됩니다.", monsterNameKo: "깨진 거울" },
+      { id: "flip_all", nameKo: "전면 뒤집기 보스", descriptionKo: "뒤집기 사용 시 모든 주사위가 뒤집힙니다.", monsterNameKo: "은 쟁반" },
+      { id: "reroll_minus1", nameKo: "리롤 감소 보스", descriptionKo: "리롤 횟수가 1회 차감됩니다.", monsterNameKo: "말발굽 자석" },
+      { id: "combo_seal", nameKo: "족보 봉인 보스", descriptionKo: "매 턴 무작위 족보 1개가 사용 불가합니다.", monsterNameKo: "잠긴 자물쇠" },
+      { id: "five_missing_stun", nameKo: "5의 부재 보스", descriptionKo: "눈금이 5인 주사위가 없으면 무작위 주사위 1개가 기절합니다.", monsterNameKo: "5번 부재" },
     ];
     const BOSS_TYPES_STAGE_6 = [
       { id: "combo_out_stun", nameKo: "미포함 기절 보스", descriptionKo: "족보에 포함되지 않은 주사위 중 하나는 기절합니다." },
-      { id: "pattern_limit", nameKo: "패턴 고착 방지 보스", descriptionKo: "전 턴에 사용한 족보는 찬스로 처리됩니다." },
+      { id: "pattern_limit", nameKo: "패턴 고착 방지 보스", descriptionKo: "전 턴에 사용한 족보는 사용 불가합니다." },
       { id: "double_stun", nameKo: "이중 기절 보스", descriptionKo: "매 턴 주사위가 2개씩 기절합니다." },
     ];
     const BOSS_TYPES_STAGE_8 = [
       { id: "despair_heal", nameKo: "절망의 회복 보스", descriptionKo: "리롤 시 보스 체력 10% 회복." },
-      { id: "combo_decay", nameKo: "족보 약화 보스", descriptionKo: "족보 사용 시 해당 전투 동안 그 족보 배율 -1 감소." },
+      { id: "combo_decay", nameKo: "족보 약화 보스", descriptionKo: "족보 사용 시 해당 전투 동안 그 족보 배율 -2 감소." },
     ];
     const BOSS_TYPES_ALL = [...BOSS_TYPES_STAGE_2, ...BOSS_TYPES_STAGE_4, ...BOSS_TYPES_STAGE_6, ...BOSS_TYPES_STAGE_8];
 
     const STAGES = [
-      { id: 1, name: "Slime", nameKo: "슬라임", hp: 100, iconName: "Droplet", imageUrl: MONSTER_IMAGES.slime, isBoss: false },
+      { id: 1, name: "Rookie Dice", nameKo: "루키 다이스", hp: 100, iconName: "Droplet", imageUrl: MONSTER_IMAGES.slime, isBoss: false },
       { id: 2, name: "Goblin", nameKo: "고블린", hp: 200, iconName: "Skull", imageUrl: MONSTER_IMAGES.goblin, isBoss: true },
       { id: 3, name: "Orc", nameKo: "오크", hp: 300, iconName: "Axe", imageUrl: MONSTER_IMAGES.orc, isBoss: false },
       { id: 4, name: "Dragon", nameKo: "드래곤", hp: 400, iconName: "Flame", imageUrl: MONSTER_IMAGES.dragon, isBoss: true },
@@ -1928,22 +1930,22 @@
     ];
 
     const REWARDS = [
-      { id: "odd_power", name: "Odd Power", nameKo: "홀수의 힘", descriptionKo: "모든 주사위 눈이 홀수일시 피해량이 2배 증가합니다.", iconName: "Target" },
-      { id: "even_power", name: "Even Power", nameKo: "짝수의 힘", descriptionKo: "모든 주사위 눈이 짝수일시 피해량이 2배 증가합니다. (0 포함)", iconName: "Target" },
-      { id: "giants_strike", name: "Giant's Strike", nameKo: "거인의 일격", descriptionKo: "주사위 눈 합계가 24 이상일시 피해량이 2배 증가합니다.", iconName: "Dumbbell" },
-      { id: "final_strike", name: "Final Strike", nameKo: "마지막 일격", descriptionKo: "몬스터 체력이 50% 이하일시 피해량이 2배 증가합니다.", iconName: "Target" },
-      { id: "skilled_hands", name: "Skilled Hands", nameKo: "숙련된 손길", descriptionKo: "기본 리롤 횟수가 1회 추가됩니다.", iconName: "Hand" },
-      { id: "cursed_power", name: "Cursed Power", nameKo: "저주받은 힘", descriptionKo: "피해량이 2배 증가합니다. 주사위 눈 1이 있으면 족보가 완성되지 않습니다.", iconName: "Skull" },
-      { id: "multi_flip", name: "Multi Flip", nameKo: "다중 뒤집기", descriptionKo: "여러 주사위를 한번에 뒤집을 수 있습니다.", iconName: "Target" },
-      { id: "flip_double", name: "Flip Double", nameKo: "뒤집기 배율", descriptionKo: "뒤집기를 사용한 턴의 피해량이 2배 증가합니다.", iconName: "Target" },
-      { id: "random_combo_boost", name: "Random Combo Boost", nameKo: "무작위 족보 강화", descriptionKo: "전투 후 무작위 족보가 +1 증가합니다.", iconName: "Target" },
-      { id: "random_die_enhance", name: "Random Die Enhance", nameKo: "공격 후 주사위 강화", descriptionKo: "공격 후 족보에 포함된 무작위 주사위가 +1 강화됩니다.", iconName: "Target" },
-      { id: "dice_flip_gain", name: "Dice Flip Gain", nameKo: "뒤집기 획득", descriptionKo: "전투 종료 후 뒤집기 획득량이 1개 더 늘어납니다.", iconName: "Target" },
-      { id: "small_straight_3", name: "Small Straight 3", nameKo: "축소 스트레이트", descriptionKo: "연속된 숫자 3개로도 스몰 스트레이트가 가능합니다.", iconName: "Target" },
-      { id: "triple_2", name: "Triple 2", nameKo: "이중 트리플", descriptionKo: "동일 숫자 2개로도 트리플이 가능합니다.", iconName: "Target" },
-      { id: "mega_enhance", name: "Mega Enhance", nameKo: "메가 강화", descriptionKo: "무작위 주사위가 +10 강화됩니다.", iconName: "Target" },
-      { id: "reroll_burn", name: "Reroll Burn", nameKo: "리롤 화상", descriptionKo: "리롤시 리롤한 주사위의 눈+강화 수치만큼 몬스터에게 피해를 입힙니다.", iconName: "Target" },
-      { id: "sum13_x5", name: "Sum 13 x5", nameKo: "13의 배율", descriptionKo: "주사위 합계가 정확히 13일 경우, 피해량이 5배 증가합니다.", iconName: "Target" },
+      { id: "odd_power", name: "Odd Eye", nameKo: "오드 아이", descriptionKo: "모든 주사위 눈이 홀수일시 피해량이 2배 증가합니다.", iconName: "Target" },
+      { id: "even_power", name: "Even Hand", nameKo: "이븐 핸드", descriptionKo: "모든 주사위 눈이 짝수일시 피해량이 2배 증가합니다. (0 포함)", iconName: "Target" },
+      { id: "giants_strike", name: "High Roller", nameKo: "하이 롤러", descriptionKo: "주사위 눈 합계가 24 이상일시 피해량이 2배 증가합니다.", iconName: "Dumbbell" },
+      { id: "final_strike", name: "Last Call", nameKo: "라스트 콜", descriptionKo: "몬스터 체력이 50% 이하일시 피해량이 2배 증가합니다.", iconName: "Target" },
+      { id: "skilled_hands", name: "Extra Chance", nameKo: "엑스트라 찬스", descriptionKo: "기본 리롤 횟수가 1회 추가됩니다.", iconName: "Hand" },
+      { id: "cursed_power", name: "Snake Eye", nameKo: "스네이크 아이", descriptionKo: "피해량이 2배 증가합니다. 주사위 눈 1이 있으면 족보가 완성되지 않습니다.", iconName: "Skull" },
+      { id: "multi_flip", name: "Sleight of Hand", nameKo: "슬레이트 핸드", descriptionKo: "여러 주사위를 한번에 뒤집을 수 있습니다.", iconName: "Target" },
+      { id: "flip_double", name: "Switch Blade", nameKo: "스위치 블레이드", descriptionKo: "뒤집기를 사용한 턴의 피해량이 2배 증가합니다.", iconName: "Target" },
+      { id: "random_combo_boost", name: "Wild Card", nameKo: "와일드 카드", descriptionKo: "전투 후 무작위 족보가 +1 증가합니다. (야찌, 라지 스트레이트 제외)", iconName: "Target" },
+      { id: "random_die_enhance", name: "Raise", nameKo: "레이즈", descriptionKo: "공격 후 족보에 포함된 무작위 주사위가 +1 강화됩니다.", iconName: "Target" },
+      { id: "dice_flip_gain", name: "Spare Card", nameKo: "스페어 카드", descriptionKo: "전투 종료 후 뒤집기 획득량이 1개 더 늘어납니다.", iconName: "Target" },
+      { id: "small_straight_3", name: "Short Cut", nameKo: "숏 컷", descriptionKo: "연속된 숫자 3개로도 스몰 스트레이트가 가능합니다.", iconName: "Target" },
+      { id: "triple_2", name: "Pocket Pair", nameKo: "포켓 페어", descriptionKo: "동일 숫자 2개로도 트리플이 가능합니다.", iconName: "Target" },
+      { id: "mega_enhance", name: "All In", nameKo: "올 인", descriptionKo: "무작위 주사위가 +10 강화됩니다.", iconName: "Target" },
+      { id: "reroll_burn", name: "Spin-off", nameKo: "스핀 오프", descriptionKo: "리롤시 리롤한 주사위의 눈+강화 수치만큼 몬스터에게 피해를 입힙니다.", iconName: "Target" },
+      { id: "sum13_x5", name: "13 Jackpot", nameKo: "13 잭팟", descriptionKo: "주사위 합계가 정확히 13일 경우, 피해량이 5배 증가합니다.", iconName: "Target" },
       { id: "dice_6_0", name: "6·0 Dice", nameKo: "6·0 다이스", descriptionKo: "[6,0] 면 구성으로 교체", iconName: "Target" },
       { id: "dice_5_1", name: "5·1 Dice", nameKo: "5·1 다이스", descriptionKo: "[5,1] 면 구성으로 교체", iconName: "Target" },
       { id: "dice_5_2", name: "5·2 Dice", nameKo: "5·2 다이스", descriptionKo: "[5,2] 면 구성으로 교체", iconName: "Target" },
@@ -1954,16 +1956,17 @@
       { id: "dice_6_5_1", name: "6·5·1 Dice", nameKo: "6·5·1 다이스", descriptionKo: "[6,5,1] 면 구성으로 교체 (양면 동일)", iconName: "Target" },
       { id: "dice_6_3_0", name: "6·3·0 Dice", nameKo: "6·3·0 다이스", descriptionKo: "[6,3,0] 면 구성으로 교체 (6↔0)", iconName: "Target" },
       { id: "dice_5_4_0", name: "5·4·0 Dice", nameKo: "5·4·0 다이스", descriptionKo: "[5,4,0] 면 구성으로 교체 (5↔0)", iconName: "Target" },
-      { id: "stunned_hold", name: "Stunned Hold", nameKo: "기절 저항", descriptionKo: "기절한 주사위가 자동으로 리롤되지 않습니다.", iconName: "Shield" },
-      { id: "fullhouse_boost", name: "Full House Boost", nameKo: "풀 하우스 강화", descriptionKo: "풀 하우스 배율이 +3 증가합니다.", iconName: "Target" },
-      { id: "small_straight_boost", name: "Small Straight Boost", nameKo: "스몰 스트레이트 강화", descriptionKo: "스몰 스트레이트 배율이 +3 증가합니다.", iconName: "Target" },
-      { id: "two_pair_boost", name: "Two Pair Boost", nameKo: "투페어 강화", descriptionKo: "투페어 배율이 +2 증가합니다.", iconName: "Target" },
-      { id: "triple_boost", name: "Triple Boost", nameKo: "트리플 강화", descriptionKo: "트리플 배율이 +2 증가합니다.", iconName: "Target" },
-      { id: "reroll_save_boost", name: "Reroll Save Boost", nameKo: "리롤 절약", descriptionKo: "리롤 횟수가 남은 상태에서 공격시 피해량이 2배 증가합니다.", iconName: "Target" },
-      { id: "reroll_carryover", name: "Reroll Carryover", nameKo: "리롤 이월", descriptionKo: "사용하지 않은 리롤이 다음 전투로 이월됩니다.", iconName: "Target" },
-      { id: "random_passive_2", name: "Random Passive 2", nameKo: "행운의 선물", descriptionKo: "무작위 패시브 2개를 획득합니다.", iconName: "Gift" },
-      { id: "low_dice_boost", name: "Low Dice Boost", nameKo: "약자의 힘", descriptionKo: "모든 주사위 눈이 3 이하일시 피해량이 2배 증가합니다.", iconName: "Target" },
-      { id: "stun_immunity_no_flip", name: "Stun Immunity No Flip", nameKo: "철벽 수비", descriptionKo: "첫 번째 몬스터 공격이 무효화됩니다. 뒤집기 사용이 불가합니다.", iconName: "Shield" },
+      { id: "stunned_hold", name: "Poker Face", nameKo: "포커 페이스", descriptionKo: "기절한 주사위가 자동으로 리롤되지 않습니다.", iconName: "Shield" },
+      { id: "fullhouse_boost", name: "Full Boat", nameKo: "풀 보트", descriptionKo: "풀 하우스 배율이 +3 증가합니다.", iconName: "Target" },
+      { id: "small_straight_boost", name: "Low Run", nameKo: "로우 런", descriptionKo: "스몰 스트레이트 배율이 +3 증가합니다.", iconName: "Target" },
+      { id: "two_pair_boost", name: "Double Stack", nameKo: "더블 스택", descriptionKo: "투페어 배율이 +2 증가합니다.", iconName: "Target" },
+      { id: "triple_boost", name: "Trips", nameKo: "트립스", descriptionKo: "트리플 배율이 +2 증가합니다.", iconName: "Target" },
+      { id: "reroll_save_boost", name: "Showdown", nameKo: "쇼다운", descriptionKo: "리롤 횟수가 남은 상태에서 공격시 피해량이 2배 증가합니다.", iconName: "Target" },
+      { id: "reroll_carryover", name: "Seed Money", nameKo: "시드 머니", descriptionKo: "사용하지 않은 리롤이 다음 전투로 이월됩니다.", iconName: "Target" },
+      { id: "random_passive_2", name: "Joker", nameKo: "조커", descriptionKo: "무작위 패시브 2개를 획득합니다.", iconName: "Gift" },
+      { id: "low_dice_boost", name: "Underdog", nameKo: "언더독", descriptionKo: "모든 주사위 눈이 3 이하일시 피해량이 2배 증가합니다.", iconName: "Target" },
+      { id: "stun_immunity_no_flip", name: "Safe Bet", nameKo: "세이프 벳", descriptionKo: "첫 번째 몬스터 공격이 무효화됩니다. 뒤집기 사용이 불가합니다.", iconName: "Shield" },
+      { id: "double_attack", name: "Double Edge", nameKo: "더블 엣지", descriptionKo: "주사위 눈 2가 포함된 경우 피해량이 2배 증가합니다.", iconName: "Target" },
     ];
 
     const COMBINATIONS = {
@@ -2243,9 +2246,10 @@
           // 라지 스트레이트: 5개 연속이므로 모든 주사위 포함
           sortedDice.forEach(({ idx }) => { if (diceEnhancements[idx] > 0) enhancementBonus += diceEnhancements[idx]; });
         } else if (combination === "smallStraight") {
-          // 스몰 스트레이트: 연속된 4개 주사위만 포함
+          // 스몰 스트레이트: 연속된 4개 주사위 또는 숏 컷 패시브로 3개 연속
           const uniqueVals = [...new Set(dice)].sort((a, b) => a - b);
           let straightVals = [];
+          // 먼저 4개 연속 찾기
           for (let i = 0; i <= uniqueVals.length - 4; i++) {
             if (uniqueVals[i + 3] - uniqueVals[i] === 3 && 
                 uniqueVals[i + 1] - uniqueVals[i] === 1 && 
@@ -2254,9 +2258,21 @@
               break;
             }
           }
+          // 4개 연속이 없고 숏 컷 패시브가 있으면 3개 연속 찾기
+          if (straightVals.length === 0 && ownedRewards.includes('small_straight_3')) {
+            for (let i = 0; i <= uniqueVals.length - 3; i++) {
+              if (uniqueVals[i + 1] - uniqueVals[i] === 1 && uniqueVals[i + 2] - uniqueVals[i + 1] === 1) {
+                straightVals = [uniqueVals[i], uniqueVals[i + 1], uniqueVals[i + 2]];
+                break;
+              }
+            }
+          }
           const usedForStraight = new Map();
           straightVals.forEach(v => usedForStraight.set(v, 0));
-          sortedDice.forEach(({ value, idx }) => {
+          // 강화 수치가 높은 주사위를 먼저 선택하도록 정렬
+          const sortedByEnhancement = [...dice].map((v, i) => ({ value: v, idx: i, enh: diceEnhancements[i] || 0 }))
+            .sort((a, b) => b.enh - a.enh);
+          sortedByEnhancement.forEach(({ value, idx }) => {
             if (straightVals.includes(value) && usedForStraight.get(value) < 1 && diceEnhancements[idx] > 0) {
               enhancementBonus += diceEnhancements[idx];
               usedForStraight.set(value, 1);
@@ -2322,6 +2338,10 @@
         // 약자의 힘: 모든 주사위 눈금이 3 이하일 때 x2
         if (ownedRewards.includes("low_dice_boost") && dice.every(d => d <= 3)) {
           rewardMultipliers.push({ rewardId: "low_dice_boost", multiplier: 2 });
+        }
+        // 더블 어택: 주사위 눈 2가 포함된 경우 x2
+        if (ownedRewards.includes("double_attack") && dice.some(d => d === 2)) {
+          rewardMultipliers.push({ rewardId: "double_attack", multiplier: 2 });
         }
       }
       
@@ -2412,8 +2432,8 @@
           newState.diceFlipStacks = Math.min((newState.diceFlipStacks || 0) + 1, 5);
           break;
         case "random_combo_boost": {
-          // 획득 시 즉시 무작위 족보 1개 강화
-          const comboKeys = Object.keys(COMBINATIONS);
+          // 획득 시 즉시 무작위 족보 1개 강화 (야찌, 라지 스트레이트 제외)
+          const comboKeys = Object.keys(COMBINATIONS).filter(k => k !== 'yahtzee' && k !== 'largeStraight');
           const randomCombo = comboKeys[Math.floor(Math.random() * comboKeys.length)];
           newState.combinationBoosts = { ...(newState.combinationBoosts || {}), [randomCombo]: ((newState.combinationBoosts || {})[randomCombo] || 0) + 1 };
           break;
@@ -2568,9 +2588,9 @@
         "dice_5_2": { name: "5·2 다이스", faces: [5,5,5,2,2,2] },
         "dice_4_3": { name: "4·3 다이스", faces: [4,4,4,3,3,3] },
         "dice_4_2": { name: "4·2 다이스", faces: [4,4,4,2,2,2] },
-        "dice_6_4_2": { name: "6·4·2 다이스 (뒤집기 동일)", faces: [6,4,2,2,4,6] },
-        "dice_5_4_3": { name: "5·4·3 다이스 (뒤집기 동일)", faces: [5,4,3,3,4,5] },
-        "dice_6_5_1": { name: "6·5·1 다이스 (뒤집기 동일)", faces: [6,5,1,1,5,6] },
+        "dice_6_4_2": { name: "6·4·2 다이스 (양면 동일)", faces: [6,4,2,2,4,6] },
+        "dice_5_4_3": { name: "5·4·3 다이스 (양면 동일)", faces: [5,4,3,3,4,5] },
+        "dice_6_5_1": { name: "6·5·1 다이스 (양면 동일)", faces: [6,5,1,1,5,6] },
         "dice_6_3_0": { name: "6·3·0 다이스 (6↔0)", faces: [6,0,3,3,0,6] },
         "dice_5_4_0": { name: "5·4·0 다이스 (5↔0)", faces: [5,0,4,4,0,5] },
         "abyss_cursed": { name: "심연의 저주", faces: [0,0,0,0,0,0] },
@@ -2887,6 +2907,7 @@
       const [rollingDice, setRollingDice] = useState(new Set());
       
       const [showRewardSelection, setShowRewardSelection] = useState(false);
+      const [rewardModalHidden, setRewardModalHidden] = useState(false);
       const [rewardOptions, setRewardOptions] = useState([]);
       const [showVictory, setShowVictory] = useState(false);
       const [showEnhancementChoice, setShowEnhancementChoice] = useState(false);
@@ -3016,6 +3037,12 @@
             if (available.length > 0)
               indicesToStun.push(available[Math.floor(Math.random() * available.length)]);
           }
+          // five_missing_stun: 눈금이 5인 주사위가 없으면 추가로 1개 기절
+          if (currentBossType === 'five_missing_stun' && attackDice && !attackDice.some(d => d === 5)) {
+            const available = activeIndices.filter(i => !indicesToStun.includes(i));
+            if (available.length > 0)
+              indicesToStun.push(available[Math.floor(Math.random() * available.length)]);
+          }
           // double_stun: 매 턴 2개 기절 (기본 1개 + 추가 1개)
           if (currentBossType === 'double_stun') {
             const available = activeIndices.filter(i => !indicesToStun.includes(i));
@@ -3089,7 +3116,8 @@
           setPlayerState(prev => {
             let n = prev;
             if (n.ownedRewards.includes('random_combo_boost')) {
-              const k = Object.keys(COMBINATIONS)[Math.floor(Math.random() * Object.keys(COMBINATIONS).length)];
+              const comboKeys = Object.keys(COMBINATIONS).filter(k => k !== 'yahtzee' && k !== 'largeStraight');
+              const k = comboKeys[Math.floor(Math.random() * comboKeys.length)];
               n = { ...n, combinationBoosts: { ...(n.combinationBoosts || {}), [k]: ((n.combinationBoosts || {})[k] || 0) + 1 } };
             }
             if (n.ownedRewards.includes('dice_flip_gain')) {
@@ -3131,11 +3159,11 @@
         setShowAttackResult(true);
         if (!score.isCursed) triggerConfetti(score);
         
-        // combo_decay 보스: 사용한 족보 배율 -1 감소
+        // combo_decay 보스: 사용한 족보 배율 -2 감소
         if (currentBossType === 'combo_decay' && score.combination) {
           setComboDecay(prev => ({
             ...prev,
-            [score.combination]: (prev[score.combination] || 0) + 1
+            [score.combination]: (prev[score.combination] || 0) + 2
           }));
         }
         
@@ -3217,7 +3245,7 @@
         setPlayerState(prev => ({ ...prev, usedFlipThisRound: false, carryOverRerolls: 0 }));
         setSelectedIndices(new Set());
         setRerollsLeft(effectiveMaxRerolls + carryOver);
-        if (currentBossType === 'cursed_dice' && totalDiceCount > 0)
+        if (currentBossType === 'cursed_dice' && totalDiceCount > 0 && cursedDiceIndex === null)
           setCursedDiceIndex(Math.floor(Math.random() * totalDiceCount));
         // combo_seal 보스: 매 턴 무작위 족보 1개 봉인 (chance 제외)
         if (currentBossType === 'combo_seal') {
@@ -3338,6 +3366,7 @@
         }
         setPlayerState(newState);
         setShowRewardSelection(false);
+        setRewardModalHidden(false);
         setStunnedIndices(new Set());
         setCurrentDice(Array.from({ length: newDiceCount }, (_, i) => i + 1));
         setDiceFaceIndices(Array.from({ length: newDiceCount }, (_, i) => i));
@@ -3394,6 +3423,7 @@
         setMonsterHp(STAGES[0].hp);
         setShowVictory(false);
         setShowRewardSelection(false);
+        setRewardModalHidden(false);
         setShowEnhancementChoice(false);
         setEnhancementOffer(null);
         setCurrentBossType(null);
@@ -3539,8 +3569,7 @@
                 borderRadius: '0.75rem',
                 fontSize: '0.875rem'
               }}>
-                <div style={{ fontWeight: 'bold', marginBottom: '0.25rem', color: '#a78bfa' }}>👹 보스 특성: {bossInfo.nameKo}</div>
-                <div style={{ color: 'rgba(30, 41, 59, 0.9)' }}>{bossInfo.descriptionKo}</div>
+                <div style={{ fontWeight: 'bold', marginBottom: '0.25rem', color: '#a78bfa' }}>👹 {bossInfo.monsterNameKo || '보스'}: {bossInfo.descriptionKo}</div>
                 {currentBossType === 'pattern_limit' && lastUsedCombination && (
                   <div style={{ marginTop: '0.5rem', padding: '0.5rem', background: 'rgba(239, 68, 68, 0.2)', borderRadius: '0.5rem', color: '#ef4444', fontWeight: 'bold' }}>
                     ⚠️ 사용 불가: {COMBINATIONS[lastUsedCombination]?.labelKo || lastUsedCombination}
@@ -3550,7 +3579,7 @@
             )}
             
             <div className="monster-section">
-              <Monster name={currentStage.name} nameKo={currentStage.nameKo} maxHp={currentBossType === 'cursed_dice' ? 300 : currentBossType === 'double_stun' ? 500 : currentBossType === 'combo_out_stun' ? 500 : currentStage.hp} currentHp={monsterHp} showDamage={showDamage} damage={lastDamage} isMonsterAttacking={isMonsterAttacking} imageUrl={currentStage.imageUrl} previewDamage={roundStarted && !showAttackResult && !showCounterattack && !allDiceStunned ? (currentBossType === 'damage_cap_50' ? Math.min(currentScore.total, Math.floor(currentStage.hp * 0.5)) : currentScore.total) : 0} />
+              <Monster name={currentStage.name} nameKo={bossInfo?.monsterNameKo || currentStage.nameKo} maxHp={currentBossType === 'cursed_dice' ? 300 : currentBossType === 'double_stun' ? 500 : currentBossType === 'combo_out_stun' ? 500 : currentStage.hp} currentHp={monsterHp} showDamage={showDamage} damage={lastDamage} isMonsterAttacking={isMonsterAttacking} imageUrl={bossInfo?.imageUrl || currentStage.imageUrl} previewDamage={roundStarted && !showAttackResult && !showCounterattack && !allDiceStunned ? (currentBossType === 'damage_cap_50' ? Math.min(currentScore.total, Math.floor(currentStage.hp * 0.5)) : currentScore.total) : 0} />
             </div>
 
             {showMonsterPreview && (
@@ -3653,11 +3682,28 @@
               </div>
             )}
 
-            {showRewardSelection && (() => {
+            {showRewardSelection && !rewardModalHidden && (() => {
               const isDiceVariantRound = [1, 3, 5, 7].includes(playerState.currentStage);
               return (
               <div className="modal-overlay">
                 <div className="modal" style={{ maxWidth: '700px', maxHeight: '90vh', overflow: 'auto' }}>
+                  <button
+                    onClick={() => setRewardModalHidden(true)}
+                    style={{
+                      position: 'absolute',
+                      top: '1rem',
+                      right: '1rem',
+                      background: 'rgba(100, 100, 100, 0.5)',
+                      border: 'none',
+                      borderRadius: '0.5rem',
+                      padding: '0.5rem 1rem',
+                      color: 'white',
+                      cursor: 'pointer',
+                      fontSize: '0.875rem'
+                    }}
+                  >
+                    숨기기
+                  </button>
                   {enhancementOffer && enhancementOffer.survivalBonus && (
                     <div style={{ 
                       background: 'linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(245, 158, 11, 0.15))',
@@ -3679,8 +3725,8 @@
                     {isDiceVariantRound ? '1·3·5·7스테이지 – 일반 주사위 1개를 특수 주사위로 교체' : '2·4·6스테이지 – 능력 보상'}
                   </p>
                       <div style={{ 
-                        display: 'grid', 
-                        gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', 
+                        display: 'flex', 
+                        flexDirection: 'column', 
                         gap: '1rem',
                         padding: '1rem',
                         borderRadius: '0.5rem',
@@ -3701,7 +3747,7 @@
                                 background: canSelect ? 'rgba(255, 255, 255, 0.1)' : 'rgba(100, 100, 100, 0.2)'
                               }}
                             >
-                              <div style={{ fontWeight: 'bold', fontSize: '1rem', marginBottom: '0.5rem' }}>{reward.nameKo}</div>
+                              <div style={{ fontWeight: 'bold', fontSize: '1rem', marginBottom: '0.5rem' }}>{reward.nameKo} {!/^dice_\d/.test(reward.id) && <span style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.7)' }}>({reward.name})</span>}</div>
                               <div style={{ fontSize: '0.875rem', color: 'rgba(255,255,255,0.9)', marginBottom: '0.75rem' }}>
                                 {reward.descriptionKo}
                               </div>
@@ -3734,6 +3780,29 @@
                 </div>
               </div>
             );})()}
+
+            {showRewardSelection && rewardModalHidden && (
+              <div style={{
+                position: 'fixed',
+                bottom: '2rem',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                zIndex: 1000
+              }}>
+                <button
+                  onClick={() => setRewardModalHidden(false)}
+                  className="btn"
+                  style={{
+                    padding: '1rem 2rem',
+                    fontSize: '1rem',
+                    background: 'linear-gradient(to right, #6366f1, #8b5cf6)',
+                    boxShadow: '0 4px 15px rgba(99, 102, 241, 0.4)'
+                  }}
+                >
+                  보상 선택으로 돌아가기
+                </button>
+              </div>
+            )}
 
             {showCounterattack && (
               <div className="counterattack-overlay">
@@ -3951,14 +4020,14 @@
               )}
             </div>
 
-            {playerState.ownedRewards.length > 0 && (
+            {playerState.ownedRewards.filter(id => !/^dice_\d/.test(id)).length > 0 && (
               <div className="owned-rewards">
-                {playerState.ownedRewards.map(rewardId => {
+                {playerState.ownedRewards.filter(id => !/^dice_\d/.test(id)).map(rewardId => {
                   const reward = REWARDS.find(r => r.id === rewardId);
                   if (!reward) return null;
                   return (
                     <span key={rewardId} className="reward-badge" title={reward.descriptionKo}>
-                      {reward.nameKo}
+                      {reward.nameKo} ({reward.name})
                     </span>
                   );
                 })}
