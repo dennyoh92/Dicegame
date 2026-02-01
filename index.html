@@ -1809,15 +1809,9 @@
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
       margin-bottom: 0.5rem;
       line-height: 1.5;
-      white-space: nowrap;
-      text-align: center;
-    }
-    @media (max-width: 768px) {
-      .stun-tooltip {
-        white-space: normal;
-        max-width: 200px;
-        word-break: keep-all;
-      }
+      min-width: 280px;
+      max-width: 400px;
+      text-align: left;
     }
     .stun-tooltip::after {
       content: '';
@@ -1881,57 +1875,96 @@
       font-size: 2rem;
       font-weight: black;
     }
+    .result-timeline {
+      position: relative;
+      padding-left: 2rem;
+    }
+    .result-timeline::before {
+      content: '';
+      position: absolute;
+      left: 0.5rem;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, #667eea, #764ba2);
+    }
+    .result-timeline-item {
+      position: relative;
+      padding-bottom: 1.5rem;
+    }
+    .result-timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -1.625rem;
+      top: 0.25rem;
+      width: 1rem;
+      height: 1rem;
+      border-radius: 50%;
+      background: #667eea;
+      border: 3px solid white;
+      box-shadow: 0 0 0 3px #e0e7ff;
+    }
+    .result-stage-info {
+      background: #f8fafc;
+      border-radius: 0.75rem;
+      padding: 1rem;
+      border-left: 4px solid #667eea;
+    }
+    .result-stage-header {
+      font-weight: bold;
+      color: #1e293b;
+      margin-bottom: 0.5rem;
+    }
+    .result-stage-details {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+      margin-top: 0.75rem;
+    }
+    .result-detail-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+      color: #475569;
+    }
+    .result-dice-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+    .result-dice-badge {
+      background: white;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #475569;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .result-rewards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+    .result-reward-item {
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      border: 1px solid rgba(102, 126, 234, 0.2);
+      font-size: 0.875rem;
+      color: #4338ca;
+      font-weight: 600;
+    }
   </style>
 </head>
 <body>
   <div id="root"></div>
 
   <script type="text/babel">
-    const { useState, useEffect, useMemo, useCallback, useRef, memo } = React;
-
-    // 에러 바운더리 컴포넌트
-    class ErrorBoundary extends React.Component {
-      constructor(props) {
-        super(props);
-        this.state = { hasError: false, error: null };
-      }
-
-      static getDerivedStateFromError(error) {
-        return { hasError: true, error };
-      }
-
-      componentDidCatch(error, errorInfo) {
-        console.error('게임 에러:', error, errorInfo);
-      }
-
-      render() {
-        if (this.state.hasError) {
-          return (
-            <div style={{
-              background: '#fee2e2',
-              border: '2px solid #dc2626',
-              borderRadius: '1rem',
-              padding: '2rem',
-              textAlign: 'center',
-              color: '#991b1b',
-              margin: '2rem'
-            }}>
-              <h2>⚠️ 오류가 발생했습니다</h2>
-              <p>{this.state.error?.message || '알 수 없는 오류'}</p>
-              <button 
-                className="btn-primary" 
-                onClick={() => window.location.reload()}
-                style={{ marginTop: '1rem', padding: '0.75rem 1.5rem', borderRadius: '0.5rem', border: 'none', background: '#6366f1', color: 'white', cursor: 'pointer' }}
-              >
-                새로고침
-              </button>
-            </div>
-          );
-        }
-
-        return this.props.children;
-      }
-    }
+    const { useState, useEffect, useMemo, useCallback } = React;
 
     // Game Data
     // 몬스터 이미지 파일 경로 (null로 설정하면 원본 CSS 방식 사용)
@@ -1948,7 +1981,7 @@
       { id: "over21_zero", nameKo: "과잉 눈금 보스", descriptionKo: "주사위 눈금이 21을 넘는 경우 피해가 0이 됩니다.", monsterNameKo: "블랙잭", imageUrl: "./2-2_blackjack.svg" },
       { id: "reroll_max2", nameKo: "리롤 제한 보스", descriptionKo: "3개 주사위 이상 동시 리롤이 불가합니다.", monsterNameKo: "망가진 슬롯 머신", imageUrl: "./2-3_slot_machine.svg" },
       { id: "six_exclude", nameKo: "6 제외 보스", descriptionKo: "눈금이 6인 주사위는 족보 판정에서 제외됩니다.", monsterNameKo: "6번 공", imageUrl: "./2-4_billiard_ball.svg" },
-      { id: "four_extra_stun", nameKo: "4의 저주 보스", descriptionKo: "눈금이 4인 주사위가 있으면 무작위 주사위 1개가 기절합니다.", monsterNameKo: "관짝", imageUrl: "./2-5_coffin.svg" },
+      { id: "four_extra_stun", nameKo: "4의 저주 보스", descriptionKo: "눈금이 4인 주사위가 있으면 주사위 1개가 추가로 기절합니다.", monsterNameKo: "관짝", imageUrl: "./2-5_coffin.svg" },
     ];
     const BOSS_TYPES_STAGE_4 = [
       { id: "cursed_dice", nameKo: "저주 주사위 보스", descriptionKo: "주사위 1개에 저주. 저주 받은 주사위는 족보 판정에서 제외됩니다.", monsterNameKo: "깨진 거울", imageUrl: "./4-1_broken_mirror.svg" },
@@ -1989,7 +2022,7 @@
       { id: "multi_flip", name: "Sleight of Hand", nameKo: "슬레이트 핸드", descriptionKo: "여러 주사위를 한번에 뒤집을 수 있습니다.", iconName: "Target" },
       { id: "flip_double", name: "Switch Blade", nameKo: "스위치 블레이드", descriptionKo: "뒤집기를 사용한 턴의 피해량이 2배 증가합니다.", iconName: "Target" },
       { id: "random_combo_boost", name: "Wild Card", nameKo: "와일드 카드", descriptionKo: "전투 후 무작위 족보가 +1 증가합니다. (야찌, 라지 스트레이트 제외)", iconName: "Target" },
-      { id: "random_die_enhance", name: "Raise", nameKo: "레이즈", descriptionKo: "공격 후 족보에 포함된 무작위 주사위가 +1 강화됩니다.", iconName: "Target" },
+      { id: "random_die_enhance", name: "Raise", nameKo: "레이즈", descriptionKo: "매 전투 후 무작위 주사위 강화 효과가 2배로 상승합니다.", iconName: "Target" },
       { id: "dice_flip_gain", name: "Spare Card", nameKo: "스페어 카드", descriptionKo: "전투 종료 후 뒤집기 획득량이 1개 더 늘어납니다.", iconName: "Target" },
       { id: "small_straight_3", name: "Short Cut", nameKo: "숏 컷", descriptionKo: "연속된 숫자 3개로도 스몰 스트레이트가 가능합니다.", iconName: "Target" },
       { id: "triple_2", name: "Pocket Pair", nameKo: "포켓 페어", descriptionKo: "동일 숫자 2개로도 트리플이 가능합니다.", iconName: "Target" },
@@ -2013,7 +2046,7 @@
       { id: "triple_boost", name: "Trips", nameKo: "트립스", descriptionKo: "트리플 배율이 +2 증가합니다.", iconName: "Target" },
       { id: "reroll_save_boost", name: "Showdown", nameKo: "쇼다운", descriptionKo: "리롤 횟수가 남은 상태에서 공격시 피해량이 2배 증가합니다.", iconName: "Target" },
       { id: "reroll_carryover", name: "Seed Money", nameKo: "시드 머니", descriptionKo: "사용하지 않은 리롤이 다음 전투로 이월됩니다.", iconName: "Target" },
-      { id: "random_passive_2", name: "Joker", nameKo: "조커", descriptionKo: "무작위 패시브 2개를 획득합니다.", iconName: "Gift" },
+      { id: "random_passive_2", name: "Joker", nameKo: "조커", descriptionKo: "무작위 룰 2개를 획득합니다.", iconName: "Gift" },
       { id: "low_dice_boost", name: "Underdog", nameKo: "언더독", descriptionKo: "모든 주사위 눈이 3 이하일시 피해량이 2배 증가합니다.", iconName: "Target" },
       { id: "stun_immunity_no_flip", name: "Safe Bet", nameKo: "세이프 벳", descriptionKo: "첫 번째 몬스터 공격이 무효화됩니다. 뒤집기 사용이 불가합니다.", iconName: "Shield" },
       { id: "double_attack", name: "Double Edge", nameKo: "더블 엣지", descriptionKo: "주사위 눈 2가 포함된 경우 피해량이 2배 증가합니다.", iconName: "Target" },
@@ -2296,7 +2329,7 @@
           // 라지 스트레이트: 5개 연속이므로 모든 주사위 포함
           sortedDice.forEach(({ idx }) => { if (diceEnhancements[idx] > 0) enhancementBonus += diceEnhancements[idx]; });
         } else if (combination === "smallStraight") {
-          // 스몰 스트레이트: 연속된 4개 주사위 또는 숏 컷 패시브로 3개 연속
+          // 스몰 스트레이트: 연속된 4개 주사위 또는 숏 컷 룰로 3개 연속
           const uniqueVals = [...new Set(dice)].sort((a, b) => a - b);
           let straightVals = [];
           // 먼저 4개 연속 찾기
@@ -2308,7 +2341,7 @@
               break;
             }
           }
-          // 4개 연속이 없고 숏 컷 패시브가 있으면 3개 연속 찾기
+          // 4개 연속이 없고 숏 컷 룰이 있으면 3개 연속 찾기
           if (straightVals.length === 0 && ownedRewards.includes('small_straight_3')) {
             for (let i = 0; i <= uniqueVals.length - 3; i++) {
               if (uniqueVals[i + 1] - uniqueVals[i] === 1 && uniqueVals[i + 2] - uniqueVals[i + 1] === 1) {
@@ -2336,7 +2369,7 @@
       multiplier = multiplier + (combinationBoosts[combination] || 0);
       // combo_decay 보스: 사용한 족보 배율 감소 적용
       multiplier = Math.max(1, multiplier - (comboDecay[combination] || 0));
-      // 족보 강화 패시브 적용
+      // 족보 강화 룰 적용
       if (ownedRewards.includes("fullhouse_boost") && combination === "fullHouse") {
         multiplier += 3; // x6 → x9
       }
@@ -2453,16 +2486,16 @@
 
     function getRandomRewards(count, excludeIds = [], currentStage = 1) {
       let available = REWARDS.filter(r => !excludeIds.includes(r.id));
-      // 1,3,5,7 라운드: 주사위 변형(dice_숫자_*)만 / 2,4,6 라운드: 패시브 보상만
+      // 1,3,5,7 라운드: 주사위 변형(dice_숫자_*)만 / 2,4,6 라운드: 룰 보상만
       const isDiceVariantRound = [1, 3, 5, 7].includes(currentStage);
       const isPassiveRound = [2, 4, 6].includes(currentStage);
       const isDiceVariantReward = (id) => /^dice_\d/.test(id); // dice_6_1, dice_5_3_2 등
-      // 2라운드 전용 패시브 (4, 6라운드에서는 제외)
+      // 2라운드 전용 룰 (4, 6라운드에서는 제외)
       const round2OnlyPassives = ['random_die_enhance', 'random_combo_boost', 'dice_flip_gain'];
       if (isDiceVariantRound) available = available.filter(r => isDiceVariantReward(r.id));
       else if (isPassiveRound) {
         available = available.filter(r => !isDiceVariantReward(r.id));
-        // 4, 6라운드에서는 2라운드 전용 패시브 제외
+        // 4, 6라운드에서는 2라운드 전용 룰 제외
         if (currentStage === 4 || currentStage === 6) {
           available = available.filter(r => !round2OnlyPassives.includes(r.id));
         }
@@ -2524,10 +2557,10 @@
           // 무작위로 2개 선택
           const shuffled = [...passiveRewards].sort(() => Math.random() - 0.5);
           const selected = shuffled.slice(0, Math.min(2, shuffled.length));
-          // 선택된 패시브들을 적용
+          // 선택된 룰들을 적용
           selected.forEach(reward => {
             newState.ownedRewards.push(reward.id);
-            // 각 패시브의 효과도 적용
+            // 각 룰의 효과도 적용
             if (reward.id === "skilled_hands") newState.baseRerolls += 1;
             if (reward.id === "mega_enhance") {
               let e = [...(newState.diceEnhancements || [])];
@@ -2982,42 +3015,17 @@
       const [hasSeenStunTutorial, setHasSeenStunTutorial] = useState(false);
       const [showStunTutorial, setShowStunTutorial] = useState(false);
       const [gameLog, setGameLog] = useState([]); // 게임 진행 로그 누적
+      const [currentStageMaxDamage, setCurrentStageMaxDamage] = useState(0); // 현재 스테이지 최고 피해량
+      const [currentStageBestCombo, setCurrentStageBestCombo] = useState(''); // 현재 스테이지 최고 피해량 족보
 
-      // 메모리 누수 방지를 위한 timeout/interval refs
-      const timeoutRefs = useRef([]);
-      const intervalRefs = useRef([]);
-
-      // cleanup 헬퍼 함수
-      const addTimeout = useCallback((callback, delay) => {
-        const id = setTimeout(callback, delay);
-        timeoutRefs.current.push(id);
-        return id;
-      }, []);
-
-      const addInterval = useCallback((callback, delay) => {
-        const id = setInterval(callback, delay);
-        intervalRefs.current.push(id);
-        return id;
-      }, []);
-
-      // 컴포넌트 언마운트 시 모든 타이머 정리
-      useEffect(() => {
-        return () => {
-          timeoutRefs.current.forEach(clearTimeout);
-          intervalRefs.current.forEach(clearInterval);
-          timeoutRefs.current = [];
-          intervalRefs.current = [];
-        };
-      }, []);
 
       // 메시지 목록 가져오기 (게임 시작 시, 주기적으로)
       useEffect(() => {
         if (gameStarted) {
-          fetchVictoryMessages().then(setVictoryMessages).catch(err => console.error('Victory messages fetch error:', err));
+          fetchVictoryMessages().then(setVictoryMessages);
           const interval = setInterval(() => {
-            fetchVictoryMessages().then(setVictoryMessages).catch(err => console.error('Victory messages fetch error:', err));
+            fetchVictoryMessages().then(setVictoryMessages);
           }, 30000); // 30초마다 새로고침
-          intervalRefs.current.push(interval);
           return () => clearInterval(interval);
         }
       }, [gameStarted]);
@@ -3105,7 +3113,7 @@
         }
         setShowCounterattack(true);
         setIsMonsterAttacking(true);
-        addTimeout(() => {
+        setTimeout(() => {
           let indicesToStun = [];
           // 기본: 반격 시 주사위 1개 기절
           if (activeIndices.length > 0)
@@ -3182,7 +3190,7 @@
 
       const proceedToRewardSelection = useCallback(() => {
         const isDiceVariantRound = [1, 3, 5, 7].includes(playerState.currentStage);
-        // 주사위 변형 라운드: 중복 허용, 3개 제시 / 패시브 라운드: 중복 불가, 3개 제시
+        // 주사위 변형 라운드: 중복 허용, 3개 제시 / 룰 라운드: 중복 불가, 3개 제시
         const excludeIds = isDiceVariantRound ? [] : [...playerState.ownedRewards];
         const finalRewards = getRandomRewards(3, excludeIds, playerState.currentStage);
         setRewardOptions(finalRewards);
@@ -3217,7 +3225,9 @@
             if (n.diceTypes.length > 0) {
               const randomIdx = Math.floor(Math.random() * n.diceTypes.length);
               const newEnhancements = [...(n.diceEnhancements || Array(n.diceTypes.length).fill(0))];
-              newEnhancements[randomIdx] = (newEnhancements[randomIdx] || 0) + survivalBonus;
+              // 레이즈 룰: 강화 효과 2배
+              const bonusMultiplier = n.ownedRewards.includes('random_die_enhance') ? 2 : 1;
+              newEnhancements[randomIdx] = (newEnhancements[randomIdx] || 0) + (survivalBonus * bonusMultiplier);
               n = { ...n, diceEnhancements: newEnhancements };
             }
             return n;
@@ -3276,20 +3286,18 @@
         }
         setLastUsedCombination(score.combination);
         const newHp = Math.max(0, monsterHp - actualDamage);
+        
+        // 최고 피해량 업데이트
+        if (actualDamage > currentStageMaxDamage) {
+          setCurrentStageMaxDamage(actualDamage);
+          setCurrentStageBestCombo(`${score.label} ${score.labelKo}`);
+        }
+        
         setTimeout(() => {
           setLastDamage(actualDamage);
           setShowDamage(true);
           setMonsterHp(newHp);
           setTimeout(() => setShowDamage(false), 1000);
-          if (playerState.ownedRewards.includes('random_die_enhance') && actualDamage > 0 && dice.length > 0) {
-            setPlayerState(prev => {
-              const e = [...(prev.diceEnhancements || [])];
-              while (e.length < prev.diceTypes.length) e.push(0);
-              const i = Math.floor(Math.random() * e.length);
-              e[i] = (e[i] || 0) + 1;
-              return { ...prev, diceEnhancements: e };
-            });
-          }
         }, 800);
         
         setTimeout(() => {
@@ -3319,7 +3327,7 @@
           const isStunned = stunnedIndices.has(idx);
           const isSelected = selectedIndices.has(idx);
           // 리롤 시스템: 선택된 주사위가 리롤됨
-          // 기절 주사위: 기본적으로 항상 리롤됨 (stunned_hold 패시브가 있으면 자동 리롤 안됨, 단 선택하면 리롤)
+          // 기절 주사위: 기본적으로 항상 리롤됨 (stunned_hold 룰이 있으면 자동 리롤 안됨, 단 선택하면 리롤)
           const stunnedAutoHeld = isStunned && hasStunnedHold && !isSelected;
           const shouldReroll = isStunned ? (hasStunnedHold ? isSelected : true) : isSelected;
           if (shouldReroll) {
@@ -3383,7 +3391,7 @@
         playerState.diceTypes.forEach((type, idx) => {
           const isStunned = stunnedIndices.has(idx);
           const isSelected = selectedIndices.has(idx);
-          // 기절 주사위: 기본적으로 항상 리롤됨 (stunned_hold 패시브가 있으면 자동 리롤 안됨, 단 선택하면 리롤)
+          // 기절 주사위: 기본적으로 항상 리롤됨 (stunned_hold 룰이 있으면 자동 리롤 안됨, 단 선택하면 리롤)
           const shouldReroll = isStunned ? (hasStunnedHold ? isSelected : true) : isSelected;
           if (shouldReroll) {
             diceToRoll.add(idx);
@@ -3434,15 +3442,20 @@
         setGameLog(prev => [...prev, {
           stage: stateAfterReward.currentStage,
           bossType: getBossNameKo(currentBossType),
-          rewardChoice: getRewardNameKo(rewardChoice)
+          rewardChoice: getRewardNameKo(rewardChoice),
+          maxDamage: currentStageMaxDamage,
+          bestCombo: currentStageBestCombo
         }]);
+        // 다음 스테이지를 위해 초기화
+        setCurrentStageMaxDamage(0);
+        setCurrentStageBestCombo('');
         setLastEnhancementChoice("");
         const newState = { ...stateAfterReward };
         newState.currentStage += 1;
         if (newState.shieldIndex != null) newState.shieldUsed = false;
         // 철벽 수비: 다음 전투에서 다시 사용 가능
         newState.stunImmunityUsed = false;
-        // 리롤 이월 패시브: 남은 리롤을 다음 전투로 이월
+        // 리롤 이월 룰: 남은 리롤을 다음 전투로 이월
         if (newState.ownedRewards.includes('reroll_carryover')) {
           newState.carryOverRerolls = (newState.carryOverRerolls || 0) + rerollsLeft;
         } else {
@@ -3529,6 +3542,8 @@
         setVictoryMessageInput("");
         setMessageSent(false);
         setGameLog([]); // 게임 로그 초기화
+        setCurrentStageMaxDamage(0); // 최고 피해량 초기화
+        setCurrentStageBestCombo(''); // 최고 족보 초기화
       };
 
       const canReroll = roundStarted && rerollsLeft > 0 && !showAttackResult && !showCounterattack;
@@ -3653,7 +3668,7 @@
                 borderRadius: '0.75rem',
                 fontSize: '0.875rem'
               }}>
-                <div style={{ fontWeight: 'bold', marginBottom: '0.25rem', color: '#a78bfa' }}>👹 {bossInfo.monsterNameKo || '보스'}: {bossInfo.descriptionKo}</div>
+                <div style={{ fontWeight: 'bold', marginBottom: '0.25rem', color: '#a78bfa' }}>👹 보스 룰: {bossInfo.descriptionKo}</div>
                 {currentBossType === 'pattern_limit' && lastUsedCombination && (
                   <div style={{ marginTop: '0.5rem', padding: '0.5rem', background: 'rgba(239, 68, 68, 0.2)', borderRadius: '0.5rem', color: '#ef4444', fontWeight: 'bold' }}>
                     ⚠️ 사용 불가: {COMBINATIONS[lastUsedCombination]?.labelKo || lastUsedCombination}
@@ -3715,12 +3730,76 @@
 
             {showVictory && (
               <div className="modal-overlay">
-                <div className="modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '450px' }}>
-                  <h2 style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '1rem' }}>🎉 승리! 🎉</h2>
-                  <p style={{ marginBottom: '1rem' }}>모든 스테이지를 클리어했습니다!</p>
+                <div className="modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '800px', maxHeight: '90vh', overflowY: 'auto' }}>
+                  <h2 style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '0.5rem', textAlign: 'center' }}>🎉 클리어! 🎉</h2>
+                  <p style={{ marginBottom: '2rem', textAlign: 'center', color: 'rgba(255,255,255,0.8)' }}>모든 스테이지를 완료했습니다!</p>
+                  
+                  <div style={{ marginBottom: '2rem' }}>
+                    <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      📊 최종 빌드
+                    </h3>
+                    <div>
+                      <div style={{ fontWeight: 'bold', color: 'rgba(255,255,255,0.9)', marginBottom: '0.75rem' }}>주사위 구성</div>
+                      <div className="result-dice-list">
+                        {(() => {
+                          const diceCounts = {};
+                          playerState.diceTypes.forEach(type => {
+                            const info = getDiceTypeInfo(type);
+                            const name = info ? info.name : '일반 주사위';
+                            diceCounts[name] = (diceCounts[name] || 0) + 1;
+                          });
+                          return Object.entries(diceCounts).map(([name, count]) => (
+                            <div key={name} className="result-dice-badge">{name} x{count}</div>
+                          ));
+                        })()}
+                      </div>
+                      <div style={{ fontWeight: 'bold', color: 'rgba(255,255,255,0.9)', margin: '1.5rem 0 0.75rem 0' }}>획득한 룰</div>
+                      <div className="result-rewards-grid">
+                        {playerState.ownedRewards.filter(id => !/^dice_\d/.test(id)).map(rewardId => {
+                          const reward = REWARDS.find(r => r.id === rewardId);
+                          return reward ? (
+                            <div key={rewardId} className="result-reward-item">{reward.nameKo}</div>
+                          ) : null;
+                        })}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style={{ marginBottom: '2rem' }}>
+                    <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      🎮 진행 기록
+                    </h3>
+                    <div className="result-timeline">
+                      {gameLog.filter((log, idx) => [1, 3, 5, 7].includes(idx + 1)).map((log, idx) => {
+                        const stageNum = [2, 4, 6, 8][idx];
+                        return (
+                          <div key={stageNum} className="result-timeline-item" style={{ paddingBottom: idx === 3 ? 0 : '1.5rem' }}>
+                            <div className="result-stage-info">
+                              <div className="result-stage-header">Stage {stageNum} - {log.bossType}</div>
+                              <div className="result-stage-details">
+                                <div className="result-detail-item">
+                                  <span>⚔️</span>
+                                  <span>최고 피해량: {log.maxDamage || 0}</span>
+                                </div>
+                                <div className="result-detail-item">
+                                  <span>🎲</span>
+                                  <span>족보: {log.bestCombo || 'N/A'}</span>
+                                </div>
+                                <div className="result-detail-item" style={{ gridColumn: '1 / -1' }}>
+                                  <span>🎁</span>
+                                  <span>보상: {log.rewardChoice || 'Pass'}</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
                   {!messageSent ? (
                     <div style={{ marginBottom: '1.5rem' }}>
-                      <label style={{ display: 'block', fontSize: '0.875rem', color: 'rgba(255,255,255,0.8)', marginBottom: '0.5rem', textAlign: 'left' }}>
+                      <label style={{ display: 'block', fontSize: '0.875rem', color: 'rgba(255,255,255,0.8)', marginBottom: '0.5rem' }}>
                         축하 메시지를 남겨보세요! (다른 플레이어들이 볼 수 있습니다)
                       </label>
                       <input
@@ -3769,7 +3848,7 @@
               const isDiceVariantRound = [1, 3, 5, 7].includes(playerState.currentStage);
               return (
               <div className="modal-overlay">
-                <div className="modal" style={{ maxWidth: '700px', maxHeight: '90vh', overflow: 'auto' }}>
+                <div className="modal" style={{ maxWidth: '700px', maxHeight: '90vh', display: 'flex', flexDirection: 'column' }}>
                   <button
                     onClick={() => setRewardModalHidden(true)}
                     style={{
@@ -3784,28 +3863,32 @@
                       cursor: 'pointer',
                       fontSize: '0.875rem',
                       fontWeight: 'bold',
-                      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)'
+                      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
+                      zIndex: 10
                     }}
                   >
                     👁 숨기기
                   </button>
-                  {enhancementOffer && enhancementOffer.survivalBonus && (
-                    <div style={{ 
-                      background: 'linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(245, 158, 11, 0.15))',
-                      border: '1px solid rgba(251, 191, 36, 0.4)',
-                      borderRadius: '0.5rem',
-                      padding: '0.6rem 1rem',
-                      marginBottom: '1rem',
-                      textAlign: 'center'
-                    }}>
-                      <span style={{ fontSize: '0.85rem', color: '#fbbf24', fontWeight: 'bold' }}>
-                        🎖 전투 보너스: 무작위 주사위 +{enhancementOffer.survivalBonus} 강화! (남은 주사위: {enhancementOffer.nonStunnedCount}개)
-                      </span>
-                    </div>
-                  )}
+                  <div style={{ flex: '0 0 auto' }}>
+                    {enhancementOffer && enhancementOffer.survivalBonus && (
+                      <div style={{ 
+                        background: 'linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(245, 158, 11, 0.15))',
+                        border: '1px solid rgba(251, 191, 36, 0.4)',
+                        borderRadius: '0.5rem',
+                        padding: '0.6rem 1rem',
+                        marginBottom: '1rem',
+                        textAlign: 'center'
+                      }}>
+                        <span style={{ fontSize: '0.85rem', color: '#fbbf24', fontWeight: 'bold' }}>
+                          🎖 전투 보너스: 무작위 주사위 +{enhancementOffer.survivalBonus} 강화! (남은 주사위: {enhancementOffer.nonStunnedCount}개)
+                        </span>
+                      </div>
+                    )}
                   <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1rem' }}>
                     {isDiceVariantRound ? '🎲 홀수 스테이지 – 특수 주사위 획득' : '✨ 짝수 스테이지 – 새로운 룰 획득'}
                   </h2>
+                  </div>
+                  <div style={{ flex: '1 1 auto', overflowY: 'auto', marginBottom: '1rem' }}>
                       <div style={{ 
                         display: 'flex', 
                         flexDirection: 'column', 
@@ -3850,7 +3933,8 @@
                           );
                         })}
                       </div>
-                  <div style={{ display: 'flex', gap: '1rem', marginTop: '1.25rem', paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.2)' }}>
+                  </div>
+                  <div style={{ flex: '0 0 auto', display: 'flex', gap: '1rem', paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.2)' }}>
                     <button
                       className="btn"
                       onClick={() => goToNextStage({ ...playerState, diceFlipStacks: Math.min((playerState.diceFlipStacks || 1) + 1, 4) }, "pass")}
@@ -3889,7 +3973,7 @@
             {showCounterattack && (
               <div className="counterattack-overlay">
                 <div className="counterattack-modal">
-                  ⚡ 반격! ⚡<br />
+                  반격!<br />
                   <div style={{ fontSize: '1rem', marginTop: '0.5rem', opacity: 0.9 }}>⚠ 주사위가 기절합니다...</div>
                 </div>
               </div>
@@ -3934,6 +4018,9 @@
             )}
 
             <h1 className="title">House Rule</h1>
+            <div style={{ textAlign: 'center', fontSize: '0.75rem', color: '#64748b', marginBottom: '0.75rem', lineHeight: '1.4' }}>
+              데미지=(주사위 합+족보 주사위 강화)×족보 배수×룰 배수
+            </div>
             <p className="subtitle">
               {!roundStarted ? "주사위를 굴려 몬스터를 공격하세요!" : "리롤할 주사위를 선택하거나 공격하세요!"}
             </p>
@@ -3949,11 +4036,9 @@
 
             {roundStarted && !showAttackResult && !showCounterattack && !allDiceStunned && (
               <div className="score-preview">
-                <div style={{ fontSize: '0.75rem', color: '#64748b', marginBottom: '0.5rem' }}>현재 조합 ({totalDiceCount} 주사위)</div>
-                <div style={{ fontSize: '1.125rem', fontWeight: 'bold', marginBottom: '0.25rem', color: currentScore.isCursed ? '#6b7280' : '#6366f1' }}>
-                  {currentScore.isCursed ? 'CURSED!' : currentScore.label}
+                <div style={{ fontSize: '1.125rem', fontWeight: 'bold', marginBottom: '0.5rem', color: currentScore.isCursed ? '#6b7280' : '#6366f1' }}>
+                  {currentScore.isCursed ? 'CURSED!' : `${currentScore.label} ${currentScore.labelKo}`}
                 </div>
-                <div style={{ fontSize: '0.875rem', color: '#64748b', marginBottom: '0.5rem' }}>{currentScore.labelKo}</div>
                 {currentScore.hasCursedDice && !currentScore.isCursed && (
                   <div style={{ fontSize: '0.7rem', color: '#a855f7', marginBottom: '0.25rem' }}>⚠ 저주 주사위 제외됨</div>
                 )}
@@ -3994,7 +4079,7 @@
                   selectionDisabled={false}
                   enhancementLevel={(playerState.diceEnhancements || [0, 0, 0, 0, 0])[idx] || 0}
                   isCursed={currentBossType === 'cursed_dice' && cursedDiceIndex === idx}
-                  previewValue={playerState.diceFlipStacks > 0 && isHoveringFlipButton && selectedIndices.has(idx) && (selectedIndices.size === 1 || playerState.ownedRewards.includes('multi_flip') || currentBossType === 'flip_all') && !(isRolling && rollingDice.has(idx)) ? (() => {
+                  previewValue={playerState.diceFlipStacks > 0 && selectedIndices.has(idx) && (selectedIndices.size === 1 || playerState.ownedRewards.includes('multi_flip') || currentBossType === 'flip_all') && !(isRolling && rollingDice.has(idx)) ? (() => {
                     const type = playerState.diceTypes[idx] || "normal";
                     if (stunnedIndices.has(idx) && type !== 'abyss_cursed') {
                       const faces = [0,0,0,1,1,1];
@@ -4014,7 +4099,7 @@
             {roundStarted && !showAttackResult && !showCounterattack && !allDiceStunned && playerState.diceFlipStacks > 0 && !playerState.ownedRewards.includes('stun_immunity_no_flip') && (() => {
               const forceAll = currentBossType === 'flip_all';
               const hasMultiFlip = playerState.ownedRewards.includes('multi_flip');
-              // 다중 뒤집기 패시브가 없으면 1개만 선택 가능
+              // 다중 뒤집기 룰이 없으면 1개만 선택 가능
               const canFlip = forceAll || (hasMultiFlip ? selectedIndices.size > 0 : selectedIndices.size === 1);
               return (
               <div style={{ 
@@ -4134,7 +4219,7 @@
               {Object.entries(COMBINATIONS).map(([key, combo]) => {
                 // combinationBoosts (무작위 족보 강화 등)
                 const comboBoost = (playerState.combinationBoosts || {})[key] || 0;
-                // 패시브로 인한 고정 배율 증가
+                // 룰로 인한 고정 배율 증가
                 let passiveBoost = 0;
                 if (key === 'fullHouse' && playerState.ownedRewards.includes('fullhouse_boost')) passiveBoost = 3;
                 if (key === 'smallStraight' && playerState.ownedRewards.includes('small_straight_boost')) passiveBoost = 3;
@@ -4159,9 +4244,6 @@
                   </div>
                 );
               })}
-              <div style={{ marginTop: '0.75rem', fontSize: '0.65rem', color: 'rgba(255,255,255,0.8)', lineHeight: '1.3' }}>
-                데미지=(주사위 합+족보 주사위 강화)×족보 배수×룰 배수
-              </div>
             </div>
 
             {victoryMessages.length > 0 && (
@@ -4195,11 +4277,7 @@
     }
 
     const root = ReactDOM.createRoot(document.getElementById('root'));
-    root.render(
-      <ErrorBoundary>
-        <Game />
-      </ErrorBoundary>
-    );
+    root.render(<Game />);
   </script>
 </body>
 </html>
