@@ -1812,6 +1812,13 @@
       white-space: nowrap;
       text-align: center;
     }
+    @media (max-width: 768px) {
+      .stun-tooltip {
+        white-space: normal;
+        max-width: 200px;
+        word-break: keep-all;
+      }
+    }
     .stun-tooltip::after {
       content: '';
       position: absolute;
