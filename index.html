@@ -1704,6 +1704,13 @@
         padding: 0.75rem 1.5rem;
         font-size: 1rem;
       }
+      .combo-desktop {
+        display: none !important;
+      }
+      .combo-mobile {
+        display: inline !important;
+        text-align: center;
+      }
     }
     .btn:hover:not(:disabled) { transform: scale(1.05) translateY(-2px); }
     .btn:active:not(:disabled) { transform: scale(0.95); }
@@ -2218,7 +2225,7 @@
     function isSmallStraight(dice, ownedRewards = []) {
       if (ownedRewards.includes('small_straight_3') && hasThreeConsecutive(dice)) return true;
       const unique = Array.from(new Set(dice)).sort((a, b) => a - b);
-      const sequences = [[0,1,2,3], [1,2,3,4], [2,3,4,5], [3,4,5,6], [4,5,6,7], [5,6,7,8]];
+      const sequences = [[1,2,3,4], [2,3,4,5], [3,4,5,6]];
       return sequences.some(seq => seq.every(num => unique.includes(num)));
     }
 
@@ -4036,9 +4043,18 @@
 
             {roundStarted && !showAttackResult && !showCounterattack && !allDiceStunned && (
               <div className="score-preview">
-                <div style={{ fontSize: '1.125rem', fontWeight: 'bold', marginBottom: '0.5rem', color: currentScore.isCursed ? '#6b7280' : '#6366f1' }}>
-                  {currentScore.isCursed ? 'CURSED!' : `${currentScore.label} ${currentScore.labelKo}`}
-                </div>
+                {currentScore.isCursed ? (
+                  <div style={{ fontSize: '1.125rem', fontWeight: 'bold', marginBottom: '0.5rem', color: '#6b7280' }}>
+                    CURSED!
+                  </div>
+                ) : (
+                  <div style={{ fontSize: '1.125rem', fontWeight: 'bold', marginBottom: '0.5rem', color: '#6366f1' }}>
+                    <span className="combo-desktop">{currentScore.label} {currentScore.labelKo}</span>
+                    <span className="combo-mobile" style={{ display: 'none' }}>
+                      {currentScore.label}<br />{currentScore.labelKo}
+                    </span>
+                  </div>
+                )}
                 {currentScore.hasCursedDice && !currentScore.isCursed && (
                   <div style={{ fontSize: '0.7rem', color: '#a855f7', marginBottom: '0.25rem' }}>⚠ 저주 주사위 제외됨</div>
                 )}
@@ -4089,74 +4105,12 @@
                     const faces = getDiceFaces(type);
                     if (faces) { const i = diceFaceIndices[idx] ?? 0; return faces[5 - i]; }
                     const v = currentDice[idx] ?? 0;
-                    if (v >= 1 && v <= 6) return 7 - v;
+                    if (v >= 0 && v <= 6) return 6 - v;
                     return undefined;
                   })() : undefined}
                 />
               ))}
             </div>
-
-            {roundStarted && !showAttackResult && !showCounterattack && !allDiceStunned && playerState.diceFlipStacks > 0 && !playerState.ownedRewards.includes('stun_immunity_no_flip') && (() => {
-              const forceAll = currentBossType === 'flip_all';
-              const hasMultiFlip = playerState.ownedRewards.includes('multi_flip');
-              // 다중 뒤집기 룰이 없으면 1개만 선택 가능
-              const canFlip = forceAll || (hasMultiFlip ? selectedIndices.size > 0 : selectedIndices.size === 1);
-              return (
-              <div style={{ 
-                display: 'flex', 
-                justifyContent: 'center', 
-                gap: '1rem', 
-                marginTop: '1rem',
-                flexWrap: 'wrap'
-              }}>
-                <button
-                  className="btn"
-                  disabled={!canFlip}
-                  onMouseEnter={() => canFlip && setIsHoveringFlipButton(true)}
-                  onMouseLeave={() => setIsHoveringFlipButton(false)}
-                  onClick={() => {
-                    if (!canFlip) return;
-                    const toFlip = forceAll ? new Set(Array.from({ length: totalDiceCount }, (_, i) => i)) : selectedIndices;
-                    if (!forceAll && toFlip.size > 1 && !playerState.ownedRewards.includes('multi_flip')) {
-                      setShowDiceModifyWarning(true);
-                      setTimeout(() => setShowDiceModifyWarning(false), 2000);
-                      return;
-                    }
-                    if (!forceAll && toFlip.size < 1) return;
-                    const newDice = [...currentDice];
-                    const newFaceIndices = [...diceFaceIndices];
-                    toFlip.forEach(idx => {
-                      const type = playerState.diceTypes[idx];
-                      let faces = (stunnedIndices.has(idx) && type !== 'abyss_cursed')
-                        ? [0,0,0,1,1,1]
-                        : getDiceFaces(type);
-                      if (faces) {
-                        const i = newFaceIndices[idx] ?? 0;
-                        const opp = 5 - i;
-                        newDice[idx] = faces[opp];
-                        newFaceIndices[idx] = opp;
-                      } else if (newDice[idx] >= 1 && newDice[idx] <= 6) {
-                        newDice[idx] = 7 - newDice[idx];
-                        newFaceIndices[idx] = newDice[idx] - 1;
-                      }
-                    });
-                    setCurrentDice(newDice);
-                    setDiceFaceIndices(newFaceIndices);
-                    setSelectedIndices(new Set());
-                    setPlayerState(prev => ({ ...prev, diceFlipStacks: prev.diceFlipStacks - 1, usedFlipThisRound: true }));
-                  }}
-                  style={{
-                    background: canFlip ? 'linear-gradient(to right, #8b5cf6, #7c3aed)' : 'rgba(100, 100, 100, 0.4)',
-                    padding: '0.75rem 1.5rem',
-                    fontSize: '0.875rem',
-                    opacity: canFlip ? 1 : 0.6,
-                    cursor: canFlip ? 'pointer' : 'not-allowed'
-                  }}
-                >
-                  🔄 {forceAll ? '모든 주사위' : '선택한 주사위'} 뒤집기 ({playerState.diceFlipStacks}/4)
-                </button>
-              </div>
-            );})()}
 
             {allDiceStunned && !isMonsterDefeated && (
               <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
@@ -4180,6 +4134,57 @@
                   <button className="btn btn-reroll" onClick={handleReroll} disabled={!canReroll}>
                     리롤 ({rerollsLeft})
                   </button>
+                  {playerState.diceFlipStacks > 0 && !playerState.ownedRewards.includes('stun_immunity_no_flip') && (() => {
+                    const forceAll = currentBossType === 'flip_all';
+                    const hasMultiFlip = playerState.ownedRewards.includes('multi_flip');
+                    const canFlip = forceAll || (hasMultiFlip ? selectedIndices.size > 0 : selectedIndices.size === 1);
+                    return (
+                      <button
+                        className="btn"
+                        disabled={!canFlip}
+                        onMouseEnter={() => canFlip && setIsHoveringFlipButton(true)}
+                        onMouseLeave={() => setIsHoveringFlipButton(false)}
+                        onClick={() => {
+                          if (!canFlip) return;
+                          const toFlip = forceAll ? new Set(Array.from({ length: totalDiceCount }, (_, i) => i)) : selectedIndices;
+                          if (!forceAll && toFlip.size > 1 && !playerState.ownedRewards.includes('multi_flip')) {
+                            setShowDiceModifyWarning(true);
+                            setTimeout(() => setShowDiceModifyWarning(false), 2000);
+                            return;
+                          }
+                          if (!forceAll && toFlip.size < 1) return;
+                          const newDice = [...currentDice];
+                          const newFaceIndices = [...diceFaceIndices];
+                          toFlip.forEach(idx => {
+                            const type = playerState.diceTypes[idx];
+                            let faces = (stunnedIndices.has(idx) && type !== 'abyss_cursed')
+                              ? [0,0,0,1,1,1]
+                              : getDiceFaces(type);
+                            if (faces) {
+                              const i = newFaceIndices[idx] ?? 0;
+                              const opp = 5 - i;
+                              newDice[idx] = faces[opp];
+                              newFaceIndices[idx] = opp;
+                            } else if (newDice[idx] >= 0 && newDice[idx] <= 6) {
+                              newDice[idx] = 6 - newDice[idx];
+                              newFaceIndices[idx] = newDice[idx];
+                            }
+                          });
+                          setCurrentDice(newDice);
+                          setDiceFaceIndices(newFaceIndices);
+                          setSelectedIndices(new Set());
+                          setPlayerState(prev => ({ ...prev, diceFlipStacks: prev.diceFlipStacks - 1, usedFlipThisRound: true }));
+                        }}
+                        style={{
+                          background: canFlip ? 'linear-gradient(to right, #8b5cf6, #7c3aed)' : 'rgba(100, 100, 100, 0.4)',
+                          opacity: canFlip ? 1 : 0.6,
+                          cursor: canFlip ? 'pointer' : 'not-allowed'
+                        }}
+                      >
+                        🔄 {forceAll ? '모든 주사위' : '선택한 주사위'} 뒤집기 ({playerState.diceFlipStacks}/4)
+                      </button>
+                    );
+                  })()}
                   <button className="btn btn-attack" onClick={() => executeAttack(currentDice)} disabled={!canAttack}>
                     공격!
                   </button>
