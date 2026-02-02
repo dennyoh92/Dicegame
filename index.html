@@ -1711,6 +1711,25 @@
         display: inline !important;
         text-align: center;
       }
+      .reward-title {
+        font-size: 0.95rem !important;
+      }
+      .boss-rule-text {
+        font-size: 0.75rem !important;
+      }
+      .victory-title {
+        font-size: 1.5rem !important;
+      }
+      .victory-subtitle {
+        font-size: 0.875rem !important;
+        margin-bottom: 1.5rem !important;
+      }
+      .result-section-title {
+        font-size: 1rem !important;
+      }
+      .result-subtitle {
+        font-size: 0.875rem !important;
+      }
     }
     .btn:hover:not(:disabled) { transform: scale(1.05) translateY(-2px); }
     .btn:active:not(:disabled) { transform: scale(0.95); }
@@ -1921,6 +1940,7 @@
       font-weight: bold;
       color: #1e293b;
       margin-bottom: 0.5rem;
+      font-size: 0.95rem;
     }
     .result-stage-details {
       display: grid;
@@ -1955,6 +1975,44 @@
       grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
       gap: 0.75rem;
       margin-top: 1rem;
+    }
+    @media (max-width: 768px) {
+      .result-timeline {
+        padding-left: 1.5rem;
+      }
+      .result-timeline::before {
+        left: 0.25rem;
+      }
+      .result-timeline-item::before {
+        left: -1.375rem;
+        width: 0.75rem;
+        height: 0.75rem;
+      }
+      .result-stage-info {
+        padding: 0.75rem;
+      }
+      .result-stage-header {
+        font-size: 0.85rem;
+      }
+      .result-stage-details {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+      }
+      .result-detail-item {
+        font-size: 0.75rem;
+      }
+      .result-dice-badge {
+        font-size: 0.75rem;
+        padding: 0.4rem 0.75rem;
+      }
+      .result-rewards-grid {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+      }
+      .result-reward-item {
+        font-size: 0.75rem;
+        padding: 0.4rem 0.75rem;
+      }
     }
     .result-reward-item {
       background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
@@ -1995,7 +2053,7 @@
       { id: "flip_all", nameKo: "전면 뒤집기 보스", descriptionKo: "뒤집기 사용 시 모든 주사위가 뒤집힙니다.", monsterNameKo: "은 쟁반", imageUrl: "./4-2_silver_platter.svg" },
       { id: "reroll_minus1", nameKo: "리롤 감소 보스", descriptionKo: "리롤 횟수가 1회 차감됩니다.", monsterNameKo: "말발굽 자석", imageUrl: "./4-3_horshoe_magnet.svg" },
       { id: "combo_seal", nameKo: "족보 봉인 보스", descriptionKo: "매 턴 무작위 족보 1개가 사용 불가합니다.", monsterNameKo: "자물쇠", imageUrl: "./4-4_chained_lock.svg" },
-      { id: "five_missing_stun", nameKo: "5의 부재 보스", descriptionKo: "눈금이 5인 주사위가 없으면 무작위 주사위 1개가 기절합니다.", monsterNameKo: "레드 칩", imageUrl: "./4-5_red_chip.svg" },
+      { id: "five_missing_stun", nameKo: "5의 부재 보스", descriptionKo: "눈금이 5인 주사위가 없으면 주사위 1개가 추가로 기절합니다.", monsterNameKo: "레드 칩", imageUrl: "./4-5_red_chip.svg" },
     ];
     const BOSS_TYPES_STAGE_6 = [
       { id: "combo_out_stun", nameKo: "미포함 기절 보스", descriptionKo: "족보에 포함되지 않은 주사위 중 하나는 기절합니다.", monsterNameKo: "오렌지 소다", imageUrl: "./6-1_orange_soda.svg" },
@@ -2033,7 +2091,7 @@
       { id: "dice_flip_gain", name: "Spare Card", nameKo: "스페어 카드", descriptionKo: "전투 종료 후 뒤집기 획득량이 1개 더 늘어납니다.", iconName: "Target" },
       { id: "small_straight_3", name: "Short Cut", nameKo: "숏 컷", descriptionKo: "연속된 숫자 3개로도 스몰 스트레이트가 가능합니다.", iconName: "Target" },
       { id: "triple_2", name: "Pocket Pair", nameKo: "포켓 페어", descriptionKo: "동일 숫자 2개로도 트리플이 가능합니다.", iconName: "Target" },
-      { id: "mega_enhance", name: "All In", nameKo: "올 인", descriptionKo: "무작위 주사위가 +10 강화됩니다.", iconName: "Target" },
+      { id: "mega_enhance", name: "All In", nameKo: "올 인", descriptionKo: "무작위 주사위가 +7 강화됩니다.", iconName: "Target" },
       { id: "reroll_burn", name: "Spin-off", nameKo: "스핀 오프", descriptionKo: "리롤시 리롤한 주사위의 눈+강화 수치만큼 몬스터에게 피해를 입힙니다.", iconName: "Target" },
       { id: "sum13_x5", name: "13 Jackpot", nameKo: "13 잭팟", descriptionKo: "주사위 합계가 정확히 13일 경우, 피해량이 5배 증가합니다.", iconName: "Target" },
       { id: "dice_6_0", name: "6·0 Dice", nameKo: "6·0 다이스", descriptionKo: "[6,0] 면 구성으로 교체", iconName: "Target" },
@@ -2056,7 +2114,7 @@
       { id: "random_passive_2", name: "Joker", nameKo: "조커", descriptionKo: "무작위 룰 2개를 획득합니다.", iconName: "Gift" },
       { id: "low_dice_boost", name: "Underdog", nameKo: "언더독", descriptionKo: "모든 주사위 눈이 3 이하일시 피해량이 2배 증가합니다.", iconName: "Target" },
       { id: "stun_immunity_no_flip", name: "Safe Bet", nameKo: "세이프 벳", descriptionKo: "첫 번째 몬스터 공격이 무효화됩니다. 뒤집기 사용이 불가합니다.", iconName: "Shield" },
-      { id: "double_attack", name: "Double Edge", nameKo: "더블 엣지", descriptionKo: "주사위 눈 2가 포함된 경우 피해량이 2배 증가합니다.", iconName: "Target" },
+      { id: "double_attack", name: "Double Edge", nameKo: "더블 엣지", descriptionKo: "주사위 눈이 2인 주사위가 있으면 피해량이 2배 증가합니다.", iconName: "Target" },
     ];
 
     const COMBINATIONS = {
@@ -2098,7 +2156,7 @@
     function getBossNameKo(bossId) {
       if (!bossId) return "";
       const boss = BOSS_TYPES_ALL.find(b => b.id === bossId);
-      return boss ? boss.nameKo : bossId;
+      return boss ? (boss.monsterNameKo || boss.nameKo) : bossId;
     }
     
     // 보상 ID를 한글 이름으로 변환
@@ -2225,7 +2283,7 @@
     function isSmallStraight(dice, ownedRewards = []) {
       if (ownedRewards.includes('small_straight_3') && hasThreeConsecutive(dice)) return true;
       const unique = Array.from(new Set(dice)).sort((a, b) => a - b);
-      const sequences = [[1,2,3,4], [2,3,4,5], [3,4,5,6]];
+      const sequences = [[0,1,2,3], [1,2,3,4], [2,3,4,5], [3,4,5,6]];
       return sequences.some(seq => seq.every(num => unique.includes(num)));
     }
 
@@ -2512,7 +2570,12 @@
     }
 
     function applyReward(state, rewardId) {
-      const newState = { ...state, ownedRewards: [...state.ownedRewards, rewardId] };
+      // 주사위 변형 보상은 ownedRewards에 추가하지 않음
+      const isDiceVariant = /^dice_/.test(rewardId);
+      const newState = isDiceVariant 
+        ? { ...state }
+        : { ...state, ownedRewards: [...state.ownedRewards, rewardId] };
+      
       switch (rewardId) {
         case "skilled_hands":
           newState.baseRerolls += 1;
@@ -2537,7 +2600,7 @@
           let e = [...(newState.diceEnhancements || [])];
           while (e.length < newState.diceTypes.length) e.push(0);
           const i = Math.floor(Math.random() * e.length);
-          e[i] = (e[i] || 0) + 10;
+          e[i] = (e[i] || 0) + 7;
           newState.diceEnhancements = e;
           break;
         }
@@ -2573,7 +2636,7 @@
               let e = [...(newState.diceEnhancements || [])];
               while (e.length < newState.diceTypes.length) e.push(0);
               const i = Math.floor(Math.random() * e.length);
-              e[i] = (e[i] || 0) + 10;
+              e[i] = (e[i] || 0) + 7;
               newState.diceEnhancements = e;
             }
           });
@@ -3218,8 +3281,11 @@
           // 전투 종료 보너스: 남은 주사위 수에 따라 무작위 주사위 1개 강화
           const survivalBonus = nonStunnedCount <= 2 ? 1 : nonStunnedCount <= 4 ? 2 : 3;
           
-          setPlayerState(prev => {
-            let n = prev;
+          const result = (() => {
+            let n = playerState;
+            // 전투 종료 시 기본 뒤집기 +1 (최대 4)
+            n = { ...n, diceFlipStacks: Math.min((n.diceFlipStacks || 0) + 1, 4) };
+            
             if (n.ownedRewards.includes('random_combo_boost')) {
               const comboKeys = Object.keys(COMBINATIONS).filter(k => k !== 'yahtzee' && k !== 'largeStraight');
               const k = comboKeys[Math.floor(Math.random() * comboKeys.length)];
@@ -3236,11 +3302,14 @@
               const bonusMultiplier = n.ownedRewards.includes('random_die_enhance') ? 2 : 1;
               newEnhancements[randomIdx] = (newEnhancements[randomIdx] || 0) + (survivalBonus * bonusMultiplier);
               n = { ...n, diceEnhancements: newEnhancements };
+              // 강화된 인덱스 저장 (레이즈 습득 시 추가 강화용)
+              return { state: n, enhancedIndex: randomIdx };
             }
-            return n;
-          });
-          // 전투 종료 보너스 정보 저장 (보상 선택 화면에서 표시)
-          setEnhancementOffer({ nonStunnedCount, survivalBonus });
+            return { state: n, enhancedIndex: null };
+          })();
+          setPlayerState(result.state);
+          // 전투 종료 보너스 정보 저장 (보상 선택 화면에서 표시, 레이즈 습득 시 사용)
+          setEnhancementOffer({ nonStunnedCount, survivalBonus, enhancedIndex: result.enhancedIndex });
           // 첫 전투 클리어 시 튜토리얼 메시지 표시
           if (playerState.currentStage === 1 && !hasSeenTutorial) {
             setShowTutorialMessage(true);
@@ -3458,6 +3527,17 @@
         setCurrentStageBestCombo('');
         setLastEnhancementChoice("");
         const newState = { ...stateAfterReward };
+        
+        // 레이즈를 방금 획득한 경우, 이번 턴 보너스에도 2배 효과 적용
+        if (rewardChoice === 'random_die_enhance' && enhancementOffer && enhancementOffer.enhancedIndex != null && enhancementOffer.survivalBonus) {
+          const enhancements = [...(newState.diceEnhancements || [])];
+          if (enhancements.length > enhancementOffer.enhancedIndex) {
+            // 이미 강화된 주사위에 보너스만큼 추가 (총 2배 효과)
+            enhancements[enhancementOffer.enhancedIndex] += enhancementOffer.survivalBonus;
+            newState.diceEnhancements = enhancements;
+          }
+        }
+        
         newState.currentStage += 1;
         if (newState.shieldIndex != null) newState.shieldUsed = false;
         // 철벽 수비: 다음 전투에서 다시 사용 가능
@@ -3675,7 +3755,7 @@
                 borderRadius: '0.75rem',
                 fontSize: '0.875rem'
               }}>
-                <div style={{ fontWeight: 'bold', marginBottom: '0.25rem', color: '#a78bfa' }}>👹 보스 룰: {bossInfo.descriptionKo}</div>
+                <div className="boss-rule-text" style={{ fontWeight: 'bold', marginBottom: '0.25rem', color: '#a78bfa' }}>👹 보스 룰: {bossInfo.descriptionKo}</div>
                 {currentBossType === 'pattern_limit' && lastUsedCombination && (
                   <div style={{ marginTop: '0.5rem', padding: '0.5rem', background: 'rgba(239, 68, 68, 0.2)', borderRadius: '0.5rem', color: '#ef4444', fontWeight: 'bold' }}>
                     ⚠️ 사용 불가: {COMBINATIONS[lastUsedCombination]?.labelKo || lastUsedCombination}
@@ -3738,15 +3818,15 @@
             {showVictory && (
               <div className="modal-overlay">
                 <div className="modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '800px', maxHeight: '90vh', overflowY: 'auto' }}>
-                  <h2 style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '0.5rem', textAlign: 'center' }}>🎉 클리어! 🎉</h2>
-                  <p style={{ marginBottom: '2rem', textAlign: 'center', color: 'rgba(255,255,255,0.8)' }}>모든 스테이지를 완료했습니다!</p>
+                  <h2 className="victory-title" style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '0.5rem', textAlign: 'center' }}>🎉 클리어! 🎉</h2>
+                  <p className="victory-subtitle" style={{ marginBottom: '2rem', textAlign: 'center', color: 'rgba(255,255,255,0.8)' }}>모든 스테이지를 완료했습니다!</p>
                   
                   <div style={{ marginBottom: '2rem' }}>
-                    <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <h3 className="result-section-title" style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                       📊 최종 빌드
                     </h3>
                     <div>
-                      <div style={{ fontWeight: 'bold', color: 'rgba(255,255,255,0.9)', marginBottom: '0.75rem' }}>주사위 구성</div>
+                      <div className="result-subtitle" style={{ fontWeight: 'bold', color: 'rgba(255,255,255,0.9)', marginBottom: '0.75rem' }}>주사위 구성</div>
                       <div className="result-dice-list">
                         {(() => {
                           const diceCounts = {};
@@ -3760,7 +3840,7 @@
                           ));
                         })()}
                       </div>
-                      <div style={{ fontWeight: 'bold', color: 'rgba(255,255,255,0.9)', margin: '1.5rem 0 0.75rem 0' }}>획득한 룰</div>
+                      <div className="result-subtitle" style={{ fontWeight: 'bold', color: 'rgba(255,255,255,0.9)', margin: '1.5rem 0 0.75rem 0' }}>획득한 룰</div>
                       <div className="result-rewards-grid">
                         {playerState.ownedRewards.filter(id => !/^dice_\d/.test(id)).map(rewardId => {
                           const reward = REWARDS.find(r => r.id === rewardId);
@@ -3773,7 +3853,7 @@
                   </div>
 
                   <div style={{ marginBottom: '2rem' }}>
-                    <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <h3 className="result-section-title" style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                       🎮 진행 기록
                     </h3>
                     <div className="result-timeline">
@@ -3855,7 +3935,7 @@
               const isDiceVariantRound = [1, 3, 5, 7].includes(playerState.currentStage);
               return (
               <div className="modal-overlay">
-                <div className="modal" style={{ maxWidth: '700px', maxHeight: '90vh', display: 'flex', flexDirection: 'column' }}>
+                <div className="modal" style={{ maxWidth: '700px', maxHeight: '90vh', overflowY: 'auto' }}>
                   <button
                     onClick={() => setRewardModalHidden(true)}
                     style={{
@@ -3876,35 +3956,28 @@
                   >
                     👁 숨기기
                   </button>
-                  <div style={{ flex: '0 0 auto' }}>
-                    {enhancementOffer && enhancementOffer.survivalBonus && (
-                      <div style={{ 
-                        background: 'linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(245, 158, 11, 0.15))',
-                        border: '1px solid rgba(251, 191, 36, 0.4)',
-                        borderRadius: '0.5rem',
-                        padding: '0.6rem 1rem',
-                        marginBottom: '1rem',
-                        textAlign: 'center'
-                      }}>
-                        <span style={{ fontSize: '0.85rem', color: '#fbbf24', fontWeight: 'bold' }}>
-                          🎖 전투 보너스: 무작위 주사위 +{enhancementOffer.survivalBonus} 강화! (남은 주사위: {enhancementOffer.nonStunnedCount}개)
-                        </span>
-                      </div>
-                    )}
-                  <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1rem' }}>
-                    {isDiceVariantRound ? '🎲 홀수 스테이지 – 특수 주사위 획득' : '✨ 짝수 스테이지 – 새로운 룰 획득'}
+                  {enhancementOffer && enhancementOffer.survivalBonus && (
+                    <div style={{ 
+                      background: 'linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(245, 158, 11, 0.15))',
+                      border: '1px solid rgba(251, 191, 36, 0.4)',
+                      borderRadius: '0.5rem',
+                      padding: '0.6rem 1rem',
+                      marginBottom: '1rem',
+                      textAlign: 'center'
+                    }}>
+                      <span style={{ fontSize: '0.85rem', color: '#fbbf24', fontWeight: 'bold' }}>
+                        🎖 전투 보너스: 무작위 주사위 +{enhancementOffer.survivalBonus} 강화! (남은 주사위: {enhancementOffer.nonStunnedCount}개)
+                      </span>
+                    </div>
+                  )}
+                  <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1rem' }} className="reward-title">
+                    {isDiceVariantRound ? '🎲 특수 주사위 획득' : '✨ 새로운 룰 획득'}
                   </h2>
-                  </div>
-                  <div style={{ flex: '1 1 auto', overflowY: 'auto', marginBottom: '1rem' }}>
-                      <div style={{ 
-                        display: 'flex', 
-                        flexDirection: 'column', 
-                        gap: '1rem',
-                        padding: '1rem',
-                        borderRadius: '0.5rem',
-                        background: isDiceVariantRound ? 'rgba(99, 102, 241, 0.12)' : 'rgba(34, 197, 94, 0.12)',
-                        border: `1px solid ${isDiceVariantRound ? 'rgba(99, 102, 241, 0.35)' : 'rgba(34, 197, 94, 0.35)'}`
-                      }}>
+                  <div style={{ 
+                    display: 'flex', 
+                    flexDirection: 'column', 
+                    gap: '1rem'
+                  }}>
                         {rewardOptions.map((reward, idx) => {
                           const isDiceVariant = /^dice_\d/.test(reward.id);
                           const isOwned = !isDiceVariant && playerState.ownedRewards.includes(reward.id);
@@ -3916,7 +3989,10 @@
                               style={{
                                 opacity: canSelect ? 1 : 0.6,
                                 cursor: canSelect ? 'pointer' : 'default',
-                                background: canSelect ? 'rgba(255, 255, 255, 0.1)' : 'rgba(100, 100, 100, 0.2)'
+                                background: canSelect ? 'rgba(255, 255, 255, 0.1)' : 'rgba(100, 100, 100, 0.2)',
+                                padding: '1rem',
+                                borderRadius: '0.5rem',
+                                border: `2px solid ${isDiceVariantRound ? 'rgba(99, 102, 241, 0.35)' : 'rgba(34, 197, 94, 0.35)'}`
                               }}
                             >
                               <div style={{ fontWeight: 'bold', fontSize: '1rem', marginBottom: '0.5rem' }}>{reward.nameKo} {!/^dice_\d/.test(reward.id) && <span style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.7)' }}>({reward.name})</span>}</div>
@@ -3940,8 +4016,7 @@
                           );
                         })}
                       </div>
-                  </div>
-                  <div style={{ flex: '0 0 auto', display: 'flex', gap: '1rem', paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.2)' }}>
+                  <div style={{ display: 'flex', gap: '1rem', marginTop: '1.25rem', paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.2)' }}>
                     <button
                       className="btn"
                       onClick={() => goToNextStage({ ...playerState, diceFlipStacks: Math.min((playerState.diceFlipStacks || 1) + 1, 4) }, "pass")}
@@ -4208,7 +4283,7 @@
                       <div style={{ fontWeight: 'bold', fontSize: '0.875rem', color: '#6366f1' }}>
                         {reward.nameKo} ({reward.name})
                       </div>
-                      <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '0.25rem' }}>
+                      <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '0.25rem', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                         {reward.descriptionKo}
                       </div>
                     </div>
